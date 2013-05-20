@@ -35,6 +35,7 @@
             this.numericUpDownThreads = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownCom = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.worker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).BeginInit();
@@ -112,6 +113,14 @@
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(118, 23);
             this.progressBar.TabIndex = 4;
+            this.progressBar.Visible = false;
+            // 
+            // worker
+            // 
+            this.worker.WorkerReportsProgress = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.worker_DoWork);
+            this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
             // 
             // VentanaRandom
             // 
@@ -125,8 +134,12 @@
             this.Controls.Add(this.buttonCom);
             this.Controls.Add(this.buttonThreads);
             this.Controls.Add(this.buttonAutores);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "VentanaRandom";
             this.Text = "VentanaRandom";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VentanaRandom_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).EndInit();
@@ -143,5 +156,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDownThreads;
         private System.Windows.Forms.NumericUpDown numericUpDownCom;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.ComponentModel.BackgroundWorker worker;
     }
 }
