@@ -41,57 +41,83 @@ namespace MongoTest2
 
         private void buttonAutores_Click(object sender, EventArgs e)
         {
+            if (worker.IsBusy)
+                return;
             progressBar.Visible = true;
-            progressBar.Minimum = 1;
-            progressBar.Value = 1;
-            int n = (int)numericUpDownAutores.Value;
-            progressBar.Maximum = n;
-            progressBar.Step = 1;
-            Random rand = new Random();
-            for(int i = 1; i<=n; i++)
-            {
-                int num = rand.Next(50);
-                int num2 = rand.Next(2000);
-                db.GetCollection("authors").Insert(new { name = names[num] + num2 });
-                progressBar.PerformStep();
-            }
-            progressBar.Visible = false;
+            worker.RunWorkerAsync(AU);
         }
 
         private void buttonThreads_Click(object sender, EventArgs e)
         {
+            if (worker.IsBusy)
+                return;
             progressBar.Visible = true;
-            progressBar.Minimum = 1;
-            progressBar.Value = 1;
-            int n = (int)numericUpDownThreads.Value;
-            progressBar.Maximum = n;
-            progressBar.Step = 1;
+            worker.RunWorkerAsync(TH);
+        }
+
+        private void buttonCom_Click(object sender, EventArgs e)
+        {
+            if (worker.IsBusy)
+                return;
+            progressBar.Visible = true;
+            worker.RunWorkerAsync(CO);
+        }
+
+        private const int CO = 1;
+        private const int TH = 2;
+        private const int AU = 3;
+
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int opc = (int)e.Argument;
+            switch (opc)
+            {
+                case 1: 
+                    cargarComments((int)numericUpDownCom.Value);
+                    break;
+                case 2:
+                    cargarThreads((int)numericUpDownThreads.Value);
+                    break;
+                default:
+                    cargarAutores((int)numericUpDownAutores.Value);
+                    break;
+            }
+        }
+
+        private void cargarAutores(int n)
+        {
+            Random rand = new Random();
+            for (int i = 1; i <= n; i++)
+            {
+                int num = rand.Next(50);
+                int num2 = rand.Next(2000);
+                db.GetCollection("authors").Insert(new { name = names[num] + num2 });
+                worker.ReportProgress((i / n) * 100);
+            }
+        }
+
+        private void cargarThreads(int n)
+        {
             Random rand = new Random();
             for (int i = 1; i <= n; i++)
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(50);
-                int nAut = (int) db.GetCollection("authors").Count();
+                int nAut = (int)db.GetCollection("authors").Count();
                 int num3 = rand.Next(nAut);
                 BsonDocument auth = db.GetCollection("authors").FindAll().Skip(num3).First();
-                db.GetCollection("threads").Insert(new { 
-                    title = names[num]+names[num2],
+                db.GetCollection("threads").Insert(new
+                {
+                    title = names[num] + names[num2],
                     author = auth,
                     date = DateTime.Now
                 });
-                progressBar.PerformStep();
+                worker.ReportProgress((i / n) * 100);
             }
-            progressBar.Visible = false;
         }
 
-        private void buttonCom_Click(object sender, EventArgs e)
+        private void cargarComments(int n)
         {
-            progressBar.Visible = true;
-            progressBar.Minimum = 1;
-            progressBar.Value = 1;
-            int n = (int)numericUpDownCom.Value;
-            progressBar.Maximum = n;
-            progressBar.Step = 1;
             Random rand = new Random();
             for (int i = 1; i <= n; i++)
             {
@@ -105,7 +131,7 @@ namespace MongoTest2
                 int num4 = rand.Next(10);
                 int num5 = 0;
                 int nCom = (int)db.GetCollection("comments").Count();
-                if (num4 <= 3 || nCom==0)
+                if (num4 <= 3 || nCom == 0)
                 {
                     int nTh = (int)db.GetCollection("threads").Count();
                     num5 = rand.Next(nTh);
@@ -120,7 +146,7 @@ namespace MongoTest2
                     parentId = com["_id"];
                     threadId = com["thread_id"];
                 }
-                
+
                 db.GetCollection("comments").Insert(new
                 {
                     text = lorem,
@@ -129,9 +155,26 @@ namespace MongoTest2
                     date = DateTime.Now,
                     parent_id = parentId
                 });
-                progressBar.PerformStep();
+
+                worker.ReportProgress((i*100)/n);
             }
+
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
             progressBar.Visible = false;
+        }
+
+        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
+        }
+
+        private void VentanaRandom_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (worker.IsBusy)
+                e.Cancel = true;
         }
     }
 }
