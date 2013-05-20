@@ -30,6 +30,8 @@
         {
             this.buttonActualizarMonitor = new System.Windows.Forms.Button();
             this.panelAcciones = new System.Windows.Forms.Panel();
+            this.buttonRandom = new System.Windows.Forms.Button();
+            this.buttonAgregarDatos = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelChunks = new System.Windows.Forms.Label();
@@ -39,8 +41,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxEstado = new System.Windows.Forms.TextBox();
             this.labelEstado = new System.Windows.Forms.Label();
-            this.buttonAgregarDatos = new System.Windows.Forms.Button();
-            this.buttonRandom = new System.Windows.Forms.Button();
+            this.labelTam = new System.Windows.Forms.Label();
             this.panelAcciones.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -69,6 +70,26 @@
             this.panelAcciones.Size = new System.Drawing.Size(160, 420);
             this.panelAcciones.TabIndex = 1;
             // 
+            // buttonRandom
+            // 
+            this.buttonRandom.Location = new System.Drawing.Point(12, 70);
+            this.buttonRandom.Name = "buttonRandom";
+            this.buttonRandom.Size = new System.Drawing.Size(134, 23);
+            this.buttonRandom.TabIndex = 18;
+            this.buttonRandom.Text = "Agregar Datos Aleatorios";
+            this.buttonRandom.UseVisualStyleBackColor = true;
+            this.buttonRandom.Click += new System.EventHandler(this.buttonRandom_Click);
+            // 
+            // buttonAgregarDatos
+            // 
+            this.buttonAgregarDatos.Location = new System.Drawing.Point(12, 41);
+            this.buttonAgregarDatos.Name = "buttonAgregarDatos";
+            this.buttonAgregarDatos.Size = new System.Drawing.Size(134, 23);
+            this.buttonAgregarDatos.TabIndex = 17;
+            this.buttonAgregarDatos.Text = "Agregar Datos Manual";
+            this.buttonAgregarDatos.UseVisualStyleBackColor = true;
+            this.buttonAgregarDatos.Click += new System.EventHandler(this.buttonAgregarDatos_Click);
+            // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
@@ -87,6 +108,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelTam);
             this.groupBox1.Controls.Add(this.labelChunks);
             this.groupBox1.Location = new System.Drawing.Point(9, 100);
             this.groupBox1.Name = "groupBox1";
@@ -158,25 +180,14 @@
             this.labelEstado.TabIndex = 23;
             this.labelEstado.Text = "Estado";
             // 
-            // buttonAgregarDatos
+            // labelTam
             // 
-            this.buttonAgregarDatos.Location = new System.Drawing.Point(12, 41);
-            this.buttonAgregarDatos.Name = "buttonAgregarDatos";
-            this.buttonAgregarDatos.Size = new System.Drawing.Size(134, 23);
-            this.buttonAgregarDatos.TabIndex = 17;
-            this.buttonAgregarDatos.Text = "Agregar Datos Manual";
-            this.buttonAgregarDatos.UseVisualStyleBackColor = true;
-            this.buttonAgregarDatos.Click += new System.EventHandler(this.buttonAgregarDatos_Click);
-            // 
-            // buttonRandom
-            // 
-            this.buttonRandom.Location = new System.Drawing.Point(12, 70);
-            this.buttonRandom.Name = "buttonRandom";
-            this.buttonRandom.Size = new System.Drawing.Size(134, 23);
-            this.buttonRandom.TabIndex = 18;
-            this.buttonRandom.Text = "Agregar Datos Aleatorios";
-            this.buttonRandom.UseVisualStyleBackColor = true;
-            this.buttonRandom.Click += new System.EventHandler(this.buttonRandom_Click);
+            this.labelTam.AutoSize = true;
+            this.labelTam.Location = new System.Drawing.Point(7, 37);
+            this.labelTam.Name = "labelTam";
+            this.labelTam.Size = new System.Drawing.Size(46, 13);
+            this.labelTam.TabIndex = 1;
+            this.labelTam.Text = "Tamaño";
             // 
             // Ventana
             // 
@@ -212,6 +223,7 @@
         private System.Windows.Forms.Label labelChunks;
         private System.Windows.Forms.Button buttonAgregarDatos;
         private System.Windows.Forms.Button buttonRandom;
+        private System.Windows.Forms.Label labelTam;
 
 
     }

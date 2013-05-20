@@ -36,9 +36,12 @@
             this.numericUpDownCom = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.worker = new System.ComponentModel.BackgroundWorker();
+            this.buttonCom1MB = new System.Windows.Forms.Button();
+            this.numericUpDownCom1MB = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom1MB)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonAutores
@@ -85,7 +88,7 @@
             // 
             // numericUpDownThreads
             // 
-            this.numericUpDownThreads.Location = new System.Drawing.Point(137, 42);
+            this.numericUpDownThreads.Location = new System.Drawing.Point(137, 46);
             this.numericUpDownThreads.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -97,7 +100,7 @@
             // 
             // numericUpDownCom
             // 
-            this.numericUpDownCom.Location = new System.Drawing.Point(137, 72);
+            this.numericUpDownCom.Location = new System.Drawing.Point(137, 75);
             this.numericUpDownCom.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -109,9 +112,9 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(141, 113);
+            this.progressBar.Location = new System.Drawing.Point(13, 130);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(118, 23);
+            this.progressBar.Size = new System.Drawing.Size(246, 23);
             this.progressBar.TabIndex = 4;
             this.progressBar.Visible = false;
             // 
@@ -122,11 +125,30 @@
             this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
             this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
             // 
+            // buttonCom1MB
+            // 
+            this.buttonCom1MB.Location = new System.Drawing.Point(13, 101);
+            this.buttonCom1MB.Name = "buttonCom1MB";
+            this.buttonCom1MB.Size = new System.Drawing.Size(118, 23);
+            this.buttonCom1MB.TabIndex = 5;
+            this.buttonCom1MB.Text = "Comentarios 1MB";
+            this.buttonCom1MB.UseVisualStyleBackColor = true;
+            this.buttonCom1MB.Click += new System.EventHandler(this.buttonCom1MB_Click);
+            // 
+            // numericUpDownCom1MB
+            // 
+            this.numericUpDownCom1MB.Location = new System.Drawing.Point(137, 104);
+            this.numericUpDownCom1MB.Name = "numericUpDownCom1MB";
+            this.numericUpDownCom1MB.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownCom1MB.TabIndex = 6;
+            // 
             // VentanaRandom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(271, 148);
+            this.ClientSize = new System.Drawing.Size(271, 160);
+            this.Controls.Add(this.numericUpDownCom1MB);
+            this.Controls.Add(this.buttonCom1MB);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.numericUpDownCom);
             this.Controls.Add(this.numericUpDownThreads);
@@ -138,11 +160,12 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "VentanaRandom";
-            this.Text = "VentanaRandom";
+            this.Text = "Datos aleatorios";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VentanaRandom_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom1MB)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -157,5 +180,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownCom;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.ComponentModel.BackgroundWorker worker;
+        private System.Windows.Forms.Button buttonCom1MB;
+        private System.Windows.Forms.NumericUpDown numericUpDownCom1MB;
     }
 }

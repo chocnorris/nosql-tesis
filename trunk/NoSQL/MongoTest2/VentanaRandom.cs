@@ -63,23 +63,34 @@ namespace MongoTest2
             worker.RunWorkerAsync(CO);
         }
 
+        private void buttonCom1MB_Click(object sender, EventArgs e)
+        {
+            if (worker.IsBusy)
+                return;
+            progressBar.Visible = true;
+            worker.RunWorkerAsync(CO1MB);
+        }
+
         private const int CO = 1;
         private const int TH = 2;
         private const int AU = 3;
-
+        private const int CO1MB = 4;
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             int opc = (int)e.Argument;
             switch (opc)
             {
-                case 1: 
-                    cargarComments((int)numericUpDownCom.Value);
+                case CO: 
+                    cargarComments((int)numericUpDownCom.Value, false);
                     break;
-                case 2:
+                case TH:
                     cargarThreads((int)numericUpDownThreads.Value);
                     break;
-                default:
+                case AU:
                     cargarAutores((int)numericUpDownAutores.Value);
+                    break;
+                case CO1MB:
+                    cargarComments((int)numericUpDownCom1MB.Value, true);
                     break;
             }
         }
@@ -116,7 +127,7 @@ namespace MongoTest2
             }
         }
 
-        private void cargarComments(int n)
+        private void cargarComments(int n,bool mb)
         {
             Random rand = new Random();
             for (int i = 1; i <= n; i++)
@@ -146,15 +157,24 @@ namespace MongoTest2
                     parentId = com["_id"];
                     threadId = com["thread_id"];
                 }
-
-                db.GetCollection("comments").Insert(new
-                {
-                    text = lorem,
-                    thread_id = threadId,
-                    author = auth,
-                    date = DateTime.Now,
-                    parent_id = parentId
-                });
+                if(!mb)
+                    db.GetCollection("comments").Insert(new
+                    {
+                        text = lorem,
+                        thread_id = threadId,
+                        author = auth,
+                        date = DateTime.Now,
+                        parent_id = parentId
+                    });
+                else
+                    db.GetCollection("comments").Insert(new
+                    {
+                        text = System.IO.File.ReadAllText(@"C:\Users\Juan Cruz\Documents\Visual Studio 2010\Projects\NoSQL\NoSQL\MongoTest2\1mb.txt"),
+                        thread_id = threadId,
+                        author = auth,
+                        date = DateTime.Now,
+                        parent_id = parentId
+                    });
 
                 worker.ReportProgress((i*100)/n);
             }
@@ -176,5 +196,6 @@ namespace MongoTest2
             if (worker.IsBusy)
                 e.Cancel = true;
         }
+
     }
 }

@@ -20,7 +20,7 @@ namespace MongoTest2
         MongoDatabase db;
         public Ventana()
         {
-            client = new MongoClient("mongodb://localhost");
+            client = new MongoClient("mongodb://192.168.56.201");
             server = client.GetServer();
             db = server.GetDatabase("forum");
             InitializeComponent();
@@ -35,7 +35,7 @@ namespace MongoTest2
             comboBoxShardList.Items.Add("Global");
             foreach (var sh in server.GetDatabase("config").GetCollection("shards").FindAll())
             {
-                comboBoxShardList.Items.Add(sh["_id"] + "");
+                comboBoxShardList.Items.Add(new ComboItem { Text = sh["_id"], Value = sh["host"] }); ;
             }
             comboBoxShardList.SelectedIndex = 0;
             textBoxEstado.Text = server.State.ToString();
@@ -49,15 +49,29 @@ namespace MongoTest2
 
         private void detalles(string referencia)
         {
+            CommandDocument comandoStats = new CommandDocument();
+            comandoStats.Add("dbstats", 1);
+            comandoStats.Add("scale", 1024*1024);
+            CommandResult stats = db.RunCommand(comandoStats);
+            /*
+            CommandDocument comandoSI = new CommandDocument();
+            comandoSI.Add("eval", "printShardingInfo()");
+            CommandResult shardingInfo = db.RunCommand(comandoSI);
+             */
             if (referencia == "Global")
             {
-                labelChunks.Text = "Chunks: " + 
-                    server.GetDatabase("config").GetCollection("chunks").Count() ;
-                return;
+                labelChunks.Text = "Chunks: " +
+                    server.GetDatabase("config").GetCollection("chunks").Count();
+                labelTam.Text = "Tamaño: " +
+                    stats.Response["dataSize"]+" Mb";
             }
-
-            labelChunks.Text = "Chunks: " +
+            else
+            {
+                labelChunks.Text = "Chunks: " +
                     server.GetDatabase("config").GetCollection("chunks").Find(new QueryDocument("shard", referencia)).Count();
+                labelTam.Text = "Tamaño: " +
+                    stats.Response["raw"][((ComboItem)comboBoxShardList.SelectedItem).Value.AsString]["dataSize"] + " Mb";
+            }
         }
 
         private void comboBoxShardList_SelectedIndexChanged(object sender, EventArgs e)
@@ -69,16 +83,6 @@ namespace MongoTest2
         {
             Form vd = new VentanaDatos(db);
             vd.ShowDialog();
-            /*
-            string text = System.IO.File.ReadAllText(@"C:\Users\Juan Cruz\Documents\Visual Studio 2010\Projects\MongoTest\MongoTest2\1mb.txt");
-            for (int i = 0; i < 100; i++)
-            {
-                BsonDocument t = new BsonDocument();
-                t["author"] = "hola"+i;
-                t["title"]=text;
-                db.GetCollection("threads").Save(t);
-            }
-             * */
         }
 
         private void buttonRandom_Click(object sender, EventArgs e)
