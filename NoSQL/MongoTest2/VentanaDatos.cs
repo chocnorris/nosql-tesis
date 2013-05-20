@@ -41,12 +41,8 @@ namespace MongoTest2
         private void cargarAutores()
         {
             comboBoxAutorThread.Items.Clear();
-            comboBoxAutorThread.DisplayMember = "Text";
-            comboBoxAutorThread.ValueMember = "Value";
             comboBoxAutorCom.Items.Clear();
-            comboBoxAutorCom.DisplayMember = "Text";
-            comboBoxAutorCom.ValueMember = "Value";
-            MongoCursor<BsonDocument> autores = db.GetCollection("authors").FindAll();
+            MongoCursor<BsonDocument> autores = db.GetCollection("authors").FindAll().SetSortOrder("name");
             bool tieneAutores = autores.Count() > 0;
             foreach (var auth in autores)
             {
@@ -162,7 +158,10 @@ namespace MongoTest2
             if (comentario != null)
             {
                 textBoxContCom.Text =
-                    comentario["text"] + "";
+                    "[Comentario] " + Environment.NewLine +
+                    "Fecha: " + comentario["date"].ToLocalTime().ToShortDateString() + Environment.NewLine +
+                    "Autor: " + comentario["author"]["name"] + Environment.NewLine +Environment.NewLine +
+                    comentario["text"] ;
             }
             else
             {
@@ -175,15 +174,5 @@ namespace MongoTest2
             }
         }
 
-    }
-
-    public class ComboItem
-    {
-        public BsonValue Text { get; set; }
-        public BsonValue Value { get; set; }
-        public override string ToString()
-        {
-            return Text+"";
-        }
     }
 }
