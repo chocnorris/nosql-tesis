@@ -169,7 +169,7 @@ namespace MongoTest2
                 else
                     db.GetCollection("comments").Insert(new
                     {
-                        text = System.IO.File.ReadAllText(@"C:\Users\Juan Cruz\Documents\Visual Studio 2010\Projects\NoSQL\NoSQL\MongoTest2\1mb.txt"),
+                        text = System.IO.File.ReadAllText(@"..\..\1mb.txt"),
                         thread_id = threadId,
                         author = auth,
                         date = DateTime.Now,
