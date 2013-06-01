@@ -16,6 +16,8 @@ namespace MongoTest2
     public partial class VentanaDatos : Form
     {
         MongoDatabase db;
+        const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
+
         public VentanaDatos(MongoDatabase mdb)
         {
             db = mdb;
@@ -32,9 +34,16 @@ namespace MongoTest2
         {
             if (textBoxNombreAutor.Text != "")
             {
-                db.GetCollection("authors").Insert(new { name = textBoxNombreAutor.Text });
-                textBoxNombreAutor.Text = "";
-                cargarAutores();
+                try
+                {
+                    var entity = db.GetCollection("authors").Insert(new { name = textBoxNombreAutor.Text });
+                    textBoxNombreAutor.Text = "";
+                    cargarAutores();
+                }
+                catch (System.IO.IOException DbException)
+                {
+                    MessageBox.Show(MSG_ERROR_DB,"Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }    
             }
         }
 
@@ -111,22 +120,29 @@ namespace MongoTest2
         {
             if (textBoxCom.Text != "")
             {
-                db.GetCollection("comments").Insert(
-                    new
-                    {
-                        text = textBoxCom.Text,
-                        thread_id = new BsonObjectId(new ObjectId(threadRaiz(treeViewCom.SelectedNode).Tag.ToString())),
-                        author = new
+                try
+                {
+                    db.GetCollection("comments").Insert(
+                        new
                         {
-                            name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text,
-                            id = ((ComboItem)comboBoxAutorCom.SelectedItem).Value
-                        },
-                        date = DateTime.Now,
-                        parent_id = new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))
-                    }
-                );
-                textBoxCom.Text = "";
-                cargarThreads();
+                            text = textBoxCom.Text,
+                            thread_id = new BsonObjectId(new ObjectId(threadRaiz(treeViewCom.SelectedNode).Tag.ToString())),
+                            author = new
+                            {
+                                name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text,
+                                id = ((ComboItem)comboBoxAutorCom.SelectedItem).Value
+                            },
+                            date = DateTime.Now,
+                            parent_id = new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))
+                        }
+                    );
+                    textBoxCom.Text = "";
+                    cargarThreads();
+                }
+                catch (System.IO.IOException DbException)
+                {
+                    MessageBox.Show(MSG_ERROR_DB, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
