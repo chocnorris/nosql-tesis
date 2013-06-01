@@ -99,20 +99,27 @@ namespace MongoTest2
         {
             if (textBoxNombreThread.Text != "")
             {
-                db.GetCollection("threads").Insert(
-                    new
-                    {
-                        title = textBoxNombreThread.Text,
-                        author = new
+                try
+                {
+                    db.GetCollection("threads").Insert(
+                        new
                         {
-                            name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text,
-                            id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
-                        },
-                        date = DateTime.Now
-                    }
-                );
-                textBoxNombreThread.Text = "";
-                cargarThreads();
+                            title = textBoxNombreThread.Text,
+                            author = new
+                            {
+                                name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text,
+                                id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
+                            },
+                            date = DateTime.Now
+                        }
+                    );
+                    textBoxNombreThread.Text = "";
+                    cargarThreads();
+                }                                
+                catch (System.IO.IOException DbException)
+                {
+                    MessageBox.Show(MSG_ERROR_DB, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -120,29 +127,22 @@ namespace MongoTest2
         {
             if (textBoxCom.Text != "")
             {
-                try
-                {
-                    db.GetCollection("comments").Insert(
-                        new
+                db.GetCollection("comments").Insert(
+                    new
+                    {
+                        text = textBoxCom.Text,
+                        thread_id = new BsonObjectId(new ObjectId(threadRaiz(treeViewCom.SelectedNode).Tag.ToString())),
+                        author = new
                         {
-                            text = textBoxCom.Text,
-                            thread_id = new BsonObjectId(new ObjectId(threadRaiz(treeViewCom.SelectedNode).Tag.ToString())),
-                            author = new
-                            {
-                                name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text,
-                                id = ((ComboItem)comboBoxAutorCom.SelectedItem).Value
-                            },
-                            date = DateTime.Now,
-                            parent_id = new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))
-                        }
-                    );
-                    textBoxCom.Text = "";
-                    cargarThreads();
-                }
-                catch (System.IO.IOException DbException)
-                {
-                    MessageBox.Show(MSG_ERROR_DB, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                            name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text,
+                            id = ((ComboItem)comboBoxAutorCom.SelectedItem).Value
+                        },
+                        date = DateTime.Now,
+                        parent_id = new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))
+                    }
+                );
+                textBoxCom.Text = "";
+                cargarThreads();
             }
         }
 
