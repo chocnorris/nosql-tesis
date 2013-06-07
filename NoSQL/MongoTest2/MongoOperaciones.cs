@@ -27,12 +27,12 @@ namespace MongoTest2
             throw new NotImplementedException();
         }
 
-        public Autor GetAutor()
+        public Autor GetAutor(Autor autor)
         {
             throw new NotImplementedException();
         }
 
-        public Comentario GetComentario()
+        public Comentario GetComentario(Comentario comentario)
         {
             throw new NotImplementedException();
         }

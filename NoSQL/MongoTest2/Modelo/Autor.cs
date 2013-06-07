@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoTest2.Entidades
 {
-    public class Autor : IAutor
+    public class Autor 
     {
         public string Nombre { get; set; }
     }

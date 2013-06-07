@@ -6,7 +6,7 @@ using MongoTest2.Entidades;
 
 namespace MongoTest2.Modelo
 {
-    public class Comentario : IComentario
+    public class Comentario
     {
     }
 }

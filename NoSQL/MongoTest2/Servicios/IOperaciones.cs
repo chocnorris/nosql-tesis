@@ -16,25 +16,25 @@ namespace MongoTest2.Servicios
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<Autor> GetAutores();
+        List<Autor> GetAutores();
         
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<Comentario> GetComentarios();
+        List<Comentario> GetComentarios();
+
+        /// <summary>
+        /// (ver tema de ids)
+        /// </summary>
+        /// <returns></returns>
+        Autor GetAutor(Autor autor);
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public Autor GetAutor();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Comentario GetComentario();
+        Comentario GetComentario(Comentario comentario);
 
         }
 }
