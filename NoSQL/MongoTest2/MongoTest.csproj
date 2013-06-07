@@ -62,8 +62,14 @@
   <ItemGroup>
     <Compile Include="ComboItem.cs" />
     <Compile Include="Comment.cs" />
+    <Compile Include="Modelo\Autor.cs" />
+    <Compile Include="Modelo\Comentario.cs" />
+    <Compile Include="Modelo\IAutor.cs" />
+    <Compile Include="Modelo\IComentario.cs" />
+    <Compile Include="MongoOperaciones.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicios\IOperaciones.cs" />
     <Compile Include="Ventana.cs">
       <SubType>Form</SubType>
     </Compile>
