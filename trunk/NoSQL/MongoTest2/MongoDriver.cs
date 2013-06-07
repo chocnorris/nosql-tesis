@@ -5,17 +5,34 @@ using System.Text;
 using MongoTest2.Servicios;
 using MongoTest2.Entidades;
 using MongoTest2.Modelo;
+using MongoDB.Driver;
 
 namespace MongoTest2
 {
-    public class MongoOperaciones : IOperaciones
+    public class MongoDriver : IOperaciones
     {
+        MongoClient client;
+        MongoServer server;
+        MongoDatabase db;
+
+        /// <summary>
+        /// Identidad de la base de datos (definir en webconfig mas apropiado)
+        /// </summary>
+        public readonly string Identidad {
+            get
+            {
+                return "MongoDB";
+            }
+        }
+
         /// <summary>
         /// Inicializar base de datos
         /// </summary>
-        public MongoOperaciones()
+        public MongoDriver()
         {
-
+            client = new MongoClient("mongodb://localhost");
+            server = client.GetServer();
+            db = server.GetDatabase("forum");            
         }
         public List<Autor> GetAutores()
         {
@@ -36,5 +53,11 @@ namespace MongoTest2
         {
             throw new NotImplementedException();
         }
+
+        public bool Conectado()
+        {
+            return server.State == MongoServerState.Connected; 
+        }        
+
     }
 }

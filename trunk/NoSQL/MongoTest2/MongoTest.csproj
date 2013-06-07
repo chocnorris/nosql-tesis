@@ -64,7 +64,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="Modelo\Autor.cs" />
     <Compile Include="Modelo\Comentario.cs" />
-    <Compile Include="MongoOperaciones.cs" />
+    <Compile Include="MongoDriver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\IOperaciones.cs" />
