@@ -10,14 +10,17 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
+using MongoTest2.Servicios;
 
 namespace MongoTest2
 {
     public partial class Ventana : Form
-    {
+    {        
         MongoClient client;
         MongoServer server;
-        MongoDatabase db;
+        MongoDatabase dbmongo;                
+
+        IOperaciones db;
         public Ventana()
         {
             InitializeComponent();
@@ -26,13 +29,14 @@ namespace MongoTest2
         private void serverState()
         {
             comboBoxShardList.Items.Clear();
-            comboBoxShardList.Items.Add("Global");
-            foreach (var sh in server.GetDatabase("config").GetCollection("shards").FindAll())
+            comboBoxShardList.Items.Add("Global");            
+
+            foreach (var keyvalue in db.GetShards())
             {
-                comboBoxShardList.Items.Add(new ComboItem { Text = sh["_id"], Value = sh["host"] }); ;
+                comboBoxShardList.Items.Add(new ComboItem { Text = keyvalue.Key, Value = keyvalue.Value }); ;
             }
             comboBoxShardList.SelectedIndex = 0;
-            textBoxEstado.Text = server.State.ToString();
+            textBoxEstado.Text = db.GetEstadoConexion();
             detalles("Global");
         }
 
@@ -43,15 +47,12 @@ namespace MongoTest2
 
         private void detalles(string referencia)
         {
+            /* Hay que ver esto de los detalles (estandarizar la que informacion se saca)
             CommandDocument comandoStats = new CommandDocument();
             comandoStats.Add("dbstats", 1);
             comandoStats.Add("scale", 1024*1024); //Mb!!
             CommandResult stats = db.RunCommand(comandoStats);
-            /**
-            CommandDocument comandoSI = new CommandDocument();
-            comandoSI.Add("$eval", "printShardingStatus()");
-            CommandResult shardingInfo = db.RunCommand(comandoSI);
-             **/
+
             MongoCollection<BsonDocument> chunks = server.GetDatabase("config").GetCollection("chunks");
             if (referencia == "Global")
             {
@@ -67,6 +68,7 @@ namespace MongoTest2
                 labelTam.Text = "Tamaño: " +
                     stats.Response["raw"][((ComboItem)comboBoxShardList.SelectedItem).Value.AsString]["dataSize"] + " Mb";
             }
+             */
         }
 
         private void comboBoxShardList_SelectedIndexChanged(object sender, EventArgs e)
@@ -76,24 +78,26 @@ namespace MongoTest2
 
         private void buttonAgregarDatos_Click(object sender, EventArgs e)
         {
-            Form vd = new VentanaDatos(db);
+            Form vd = new VentanaDatos(dbmongo,db);
             vd.ShowDialog();
         }
 
         private void buttonRandom_Click(object sender, EventArgs e)
         {
-            Form vr = new VentanaRandom(db);
+            Form vr = new VentanaRandom(dbmongo);
             vr.Show();
         }
 
         private void buttonConectar_Click(object sender, EventArgs e)
         {
+            // sacar luego
             client = new MongoClient("mongodb://localhost");
-            server = client.GetServer();
-            db = server.GetDatabase("forum");
+            server = client.GetServer();          
+            db = new MongoDriver(client,server);
+            dbmongo = db.GetDB();
             serverState();
-            if (server.State == MongoServerState.Connected)
-                buttonConectar.Enabled = false;
+            if ( db.Conectado() )
+                buttonConectar.Enabled = false;            
         }
     }
 }

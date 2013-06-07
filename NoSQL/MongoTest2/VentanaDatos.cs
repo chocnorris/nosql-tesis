@@ -10,17 +10,23 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
+using MongoTest2.Servicios;
+using MongoTest2.Modelo;
+using MongoTest2.Entidades;
 
 namespace MongoTest2
 {
     public partial class VentanaDatos : Form
     {
-        MongoDatabase db;
+        MongoDatabase dbmongo;
+        IOperaciones db;
+
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
 
-        public VentanaDatos(MongoDatabase mdb)
+        public VentanaDatos(MongoDatabase mdb, IOperaciones db)
         {
-            db = mdb;
+            dbmongo = mdb;
+            this.db = db;
             InitializeComponent();
         }
 
@@ -35,8 +41,8 @@ namespace MongoTest2
             if (textBoxNombreAutor.Text != "")
             {
                 try
-                {
-                    var entity = db.GetCollection("authors").Insert(new { name = textBoxNombreAutor.Text });
+                {                    
+                    db.addAutor(new Autor() { Nombre = textBoxNombreAutor.Text });
                     textBoxNombreAutor.Text = "";
                     cargarAutores();
                 }
@@ -51,14 +57,17 @@ namespace MongoTest2
         {
             comboBoxAutorThread.Items.Clear();
             comboBoxAutorCom.Items.Clear();
-            MongoCursor<BsonDocument> autores = db.GetCollection("authors").FindAll().SetSortOrder("name");
-            bool tieneAutores = autores.Count() > 0;
-            foreach (var auth in autores)
+
+            var Autores = db.GetAutores();            
+            foreach (var autor in Autores)
             {
-                comboBoxAutorCom.Items.Add(new ComboItem { Text = auth["name"], Value = auth["_id"] });
-                comboBoxAutorThread.Items.Add(new ComboItem { Text = auth["name"], Value = auth["_id"] });
+                if (db.Identidad() == "MongoDB")
+                {
+                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Nombre, Value = (BsonValue)autor.AutorId.Value });
+                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Nombre, Value = (BsonValue)autor.AutorId.Value });
+                }
             }
-            if (tieneAutores)
+            if (Autores.Count > 0)
             {
                 comboBoxAutorThread.SelectedIndex = 0;
                 comboBoxAutorCom.SelectedIndex = 0;
@@ -67,22 +76,23 @@ namespace MongoTest2
 
         private void cargarThreads()
         {
-            treeViewCom.Nodes.Clear();
-            MongoCursor<BsonDocument> threads = db.GetCollection("threads").FindAll();
-            bool tieneThreads = threads.Count() > 0;
-            foreach (var th in threads)
+            treeViewCom.Nodes.Clear();           
+            var Threads = db.GetThreads();            
+            foreach (var th in Threads)
             {
-                TreeNode nodo = new TreeNode(th["title"] + "");
+                TreeNode nodo = new TreeNode(th.Titulo + "");
                 //TreeNode nodo = new TreeNode(th["title"] + "", subComments(th["_id"] + "").ToArray());
-                nodo.Tag = th["_id"].ToString();
+                nodo.Tag = th.Id.ToString();
                 treeViewCom.Nodes.Add(nodo);
             }
         }
+
         //Metodo recursivo para levantar toda la estructura!! Not recommended
+        /*
         private List<TreeNode> subComments(string parent)
         {
             List<TreeNode> hijos = new List<TreeNode>();
-            MongoCursor<BsonDocument> comments = db.GetCollection("comments").Find(Query.EQ("parent_id", new BsonObjectId(new ObjectId(parent)))).SetLimit(10);
+            MongoCursor<BsonDocument> comments = dbmongo.GetCollection("comments").Find(Query.EQ("parent_id", new BsonObjectId(new ObjectId(parent)))).SetLimit(10);
             //textBoxCom.Text += parent+" "+comments.ToJson() + Environment.NewLine;
             int i = 1;
             foreach (var com in comments)
@@ -94,6 +104,7 @@ namespace MongoTest2
             }
             return hijos;
         }
+         */
 
         private void buttonAgregarThread_Click(object sender, EventArgs e)
         {
@@ -101,7 +112,7 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.GetCollection("threads").Insert(
+                    dbmongo.GetCollection("threads").Insert(
                         new
                         {
                             title = textBoxNombreThread.Text,
@@ -127,7 +138,7 @@ namespace MongoTest2
         {
             if (textBoxCom.Text != "")
             {
-                db.GetCollection("comments").Insert(
+                dbmongo.GetCollection("comments").Insert(
                     new
                     {
                         text = textBoxCom.Text,
@@ -160,7 +171,7 @@ namespace MongoTest2
             {
                 treeViewCom.BeginUpdate();
                 int i = 1;
-                foreach (BsonDocument com in db.GetCollection("comments").Find(Query.EQ("parent_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString())))))
+                foreach (BsonDocument com in dbmongo.GetCollection("comments").Find(Query.EQ("parent_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString())))))
                 {
                     TreeNode nodo = new TreeNode("Comentario: " + i);
                     i++;
@@ -170,7 +181,7 @@ namespace MongoTest2
                 treeViewCom.EndUpdate();
             }
             //Modificacion no recursiva
-            BsonDocument comentario = db.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+            BsonDocument comentario = dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
             if (comentario != null)
             {
                 textBoxContCom.Text =
@@ -181,7 +192,7 @@ namespace MongoTest2
             }
             else
             {
-                BsonDocument thread = db.GetCollection("threads").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+                BsonDocument thread = dbmongo.GetCollection("threads").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
                 textBoxContCom.Text =
                     "[Thread] " + Environment.NewLine +
                     "Fecha: " + thread["date"].ToLocalTime().ToShortDateString() + Environment.NewLine +
