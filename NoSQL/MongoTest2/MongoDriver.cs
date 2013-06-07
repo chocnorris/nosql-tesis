@@ -18,7 +18,7 @@ namespace MongoTest2
         /// <summary>
         /// Identidad de la base de datos (definir en webconfig mas apropiado)
         /// </summary>
-        public readonly string Identidad {
+        public string Identidad {
             get
             {
                 return "MongoDB";
