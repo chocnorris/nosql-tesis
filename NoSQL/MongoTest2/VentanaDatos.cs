@@ -93,7 +93,7 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.addAutor(new Autor() { Name = textBoxNombreAutor.Text, Id = ObjectId.GenerateNewId() });
+                    db.addAutor(new Autor() { Name = textBoxNombreAutor.Text });
                     textBoxNombreAutor.Text = "";
                     cargarAutores();
                 }
@@ -118,8 +118,7 @@ namespace MongoTest2
                             Name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text.AsString,
                             Id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
                         },
-                        Date = DateTime.Now,
-                        Id = ObjectId.GenerateNewId()
+                        Date = DateTime.Now
                     });
                     textBoxNombreThread.Text = "";
                     cargarThreads();

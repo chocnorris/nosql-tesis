@@ -72,12 +72,14 @@ namespace MongoTest2
 
         public Autor addAutor(Autor autor)
         {
+            autor.Id = ObjectId.GenerateNewId();
             db.GetCollection<Autor>("authors").Insert(autor);
             return autor;
         }
 
         public Thread addThread(Thread thread)
         {
+            thread.Id = ObjectId.GenerateNewId();
             db.GetCollection<Thread>("threads").Insert(thread);
             return thread;
         }
