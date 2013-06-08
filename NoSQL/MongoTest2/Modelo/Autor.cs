@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoTest2.Modelo;
+using MongoDB.Bson;
 
-namespace MongoTest2.Entidades
+namespace MongoTest2.Modelo
 {
     public class Autor 
     {        
-        public GenericId AutorId { get; set; }
-        public string Nombre { get; set; }
+        public object Id { get; set; }
+        public string Name { get; set; }
     }
 }
