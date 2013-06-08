@@ -7,7 +7,7 @@ namespace MongoTest2.Modelo
 {
     public class Comment
     {
-        public object id { get; set; }
+        public object Id { get; set; }
         public Author Author { get; set; }
         public string Text { get; set; }
         public object Parent_id { get; set; }

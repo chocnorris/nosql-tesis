@@ -66,6 +66,9 @@ namespace MongoTest2
 
         public Comment addComentario(Comment comentario)
         {
+            comentario.Id = ObjectId.GenerateNewId();
+            comentario.Thread_id = ObjectId.Parse(comentario.Thread_id.ToString());
+            comentario.Parent_id = ObjectId.Parse(comentario.Parent_id.ToString());
             db.GetCollection<Comment>("comments").Insert(comentario);
             return comentario;
         }
