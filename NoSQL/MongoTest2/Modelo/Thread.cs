@@ -9,7 +9,7 @@ namespace MongoTest2.Modelo
     {
         public object Id { get; set; }
         public string Title { get; set; }
-        public Autor Author { get; set; }
+        public Author Author { get; set; }
         public DateTime Date { get; set; }
     }
 }

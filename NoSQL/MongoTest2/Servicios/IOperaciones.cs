@@ -18,13 +18,13 @@ namespace MongoTest2.Servicios
         /// Obtener todos los autores
         /// </summary>
         /// <returns></returns>
-        List<Autor> GetAutores();
+        List<Author> GetAutores();
 
         /// <summary>
         /// Obtener todos los comentarios
         /// </summary>
         /// <returns></returns>
-        List<Comentario> GetComentarios();
+        List<Comment> GetComentarios();
 
         /// <summary>
         /// Obtener todos los threads
@@ -36,25 +36,25 @@ namespace MongoTest2.Servicios
         /// Otener un autor
         /// </summary>
         /// <returns></returns>
-        Autor GetAutor(Autor autor);
+        Author GetAutor(Author autor);
 
         /// <summary>
         /// Obtener un comentario
         /// </summary>
         /// <returns></returns>
-        Comentario GetComentario(Comentario comentario);
+        Comment GetComentario(Comment comentario);
 
         /// <summary>
         /// Agregar un comentario a la base de datos
         /// </summary>
         /// <param name="comentario"></param>
-        Comentario addComentario(Comentario comentario);
+        Comment addComentario(Comment comentario);
 
         /// <summary>
         /// Agregar un autor a la base de datos
         /// </summary>
         /// <param name="autor"></param>
-        Autor addAutor(Autor autor);
+        Author addAutor(Author autor);
 
         /// <summary>
         /// Agregar un thread a la base de datos

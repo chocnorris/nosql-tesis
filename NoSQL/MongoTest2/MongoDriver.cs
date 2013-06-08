@@ -43,17 +43,17 @@ namespace MongoTest2
         }
 
 
-        public List<Autor> GetAutores()
+        public List<Author> GetAutores()
         {
-            MongoCollection<Autor> col = db.GetCollection<Autor>("authors");
-            MongoCursor<Autor> autores = col.FindAll();
+            MongoCollection<Author> col = db.GetCollection<Author>("authors");
+            MongoCursor<Author> autores = col.FindAll();
             return autores.ToList();
         }
 
-        public List<Comentario> GetComentarios()
+        public List<Comment> GetComentarios()
         {
-            MongoCollection<Comentario> col = db.GetCollection<Comentario>("comments");
-            MongoCursor<Comentario> comentarios = col.FindAll();
+            MongoCollection<Comment> col = db.GetCollection<Comment>("comments");
+            MongoCursor<Comment> comentarios = col.FindAll();
             return comentarios.ToList();
         }
 
@@ -64,16 +64,16 @@ namespace MongoTest2
             return threads.ToList();
         }
 
-        public Comentario addComentario(Comentario comentario)
+        public Comment addComentario(Comment comentario)
         {
-            db.GetCollection<Comentario>("comments").Insert(comentario);
+            db.GetCollection<Comment>("comments").Insert(comentario);
             return comentario;
         }
 
-        public Autor addAutor(Autor autor)
+        public Author addAutor(Author autor)
         {
             autor.Id = ObjectId.GenerateNewId();
-            db.GetCollection<Autor>("authors").Insert(autor);
+            db.GetCollection<Author>("authors").Insert(autor);
             return autor;
         }
 
@@ -84,12 +84,12 @@ namespace MongoTest2
             return thread;
         }
         
-        public Autor GetAutor(Autor autor)
+        public Author GetAutor(Author autor)
         {
             throw new NotImplementedException();
         }
 
-        public Comentario GetComentario(Comentario comentario)
+        public Comment GetComentario(Comment comentario)
         {
             throw new NotImplementedException();
         }

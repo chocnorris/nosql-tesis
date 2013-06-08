@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace MongoTest2.Modelo
 {
-    public class Autor 
+    public class Author 
     {        
         public object Id { get; set; }
         public string Name { get; set; }
