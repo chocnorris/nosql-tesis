@@ -18,20 +18,20 @@ namespace MongoTest2.Servicios
         /// Obtener todos los autores
         /// </summary>
         /// <returns></returns>
-        List<Author> GetAutores();
+        List<Author> GetAuthors();
 
         /// <summary>
         /// Obtener todos los comentarios
         /// </summary>
         /// <returns></returns>
-        List<Comment> GetComentarios();
+        List<Comment> GetComments();
 
         /// <summary>
         /// Obtener todos los comentarios hijos de un comentario o thread
         /// </summary>
-        /// <param name="Parent_id"></param>
+        /// <param name="Parent_id">Id de comentario para el cual se quieren obtener sus hijos</param>
         /// <returns></returns>
-        List<Comment> GetComentariosHijos(object Parent_id);
+        List<Comment> GetChildComments(object Parent_id);
         
         /// <summary>
         /// Obtener todos los threads
@@ -49,25 +49,25 @@ namespace MongoTest2.Servicios
         /// Otener un autor
         /// </summary>
         /// <returns></returns>
-        Author GetAutor(object id);
+        Author GetAuthor(object id);
 
         /// <summary>
         /// Obtener un comentario
         /// </summary>
         /// <returns></returns>
-        Comment GetComentario(object id);
+        Comment GetComments(object id);
 
         /// <summary>
         /// Agregar un comentario a la base de datos
         /// </summary>
         /// <param name="comentario"></param>
-        Comment AddComentario(Comment comentario);
+        Comment AddComment(Comment comentario);
 
         /// <summary>
         /// Agregar un autor a la base de datos
         /// </summary>
         /// <param name="autor"></param>
-        Author AddAutor(Author autor);
+        Author AddAuthor(Author autor);
 
         /// <summary>
         /// Agregar un thread a la base de datos
@@ -82,7 +82,7 @@ namespace MongoTest2.Servicios
         /// Determinar el si se está conectado a la base de datos
         /// </summary>
         /// <returns></returns>
-        bool Conectado();
+        bool IsDatabaseConnected();
 
         /// <summary>
         /// Obtener un diccionario conteniendo todos los shards (REVISAR PUEDE HACERSE UNA ENTIDAD PARA SHARd)
@@ -94,7 +94,7 @@ namespace MongoTest2.Servicios
         /// Retorna el estado de la conexión 
         /// </summary>
         /// <returns></returns>
-        string GetEstadoConexion();
+        string ConnectionState();
 
         /// <summary>
         /// Temporal

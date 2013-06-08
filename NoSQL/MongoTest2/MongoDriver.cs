@@ -43,21 +43,21 @@ namespace MongoTest2
         }
 
 
-        public List<Author> GetAutores()
+        public List<Author> GetAuthors()
         {
             MongoCollection<Author> col = db.GetCollection<Author>("authors");
             MongoCursor<Author> autores = col.FindAll().SetSortOrder("Name");
             return autores.ToList();
         }
 
-        public List<Comment> GetComentarios()
+        public List<Comment> GetComments()
         {
             MongoCollection<Comment> col = db.GetCollection<Comment>("comments");
             MongoCursor<Comment> comentarios = col.FindAll();
             return comentarios.ToList();
         }
 
-        public List<Comment> GetComentariosHijos(object Parent_id)
+        public List<Comment> GetChildComments(object Parent_id)
         {
             var query = Query.EQ("Parent_id", ObjectId.Parse(Parent_id.ToString()));
             MongoCollection<Comment> col = db.GetCollection<Comment>("comments");
@@ -72,7 +72,7 @@ namespace MongoTest2
             return threads.ToList();
         }
 
-        public Comment AddComentario(Comment comentario)
+        public Comment AddComment(Comment comentario)
         {
             comentario.Id = ObjectId.GenerateNewId();
             comentario.Thread_id = ObjectId.Parse(comentario.Thread_id.ToString());
@@ -81,7 +81,7 @@ namespace MongoTest2
             return comentario;
         }
 
-        public Author AddAutor(Author autor)
+        public Author AddAuthor(Author autor)
         {
             autor.Id = ObjectId.GenerateNewId();
             db.GetCollection<Author>("authors").Insert(autor);
@@ -95,7 +95,7 @@ namespace MongoTest2
             return thread;
         }
         
-        public Author GetAutor(object id)
+        public Author GetAuthor(object id)
         {
             return db.GetCollection<Author>("author").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
         }
@@ -105,12 +105,12 @@ namespace MongoTest2
             return db.GetCollection<Thread>("threads").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
         }
 
-        public Comment GetComentario(object id)
+        public Comment GetComments(object id)
         {
             return db.GetCollection<Comment>("comments").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
         }
 
-        public bool Conectado()
+        public bool IsDatabaseConnected()
         {
             return server.State == MongoServerState.Connected; 
         }
@@ -127,7 +127,7 @@ namespace MongoTest2
             return dictionary;
         }
 
-        public string GetEstadoConexion()
+        public string ConnectionState()
         {
             return server.State.ToString();
         }

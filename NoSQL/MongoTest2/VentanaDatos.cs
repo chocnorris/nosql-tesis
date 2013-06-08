@@ -34,7 +34,7 @@ namespace MongoTest2
             comboBoxAutorThread.Items.Clear();
             comboBoxAutorCom.Items.Clear();
 
-            var Autores = db.GetAutores();            
+            var Autores = db.GetAuthors();            
             foreach (var autor in Autores)
             {
                 if (db.Identidad() == "MongoDB")
@@ -87,7 +87,7 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.AddAutor(new Author() { Name = textBoxNombreAutor.Text });
+                    db.AddAuthor(new Author() { Name = textBoxNombreAutor.Text });
                     textBoxNombreAutor.Text = "";
                     cargarAutores();
                 }
@@ -128,7 +128,7 @@ namespace MongoTest2
         {
             if (textBoxCom.Text != "")
             {
-                db.AddComentario(new Comment()
+                db.AddComment(new Comment()
                 {
                     Text = textBoxCom.Text,
                     Thread_id = threadRaiz(treeViewCom.SelectedNode).Tag.ToString(),
@@ -161,7 +161,7 @@ namespace MongoTest2
                 treeViewCom.BeginUpdate();
                 int i = 1;
                 
-                foreach (Comment com in db.GetComentariosHijos(treeViewCom.SelectedNode.Tag.ToString()) )
+                foreach (Comment com in db.GetChildComments(treeViewCom.SelectedNode.Tag.ToString()) )
                 {
                     TreeNode nodo = new TreeNode("Comentario: " + i);
                     i++;
@@ -171,7 +171,7 @@ namespace MongoTest2
                 treeViewCom.EndUpdate();
             }
             //Modificacion no recursiva
-            Comment comentario = db.GetComentario(treeViewCom.SelectedNode.Tag.ToString());
+            Comment comentario = db.GetComments(treeViewCom.SelectedNode.Tag.ToString());
                 //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
             if (comentario != null)
             {
