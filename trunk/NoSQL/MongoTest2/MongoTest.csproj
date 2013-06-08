@@ -63,9 +63,7 @@
     <Compile Include="ComboItem.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="Modelo\Autor.cs" />
-    <Compile Include="Modelo\BsonId.cs" />
     <Compile Include="Modelo\Comentario.cs" />
-    <Compile Include="Modelo\GenericId.cs" />
     <Compile Include="Modelo\Thread.cs" />
     <Compile Include="MongoDriver.cs" />
     <Compile Include="Program.cs" />

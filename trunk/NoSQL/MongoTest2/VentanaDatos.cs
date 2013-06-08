@@ -12,7 +12,6 @@ using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
 using MongoTest2.Servicios;
 using MongoTest2.Modelo;
-using MongoTest2.Entidades;
 
 namespace MongoTest2
 {
@@ -36,23 +35,6 @@ namespace MongoTest2
             cargarThreads();
         }
 
-        private void buttonAgregarAutor_Click(object sender, EventArgs e)
-        {
-            if (textBoxNombreAutor.Text != "")
-            {
-                try
-                {                    
-                    db.addAutor(new Autor() { Nombre = textBoxNombreAutor.Text });
-                    textBoxNombreAutor.Text = "";
-                    cargarAutores();
-                }
-                catch (System.IO.IOException DbException)
-                {
-                    MessageBox.Show(MSG_ERROR_DB,"Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }    
-            }
-        }
-
         private void cargarAutores()
         {
             comboBoxAutorThread.Items.Clear();
@@ -63,8 +45,8 @@ namespace MongoTest2
             {
                 if (db.Identidad() == "MongoDB")
                 {
-                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Nombre, Value = (BsonValue)autor.AutorId.Value });
-                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Nombre, Value = (BsonValue)autor.AutorId.Value });
+                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Name, Value = (ObjectId)autor.Id });
+                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Name, Value = (ObjectId)autor.Id });
                 }
             }
             if (Autores.Count > 0)
@@ -80,7 +62,7 @@ namespace MongoTest2
             var Threads = db.GetThreads();            
             foreach (var th in Threads)
             {
-                TreeNode nodo = new TreeNode(th.Titulo + "");
+                TreeNode nodo = new TreeNode(th.Title + "");
                 //TreeNode nodo = new TreeNode(th["title"] + "", subComments(th["_id"] + "").ToArray());
                 nodo.Tag = th.Id.ToString();
                 treeViewCom.Nodes.Add(nodo);
@@ -105,6 +87,22 @@ namespace MongoTest2
             return hijos;
         }
          */
+        private void buttonAgregarAutor_Click(object sender, EventArgs e)
+        {
+            if (textBoxNombreAutor.Text != "")
+            {
+                try
+                {
+                    db.addAutor(new Autor() { Name = textBoxNombreAutor.Text, Id = ObjectId.GenerateNewId() });
+                    textBoxNombreAutor.Text = "";
+                    cargarAutores();
+                }
+                catch (System.IO.IOException DbException)
+                {
+                    MessageBox.Show(MSG_ERROR_DB, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void buttonAgregarThread_Click(object sender, EventArgs e)
         {
@@ -112,18 +110,17 @@ namespace MongoTest2
             {
                 try
                 {
-                    dbmongo.GetCollection("threads").Insert(
-                        new
+                    db.addThread(new Thread()
+                    {
+                        Title = textBoxNombreThread.Text,
+                        Author = new Autor()
                         {
-                            title = textBoxNombreThread.Text,
-                            author = new
-                            {
-                                name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text,
-                                id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
-                            },
-                            date = DateTime.Now
-                        }
-                    );
+                            Name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text.AsString,
+                            Id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
+                        },
+                        Date = DateTime.Now,
+                        Id = ObjectId.GenerateNewId()
+                    });
                     textBoxNombreThread.Text = "";
                     cargarThreads();
                 }                                

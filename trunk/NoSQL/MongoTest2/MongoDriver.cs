@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoTest2.Servicios;
-using MongoTest2.Entidades;
 using MongoTest2.Modelo;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 
 namespace MongoTest2
 {
@@ -45,70 +45,41 @@ namespace MongoTest2
 
         public List<Autor> GetAutores()
         {
-            var autores =  new List<Autor>();            
-            MongoCursor<BsonDocument> autoresBson = db.GetCollection("authors").FindAll().SetSortOrder("name");
-            bool tieneAutores = autoresBson.Count() > 0;
-            foreach (var auth in autoresBson)
-            {
-                BsonId id = new BsonId();
-                id.Value = auth["_id"].AsBsonValue;
-                autores.Add( new Autor () { 
-                    Nombre = auth["Nombre"].AsString, 
-                    AutorId = id} );                                
-            }
-            return autores;
+            MongoCollection<Autor> col = db.GetCollection<Autor>("authors");
+            MongoCursor<Autor> autores = col.FindAll();
+            return autores.ToList();
         }
 
         public List<Comentario> GetComentarios()
         {
-            var Comentarios = new List<Comentario>();
-            return Comentarios;
+            MongoCollection<Comentario> col = db.GetCollection<Comentario>("comments");
+            MongoCursor<Comentario> comentarios = col.FindAll();
+            return comentarios.ToList();
         }
 
         public List<Thread> GetThreads()
         {
-            List<Thread> Threads = new List<Thread>();
-            MongoCursor<BsonDocument> threads = db.GetCollection("threads").FindAll();            
-            foreach (var th in threads)
-            {
-                BsonId Id = new BsonId();
-                Id.Value = th["_id"];
-                Threads.Add(new Thread()
-                {
-                    Id = Id,
-                    Titulo = th["title"].AsString
-                });
-            }
-            return Threads;
+            MongoCollection<Thread> col = db.GetCollection<Thread>("threads");
+            MongoCursor<Thread> threads = col.FindAll();
+            return threads.ToList();
         }
 
         public Comentario addComentario(Comentario comentario)
         {
-            throw new NotImplementedException();            
+            db.GetCollection<Comentario>("comments").Insert(comentario);
+            return comentario;
         }
 
         public Autor addAutor(Autor autor)
         {
-            var entity = db.GetCollection<Autor>("authors").Insert(autor);
+            db.GetCollection<Autor>("authors").Insert(autor);
             return autor;
-            /*
-            if (entity != null)
-            {
-                BsonId Id = new BsonId();
-                Id.Value = entity.ToBsonDocument()["_id"];
-                return new Author()
-                {
-                    AutorId = Id,
-                    Nombre = entity.ToBsonDocument()["name"].AsString
-                };
-            }
-            else return null;           
-             */
         }
 
         public Thread addThread(Thread thread)
         {
-            throw new NotImplementedException();
+            db.GetCollection<Thread>("threads").Insert(thread);
+            return thread;
         }
         
         public Autor GetAutor(Autor autor)

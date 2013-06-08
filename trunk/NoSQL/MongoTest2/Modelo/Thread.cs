@@ -7,7 +7,9 @@ namespace MongoTest2.Modelo
 {
     public class Thread
     {
-        public GenericId Id { get; set; }
-        public string Titulo { get; set; }
+        public object Id { get; set; }
+        public string Title { get; set; }
+        public Autor Author { get; set; }
+        public DateTime Date { get; set; }
     }
 }
