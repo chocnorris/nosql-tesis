@@ -15,16 +15,16 @@ namespace MongoTest2.Servicios
 
         #region operaciones CRUD
         /// <summary>
-        /// Obtener todos los autores
+        /// Obtener todos los autores o por paginación
         /// </summary>
         /// <returns></returns>
-        List<Author> GetAuthors();
+        List<Author> GetAuthors(int skip = 0, int take = 0);
 
         /// <summary>
-        /// Obtener todos los comentarios
+        /// Obtener todos los comentarios o por paginación
         /// </summary>
         /// <returns></returns>
-        List<Comment> GetComments();
+        List<Comment> GetComments(int skip = 0, int take = 0);
 
         /// <summary>
         /// Obtener todos los comentarios hijos de un comentario o thread
@@ -34,10 +34,10 @@ namespace MongoTest2.Servicios
         List<Comment> GetChildComments(object Parent_id);
         
         /// <summary>
-        /// Obtener todos los threads
+        /// Obtener todos los threads o por paginación
         /// </summary>
         /// <returns></returns>
-        List<Thread> GetThreads();
+        List<Thread> GetThreads(int skip = 0, int take = 0);
 
         /// <summary>
         /// Obtener un thread
@@ -74,6 +74,24 @@ namespace MongoTest2.Servicios
         /// </summary>
         /// <param name="thread"></param>
         Thread AddThread(Thread thread);
+
+        /// <summary>
+        /// Retorna el número de autores en la colección
+        /// </summary>
+        /// <returns></returns>
+        
+        long GetAuthorsCount();
+        /// <summary>
+        /// Retorna el número de threads en la colección
+        /// </summary>
+        /// <returns></returns>
+        long GetThreadsCount();
+
+        /// <summary>
+        /// Retorna el número de comentarios en la colección
+        /// </summary>
+        /// <returns></returns>
+        long GetCommentsCount();
 
         #endregion
 

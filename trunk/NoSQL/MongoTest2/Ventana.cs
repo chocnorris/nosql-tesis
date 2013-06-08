@@ -84,7 +84,7 @@ namespace MongoTest2
 
         private void buttonRandom_Click(object sender, EventArgs e)
         {
-            Form vr = new VentanaRandom(dbmongo);
+            Form vr = new VentanaRandom(db);
             vr.Show();
         }
 

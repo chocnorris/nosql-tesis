@@ -6,16 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoDB.Driver.Builders;
+using MongoTest2.Servicios;
+using MongoTest2.Modelo;
 
 namespace MongoTest2
 {
     public partial class VentanaRandom : Form
     {
-        MongoDatabase db;
+        IOperaciones db;
 
         string[] names = new string[50]
         {
@@ -33,9 +31,9 @@ namespace MongoTest2
             "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris "+
             "nisi ut aliquip ex ea commodo consequat.";
 
-        public VentanaRandom(MongoDatabase mdb)
+        public VentanaRandom(IOperaciones db)
         {
-            db = mdb;
+            this.db = db;
             InitializeComponent();
         }
 
@@ -102,7 +100,8 @@ namespace MongoTest2
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(2000);
-                db.GetCollection("authors").Insert(new { name = names[num] + num2 });
+                db.AddAuthor(new Author() { Name = names[num] + num2 });
+                //db.GetCollection("authors").Insert(new { name = names[num] + num2 });
                 worker.ReportProgress((i / n) * 100);
             }
         }
@@ -114,14 +113,14 @@ namespace MongoTest2
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(50);
-                int nAut = (int)db.GetCollection("authors").Count();
+                int nAut = (int)db.GetAuthorsCount();
                 int num3 = rand.Next(nAut);
-                BsonDocument auth = db.GetCollection("authors").FindAll().Skip(num3).First();
-                db.GetCollection("threads").Insert(new
+                Author auth = db.GetAuthors(num3,1).First();
+                db.AddThread(new Thread()
                 {
-                    title = names[num] + names[num2],
-                    author = auth,
-                    date = DateTime.Now
+                    Title = names[num] + names[num2],
+                    Author = auth,
+                    Date = DateTime.Now
                 });
                 worker.ReportProgress((i / n) * 100);
             }
@@ -134,46 +133,46 @@ namespace MongoTest2
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(50);
-                int nAut = (int)db.GetCollection("authors").Count();
+                int nAut = (int)db.GetAuthorsCount();
                 int num3 = rand.Next(nAut);
-                BsonDocument auth = db.GetCollection("authors").FindAll().SetSkip(num3).SetLimit(1).First();
-                BsonValue parentId = null;
-                BsonValue threadId = null;
+                Author auth = db.GetAuthors(num3,1).First();
+                string parentId = null;
+                string threadId = null;
                 int num4 = rand.Next(10);
                 int num5 = 0;
-                int nCom = (int)db.GetCollection("comments").Count();
+                int nCom = (int)db.GetCommentsCount();
                 if (num4 <= 3 || nCom == 0)
                 {
-                    int nTh = (int)db.GetCollection("threads").Count();
+                    int nTh = (int)db.GetThreads().Count();
                     num5 = rand.Next(nTh);
-                    BsonDocument thread = db.GetCollection("threads").FindAll().SetSkip(num5).SetLimit(1).First();
-                    parentId = thread["_id"];
+                    Thread thread = db.GetThreads(num5,1).First();
+                    parentId = thread.Id.ToString();
                     threadId = parentId;
                 }
                 else
                 {
                     num5 = rand.Next(nCom);
-                    BsonDocument com = db.GetCollection("comments").FindAll().SetSkip(num5).SetLimit(1).First();
-                    parentId = com["_id"];
-                    threadId = com["thread_id"];
+                    Comment com = db.GetComments(num5,1).First();
+                    parentId = com.Id.ToString();
+                    threadId = com.Thread_id.ToString();
                 }
-                if(!mb)
-                    db.GetCollection("comments").Insert(new
+                if (!mb)
+                    db.AddComment(new Comment()
                     {
-                        text = lorem,
-                        thread_id = threadId,
-                        author = auth,
-                        date = DateTime.Now,
-                        parent_id = parentId
+                        Text = lorem,
+                        Thread_id = threadId,
+                        Author = auth,
+                        Date = DateTime.Now,
+                        Parent_id = parentId
                     });
                 else
-                    db.GetCollection("comments").Insert(new
+                    db.AddComment(new Comment()
                     {
-                        text = System.IO.File.ReadAllText(@"..\..\1mb.txt"),
-                        thread_id = threadId,
-                        author = auth,
-                        date = DateTime.Now,
-                        parent_id = parentId
+                        Text = System.IO.File.ReadAllText(@"..\..\1mb.txt"),
+                        Thread_id = threadId,
+                        Author = auth,
+                        Date = DateTime.Now,
+                        Parent_id = parentId
                     });
 
                 worker.ReportProgress((i*100)/n);
