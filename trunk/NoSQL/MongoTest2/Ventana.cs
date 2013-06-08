@@ -78,7 +78,7 @@ namespace MongoTest2
 
         private void buttonAgregarDatos_Click(object sender, EventArgs e)
         {
-            Form vd = new VentanaDatos(dbmongo,db);
+            Form vd = new VentanaDatos(db);
             vd.ShowDialog();
         }
 

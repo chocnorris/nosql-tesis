@@ -27,40 +27,53 @@ namespace MongoTest2.Servicios
         List<Comment> GetComentarios();
 
         /// <summary>
+        /// Obtener todos los comentarios hijos de un comentario o thread
+        /// </summary>
+        /// <param name="Parent_id"></param>
+        /// <returns></returns>
+        List<Comment> GetComentariosHijos(object Parent_id);
+        
+        /// <summary>
         /// Obtener todos los threads
         /// </summary>
         /// <returns></returns>
         List<Thread> GetThreads();
 
         /// <summary>
+        /// Obtener un thread
+        /// </summary>
+        /// <returns></returns>
+        Thread GetThread(object id);
+
+        /// <summary>
         /// Otener un autor
         /// </summary>
         /// <returns></returns>
-        Author GetAutor(Author autor);
+        Author GetAutor(object id);
 
         /// <summary>
         /// Obtener un comentario
         /// </summary>
         /// <returns></returns>
-        Comment GetComentario(Comment comentario);
+        Comment GetComentario(object id);
 
         /// <summary>
         /// Agregar un comentario a la base de datos
         /// </summary>
         /// <param name="comentario"></param>
-        Comment addComentario(Comment comentario);
+        Comment AddComentario(Comment comentario);
 
         /// <summary>
         /// Agregar un autor a la base de datos
         /// </summary>
         /// <param name="autor"></param>
-        Author addAutor(Author autor);
+        Author AddAutor(Author autor);
 
         /// <summary>
         /// Agregar un thread a la base de datos
         /// </summary>
         /// <param name="thread"></param>
-        Thread addThread(Thread thread);
+        Thread AddThread(Thread thread);
 
         #endregion
 
