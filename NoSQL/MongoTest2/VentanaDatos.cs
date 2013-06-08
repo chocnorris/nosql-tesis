@@ -6,10 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoDB.Driver.Builders;
 using MongoTest2.Servicios;
 using MongoTest2.Modelo;
 
@@ -17,14 +13,12 @@ namespace MongoTest2
 {
     public partial class VentanaDatos : Form
     {
-        MongoDatabase dbmongo;
         IOperaciones db;
 
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
 
-        public VentanaDatos(MongoDatabase mdb, IOperaciones db)
+        public VentanaDatos(IOperaciones db)
         {
-            dbmongo = mdb;
             this.db = db;
             InitializeComponent();
         }
@@ -45,8 +39,8 @@ namespace MongoTest2
             {
                 if (db.Identidad() == "MongoDB")
                 {
-                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Name, Value = (ObjectId)autor.Id });
-                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Name, Value = (ObjectId)autor.Id });
+                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
+                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
                 }
             }
             if (Autores.Count > 0)
@@ -93,7 +87,7 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.addAutor(new Author() { Name = textBoxNombreAutor.Text });
+                    db.AddAutor(new Author() { Name = textBoxNombreAutor.Text });
                     textBoxNombreAutor.Text = "";
                     cargarAutores();
                 }
@@ -110,12 +104,12 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.addThread(new Thread()
+                    db.AddThread(new Thread()
                     {
                         Title = textBoxNombreThread.Text,
                         Author = new Author()
                         {
-                            Name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text.AsString,
+                            Name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text.ToString(),
                             Id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
                         },
                         Date = DateTime.Now
@@ -134,13 +128,13 @@ namespace MongoTest2
         {
             if (textBoxCom.Text != "")
             {
-                db.addComentario(new Comment()
+                db.AddComentario(new Comment()
                 {
                     Text = textBoxCom.Text,
                     Thread_id = threadRaiz(treeViewCom.SelectedNode).Tag.ToString(),
                     Author = new Author()
                     {
-                        Name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text.AsString,
+                        Name = ((ComboItem)comboBoxAutorCom.SelectedItem).Text.ToString(),
                         Id = ((ComboItem)comboBoxAutorCom.SelectedItem).Value
                     },
                     Date = DateTime.Now,
@@ -166,33 +160,36 @@ namespace MongoTest2
             {
                 treeViewCom.BeginUpdate();
                 int i = 1;
-                foreach (BsonDocument com in dbmongo.GetCollection("comments").Find(Query.EQ("Parent_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString())))))
+                
+                foreach (Comment com in db.GetComentariosHijos(treeViewCom.SelectedNode.Tag.ToString()) )
                 {
                     TreeNode nodo = new TreeNode("Comentario: " + i);
                     i++;
-                    nodo.Tag = com["_id"].ToString();
+                    nodo.Tag = com.Id.ToString();
                     treeViewCom.SelectedNode.Nodes.Add(nodo);
                 }
                 treeViewCom.EndUpdate();
             }
             //Modificacion no recursiva
-            BsonDocument comentario = dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+            Comment comentario = db.GetComentario(treeViewCom.SelectedNode.Tag.ToString());
+                //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
             if (comentario != null)
             {
                 textBoxContCom.Text =
                     "[Comentario] " + Environment.NewLine +
-                    "Fecha: " + comentario["Date"].ToLocalTime().ToShortDateString() + Environment.NewLine +
-                    "Autor: " + comentario["Author"]["Name"] + Environment.NewLine +Environment.NewLine +
-                    comentario["Text"] ;
+                    "Fecha: " + comentario.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
+                    "Autor: " + comentario.Author.Name + Environment.NewLine +Environment.NewLine +
+                    comentario.Text ;
             }
             else
             {
-                BsonDocument thread = dbmongo.GetCollection("threads").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+                Thread thread = db.GetThread(treeViewCom.SelectedNode.Tag.ToString());
+                //BsonDocument thread = dbmongo.GetCollection("threads").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
                 textBoxContCom.Text =
                     "[Thread] " + Environment.NewLine +
-                    "Fecha: " + thread["Date"].ToLocalTime().ToShortDateString() + Environment.NewLine +
-                    "Título: " + thread["Title"] + Environment.NewLine +
-                    "Autor: " + thread["Author"]["Name"];
+                    "Fecha: " + thread.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
+                    "Título: " + thread.Title + Environment.NewLine +
+                    "Autor: " + thread.Author.Name;
             }
         }
 

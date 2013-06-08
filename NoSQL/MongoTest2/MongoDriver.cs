@@ -46,7 +46,7 @@ namespace MongoTest2
         public List<Author> GetAutores()
         {
             MongoCollection<Author> col = db.GetCollection<Author>("authors");
-            MongoCursor<Author> autores = col.FindAll();
+            MongoCursor<Author> autores = col.FindAll().SetSortOrder("Name");
             return autores.ToList();
         }
 
@@ -57,6 +57,14 @@ namespace MongoTest2
             return comentarios.ToList();
         }
 
+        public List<Comment> GetComentariosHijos(object Parent_id)
+        {
+            var query = Query.EQ("Parent_id", ObjectId.Parse(Parent_id.ToString()));
+            MongoCollection<Comment> col = db.GetCollection<Comment>("comments");
+            MongoCursor<Comment> comentarios = col.Find(query);
+            return comentarios.ToList();
+        }
+
         public List<Thread> GetThreads()
         {
             MongoCollection<Thread> col = db.GetCollection<Thread>("threads");
@@ -64,7 +72,7 @@ namespace MongoTest2
             return threads.ToList();
         }
 
-        public Comment addComentario(Comment comentario)
+        public Comment AddComentario(Comment comentario)
         {
             comentario.Id = ObjectId.GenerateNewId();
             comentario.Thread_id = ObjectId.Parse(comentario.Thread_id.ToString());
@@ -73,28 +81,33 @@ namespace MongoTest2
             return comentario;
         }
 
-        public Author addAutor(Author autor)
+        public Author AddAutor(Author autor)
         {
             autor.Id = ObjectId.GenerateNewId();
             db.GetCollection<Author>("authors").Insert(autor);
             return autor;
         }
 
-        public Thread addThread(Thread thread)
+        public Thread AddThread(Thread thread)
         {
             thread.Id = ObjectId.GenerateNewId();
             db.GetCollection<Thread>("threads").Insert(thread);
             return thread;
         }
         
-        public Author GetAutor(Author autor)
+        public Author GetAutor(object id)
         {
-            throw new NotImplementedException();
+            return db.GetCollection<Author>("author").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
         }
 
-        public Comment GetComentario(Comment comentario)
+        public Thread GetThread(object id)
         {
-            throw new NotImplementedException();
+            return db.GetCollection<Thread>("threads").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+        }
+
+        public Comment GetComentario(object id)
+        {
+            return db.GetCollection<Comment>("comments").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
         }
 
         public bool Conectado()
