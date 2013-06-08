@@ -61,8 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComboItem.cs" />
-    <Compile Include="Modelo\Autor.cs" />
-    <Compile Include="Modelo\Comentario.cs" />
+    <Compile Include="Modelo\Author.cs" />
+    <Compile Include="Modelo\Comment.cs" />
     <Compile Include="Modelo\Thread.cs" />
     <Compile Include="MongoDriver.cs" />
     <Compile Include="Program.cs" />
