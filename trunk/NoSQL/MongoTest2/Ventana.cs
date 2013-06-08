@@ -36,7 +36,7 @@ namespace MongoTest2
                 comboBoxShardList.Items.Add(new ComboItem { Text = keyvalue.Key, Value = keyvalue.Value }); ;
             }
             comboBoxShardList.SelectedIndex = 0;
-            textBoxEstado.Text = db.GetEstadoConexion();
+            textBoxEstado.Text = db.ConnectionState();
             detalles("Global");
         }
 
@@ -96,7 +96,7 @@ namespace MongoTest2
             db = new MongoDriver(client,server);
             dbmongo = db.GetDB();
             serverState();
-            if ( db.Conectado() )
+            if ( db.IsDatabaseConnected() )
                 buttonConectar.Enabled = false;            
         }
     }
