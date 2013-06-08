@@ -43,17 +43,26 @@ namespace MongoTest2
         }
 
 
-        public List<Author> GetAuthors()
+        public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
+
             MongoCollection<Author> col = db.GetCollection<Author>("authors");
-            MongoCursor<Author> autores = col.FindAll().SetSortOrder("Name");
-            return autores.ToList();
+            MongoCursor<Author> autores = col.FindAll();
+            if (skip != 0)
+                autores = autores.SetSkip(skip);
+            if (take != 0)
+                autores = autores.SetLimit(take);
+            return autores.SetSortOrder("Name").ToList();
         }
 
-        public List<Comment> GetComments()
+        public List<Comment> GetComments(int skip = 0, int take = 0)
         {
             MongoCollection<Comment> col = db.GetCollection<Comment>("comments");
             MongoCursor<Comment> comentarios = col.FindAll();
+            if (skip != 0)
+                comentarios = comentarios.SetSkip(skip);
+            if (take != 0)
+                comentarios = comentarios.SetLimit(take);
             return comentarios.ToList();
         }
 
@@ -65,10 +74,14 @@ namespace MongoTest2
             return comentarios.ToList();
         }
 
-        public List<Thread> GetThreads()
+        public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
             MongoCollection<Thread> col = db.GetCollection<Thread>("threads");
             MongoCursor<Thread> threads = col.FindAll();
+            if (skip != 0)
+                threads = threads.SetSkip(skip);
+            if (take != 0)
+                threads = threads.SetLimit(take);
             return threads.ToList();
         }
 
@@ -137,5 +150,19 @@ namespace MongoTest2
             return db;
         }
 
+        public long GetAuthorsCount()
+        {
+            return db.GetCollection("authors").Count();
+        }
+
+        public long GetThreadsCount()
+        {
+            return db.GetCollection("threads").Count();
+        }
+
+        public long GetCommentsCount()
+        {
+            return db.GetCollection("comments").Count();
+        }
     }
 }
