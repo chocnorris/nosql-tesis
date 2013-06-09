@@ -13,5 +13,6 @@ namespace MongoTest2.Modelo
         public object Parent_id { get; set; }
         public object Thread_id { get; set; }
         public DateTime Date { get; set; }
+        public long CommentCount { get; set; }
     }
 }

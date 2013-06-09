@@ -171,14 +171,15 @@ namespace MongoTest2
                 treeViewCom.EndUpdate();
             }
             //Modificacion no recursiva
-            Comment comentario = db.GetComments(treeViewCom.SelectedNode.Tag.ToString());
+            Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
                 //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
             if (comentario != null)
             {
                 textBoxContCom.Text =
                     "[Comentario] " + Environment.NewLine +
                     "Fecha: " + comentario.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
-                    "Autor: " + comentario.Author.Name + Environment.NewLine +Environment.NewLine +
+                    "Autor: " + comentario.Author.Name + Environment.NewLine +
+                    "Respuestas: " + comentario.CommentCount + Environment.NewLine +Environment.NewLine +
                     comentario.Text ;
             }
             else
@@ -189,8 +190,14 @@ namespace MongoTest2
                     "[Thread] " + Environment.NewLine +
                     "Fecha: " + thread.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
                     "Título: " + thread.Title + Environment.NewLine +
-                    "Autor: " + thread.Author.Name;
+                    "Autor: " + thread.Author.Name + Environment.NewLine +
+                    "Comentarios: " + thread.CommentCount;
             }
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+
         }
 
     }
