@@ -34,9 +34,15 @@
             this.labelNombreAutor = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBoxComments = new System.Windows.Forms.GroupBox();
-            this.textBoxCom = new System.Windows.Forms.TextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.textBoxContCom = new System.Windows.Forms.TextBox();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.treeViewCom = new System.Windows.Forms.TreeView();
+            this.textBoxCom = new System.Windows.Forms.TextBox();
+            this.buttonAgregarCom = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.comboBoxAutorCom = new System.Windows.Forms.ComboBox();
+            this.labelThreadsTree = new System.Windows.Forms.Label();
             this.labelAutorCom = new System.Windows.Forms.Label();
             this.groupBoxThreads = new System.Windows.Forms.GroupBox();
             this.buttonAgregarThread = new System.Windows.Forms.Button();
@@ -44,13 +50,20 @@
             this.labelNombreThread = new System.Windows.Forms.Label();
             this.comboBoxAutorThread = new System.Windows.Forms.ComboBox();
             this.labelAutorThread = new System.Windows.Forms.Label();
-            this.buttonAgregarCom = new System.Windows.Forms.Button();
-            this.textBoxContCom = new System.Windows.Forms.TextBox();
-            this.labelThreadsTree = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.groupBoxThreads.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxAutores
@@ -105,13 +118,8 @@
             // 
             // groupBoxComments
             // 
-            this.groupBoxComments.Controls.Add(this.labelThreadsTree);
-            this.groupBoxComments.Controls.Add(this.textBoxContCom);
-            this.groupBoxComments.Controls.Add(this.buttonAgregarCom);
-            this.groupBoxComments.Controls.Add(this.textBoxCom);
-            this.groupBoxComments.Controls.Add(this.treeViewCom);
-            this.groupBoxComments.Controls.Add(this.comboBoxAutorCom);
-            this.groupBoxComments.Controls.Add(this.labelAutorCom);
+            this.groupBoxComments.Controls.Add(this.splitContainer1);
+            this.groupBoxComments.Controls.Add(this.panel2);
             this.groupBoxComments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxComments.Location = new System.Drawing.Point(0, 95);
             this.groupBoxComments.Name = "groupBoxComments";
@@ -120,36 +128,109 @@
             this.groupBoxComments.TabStop = false;
             this.groupBoxComments.Text = "Comentarios";
             // 
-            // textBoxCom
+            // splitContainer1
             // 
-            this.textBoxCom.Location = new System.Drawing.Point(3, 182);
-            this.textBoxCom.Multiline = true;
-            this.textBoxCom.Name = "textBoxCom";
-            this.textBoxCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxCom.Size = new System.Drawing.Size(508, 108);
-            this.textBoxCom.TabIndex = 7;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 63);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.textBoxContCom);
+            this.splitContainer1.Panel1.Controls.Add(this.panel3);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel5);
+            this.splitContainer1.Panel2.Controls.Add(this.panel4);
+            this.splitContainer1.Size = new System.Drawing.Size(592, 230);
+            this.splitContainer1.SplitterDistance = 126;
+            this.splitContainer1.TabIndex = 12;
+            // 
+            // textBoxContCom
+            // 
+            this.textBoxContCom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxContCom.Location = new System.Drawing.Point(257, 0);
+            this.textBoxContCom.Multiline = true;
+            this.textBoxContCom.Name = "textBoxContCom";
+            this.textBoxContCom.ReadOnly = true;
+            this.textBoxContCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxContCom.Size = new System.Drawing.Size(335, 126);
+            this.textBoxContCom.TabIndex = 9;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.treeViewCom);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(257, 126);
+            this.panel3.TabIndex = 10;
             // 
             // treeViewCom
             // 
-            this.treeViewCom.Location = new System.Drawing.Point(3, 69);
+            this.treeViewCom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewCom.Location = new System.Drawing.Point(0, 0);
             this.treeViewCom.Name = "treeViewCom";
-            this.treeViewCom.Size = new System.Drawing.Size(235, 107);
+            this.treeViewCom.Size = new System.Drawing.Size(257, 126);
             this.treeViewCom.TabIndex = 6;
             this.treeViewCom.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCom_AfterSelect);
+            // 
+            // textBoxCom
+            // 
+            this.textBoxCom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxCom.Location = new System.Drawing.Point(0, 0);
+            this.textBoxCom.Multiline = true;
+            this.textBoxCom.Name = "textBoxCom";
+            this.textBoxCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxCom.Size = new System.Drawing.Size(507, 100);
+            this.textBoxCom.TabIndex = 7;
+            // 
+            // buttonAgregarCom
+            // 
+            this.buttonAgregarCom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonAgregarCom.Location = new System.Drawing.Point(0, 67);
+            this.buttonAgregarCom.Name = "buttonAgregarCom";
+            this.buttonAgregarCom.Size = new System.Drawing.Size(85, 23);
+            this.buttonAgregarCom.TabIndex = 8;
+            this.buttonAgregarCom.Text = "Comentar";
+            this.buttonAgregarCom.UseVisualStyleBackColor = true;
+            this.buttonAgregarCom.Click += new System.EventHandler(this.buttonAgregarCom_Click);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.comboBoxAutorCom);
+            this.panel2.Controls.Add(this.labelThreadsTree);
+            this.panel2.Controls.Add(this.labelAutorCom);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(3, 16);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(592, 47);
+            this.panel2.TabIndex = 11;
             // 
             // comboBoxAutorCom
             // 
             this.comboBoxAutorCom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAutorCom.FormattingEnabled = true;
-            this.comboBoxAutorCom.Location = new System.Drawing.Point(57, 22);
+            this.comboBoxAutorCom.Location = new System.Drawing.Point(41, 5);
             this.comboBoxAutorCom.Name = "comboBoxAutorCom";
             this.comboBoxAutorCom.Size = new System.Drawing.Size(152, 21);
             this.comboBoxAutorCom.TabIndex = 3;
             // 
+            // labelThreadsTree
+            // 
+            this.labelThreadsTree.AutoSize = true;
+            this.labelThreadsTree.Location = new System.Drawing.Point(3, 29);
+            this.labelThreadsTree.Name = "labelThreadsTree";
+            this.labelThreadsTree.Size = new System.Drawing.Size(46, 13);
+            this.labelThreadsTree.TabIndex = 10;
+            this.labelThreadsTree.Text = "Threads";
+            // 
             // labelAutorCom
             // 
             this.labelAutorCom.AutoSize = true;
-            this.labelAutorCom.Location = new System.Drawing.Point(10, 25);
+            this.labelAutorCom.Location = new System.Drawing.Point(3, 8);
             this.labelAutorCom.Name = "labelAutorCom";
             this.labelAutorCom.Size = new System.Drawing.Size(32, 13);
             this.labelAutorCom.TabIndex = 2;
@@ -214,34 +295,24 @@
             this.labelAutorThread.TabIndex = 0;
             this.labelAutorThread.Text = "Autor";
             // 
-            // buttonAgregarCom
+            // panel4
             // 
-            this.buttonAgregarCom.Location = new System.Drawing.Point(517, 267);
-            this.buttonAgregarCom.Name = "buttonAgregarCom";
-            this.buttonAgregarCom.Size = new System.Drawing.Size(75, 23);
-            this.buttonAgregarCom.TabIndex = 8;
-            this.buttonAgregarCom.Text = "Comentar";
-            this.buttonAgregarCom.UseVisualStyleBackColor = true;
-            this.buttonAgregarCom.Click += new System.EventHandler(this.buttonAgregarCom_Click);
+            this.panel4.Controls.Add(this.buttonAgregarCom);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel4.Location = new System.Drawing.Point(507, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.panel4.Size = new System.Drawing.Size(85, 100);
+            this.panel4.TabIndex = 9;
             // 
-            // textBoxContCom
+            // panel5
             // 
-            this.textBoxContCom.Location = new System.Drawing.Point(245, 69);
-            this.textBoxContCom.Multiline = true;
-            this.textBoxContCom.Name = "textBoxContCom";
-            this.textBoxContCom.ReadOnly = true;
-            this.textBoxContCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxContCom.Size = new System.Drawing.Size(347, 107);
-            this.textBoxContCom.TabIndex = 9;
-            // 
-            // labelThreadsTree
-            // 
-            this.labelThreadsTree.AutoSize = true;
-            this.labelThreadsTree.Location = new System.Drawing.Point(10, 53);
-            this.labelThreadsTree.Name = "labelThreadsTree";
-            this.labelThreadsTree.Size = new System.Drawing.Size(46, 13);
-            this.labelThreadsTree.TabIndex = 10;
-            this.labelThreadsTree.Text = "Threads";
+            this.panel5.Controls.Add(this.textBoxCom);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(507, 100);
+            this.panel5.TabIndex = 10;
             // 
             // VentanaDatos
             // 
@@ -258,9 +329,19 @@
             this.groupBoxAutores.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.groupBoxComments.ResumeLayout(false);
-            this.groupBoxComments.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.groupBoxThreads.ResumeLayout(false);
             this.groupBoxThreads.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -286,5 +367,10 @@
         private System.Windows.Forms.Button buttonAgregarCom;
         private System.Windows.Forms.TextBox textBoxContCom;
         private System.Windows.Forms.Label labelThreadsTree;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel4;
     }
 }

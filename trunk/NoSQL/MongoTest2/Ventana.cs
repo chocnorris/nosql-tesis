@@ -33,15 +33,26 @@ namespace MongoTest2
         }
 
         private void buttonConectar_Click(object sender, EventArgs e)
-        {      
-            MongoDriver md = new MongoDriver("localhost");
-            InfoMongo panel = new InfoMongo(md);
-            db = md;
+        {
+            Form vc = new VentanaConexion(this);
+            vc.ShowDialog();        
+        }
+
+        public void SetPanelInfo(UserControl panel)
+        {
             panelInfo.Controls.Add(panel);
             panel.Dock = DockStyle.Fill;
-            panel.serverState();
+        }
+
+        public void SetDB(IOperaciones db)
+        {
+            this.db = db;
+        }
+
+        public void AfterConnection()
+        {
             if (db.IsDatabaseConnected())
-                buttonConectar.Enabled = false;            
+                buttonConectar.Enabled = false;    
         }
     }
 }
