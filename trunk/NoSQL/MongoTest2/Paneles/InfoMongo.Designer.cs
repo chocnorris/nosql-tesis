@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panelInfo = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.textBoxInfo = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.buttonActualizarMonitor = new System.Windows.Forms.Button();
@@ -36,10 +37,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxEstado = new System.Windows.Forms.TextBox();
             this.labelEstado = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.panelInfo.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelInfo
@@ -52,6 +52,15 @@
             this.panelInfo.Name = "panelInfo";
             this.panelInfo.Size = new System.Drawing.Size(405, 340);
             this.panelInfo.TabIndex = 2;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.textBoxInfo);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 95);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(405, 245);
+            this.panel2.TabIndex = 7;
             // 
             // textBoxInfo
             // 
@@ -85,6 +94,7 @@
             this.buttonActualizarMonitor.TabIndex = 10;
             this.buttonActualizarMonitor.Text = "Actualizar";
             this.buttonActualizarMonitor.UseVisualStyleBackColor = true;
+            this.buttonActualizarMonitor.Click += new System.EventHandler(this.buttonActualizarMonitor_Click);
             // 
             // comboBoxShardList
             // 
@@ -123,15 +133,6 @@
             this.labelEstado.TabIndex = 6;
             this.labelEstado.Text = "Estado";
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.textBoxInfo);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 95);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(405, 245);
-            this.panel2.TabIndex = 7;
-            // 
             // InfoMongo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -140,10 +141,10 @@
             this.Name = "InfoMongo";
             this.Size = new System.Drawing.Size(405, 340);
             this.panelInfo.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
