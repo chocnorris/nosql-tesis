@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CassandraOperaciones.cs" />
     <Compile Include="ComboItem.cs" />
     <Compile Include="Modelo\Author.cs" />
     <Compile Include="Modelo\Comment.cs" />
