@@ -182,6 +182,7 @@ namespace MongoTest2
 
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            progressBar.Value = 0;
             progressBar.Visible = false;
         }
 

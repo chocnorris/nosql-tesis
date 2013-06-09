@@ -115,12 +115,6 @@ namespace MongoTest2.Servicios
         string ConnectionState();
 
         /// <summary>
-        /// Temporal
-        /// </summary>
-        /// <returns></returns>
-        MongoDatabase GetDB();
-
-        /// <summary>
         /// Obtener el tipo de la base de datos
         /// </summary>
         /// <returns></returns>

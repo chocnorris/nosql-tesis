@@ -27,21 +27,12 @@ namespace MongoTest2
         /// <summary>
         /// Inicializar base de datos
         /// </summary>
-        public MongoDriver()
+        public MongoDriver(string host)
         {
-            client = new MongoClient("mongodb://localhost");
+            client = new MongoClient("mongodb://"+host);
             server = client.GetServer();
             db = server.GetDatabase("forum");            
         }
-
-        // temporal
-        public MongoDriver(MongoClient cl, MongoServer sv)
-        {
-            client = cl;
-            server = sv;
-            db = server.GetDatabase("forum");            
-        }
-
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
@@ -145,10 +136,6 @@ namespace MongoTest2
             return server.State.ToString();
         }
 
-        public MongoDatabase GetDB()
-        {
-            return db;
-        }
 
         public long GetAuthorsCount()
         {
