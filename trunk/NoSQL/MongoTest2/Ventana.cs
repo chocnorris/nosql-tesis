@@ -38,6 +38,7 @@ namespace MongoTest2
             InfoMongo panel = new InfoMongo(md);
             db = md;
             panelInfo.Controls.Add(panel);
+            panel.Dock = DockStyle.Fill;
             panel.serverState();
             if (db.IsDatabaseConnected())
                 buttonConectar.Enabled = false;            

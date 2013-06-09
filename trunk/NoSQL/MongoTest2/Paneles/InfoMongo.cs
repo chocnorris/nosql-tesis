@@ -13,6 +13,7 @@ namespace MongoTest2.Paneles
     {
 
         private MongoDriver db;
+        private Dictionary<string, string> shards;
 
         public InfoMongo(MongoDriver md)
         {
@@ -23,45 +24,25 @@ namespace MongoTest2.Paneles
         public void serverState()
         {
             comboBoxShardList.Items.Clear();
-            comboBoxShardList.Items.Add("Global");
-
-            foreach (var keyvalue in db.GetShards())
+            //comboBoxShardList.Items.Add("Global");
+            shards = db.GetShards();
+            shards.Add("Global", "");
+            foreach (var keyvalue in shards)
             {
                 comboBoxShardList.Items.Add(new ComboItem { Text = keyvalue.Key, Value = keyvalue.Value }); ;
             }
             comboBoxShardList.SelectedIndex = 0;
             textBoxEstado.Text = db.ConnectionState();
-            detalles("Global");
+            detalles("Global", "");
         }
-        private void detalles(string referencia)
+        private void detalles(string key, string value)
         {
-            /* Hay que ver esto de los detalles (estandarizar la que informacion se saca)
-            CommandDocument comandoStats = new CommandDocument();
-            comandoStats.Add("dbstats", 1);
-            comandoStats.Add("scale", 1024*1024); //Mb!!
-            CommandResult stats = db.RunCommand(comandoStats);
-
-            MongoCollection<BsonDocument> chunks = server.GetDatabase("config").GetCollection("chunks");
-            if (referencia == "Global")
-            {
-                labelChunks.Text = "Chunks: " +
-                    chunks.Count();
-                labelTam.Text = "Tamaño: " +
-                    stats.Response["dataSize"]+" Mb";
-            }
-            else
-            {
-                labelChunks.Text = "Chunks: " +
-                    chunks.Find(new QueryDocument("shard", referencia)).Count();
-                labelTam.Text = "Tamaño: " +
-                    stats.Response["raw"][((ComboItem)comboBoxShardList.SelectedItem).Value.AsString]["dataSize"] + " Mb";
-            }
-             */
+            textBoxInfo.Text = db.ServerInfo(key , value);
         }
 
         private void comboBoxShardList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            detalles(comboBoxShardList.SelectedItem.ToString());
+            detalles(comboBoxShardList.SelectedItem.ToString(), ((ComboItem)comboBoxShardList.SelectedItem).Value.ToString());
         }
 
         private void buttonActualizarMonitor_MouseClick(object sender, MouseEventArgs e)
