@@ -36,7 +36,7 @@ namespace MongoTest2
             var Authors =
                 from u in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()                                
                 select u;
-            return Authors.Skip(skip).Take(take).ToList();
+            return Authors.ToList();
         }
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
@@ -44,7 +44,7 @@ namespace MongoTest2
             var Comments =
                 from c in db.GetColumnFamily("Comments").AsObjectQueryable<Comment>()                
                 select c;
-            return Comments.Skip(skip).Take(take).ToList();
+            return Comments.ToList();
         }
 
         public List<Comment> GetChildComments(object Parent_id)
@@ -61,7 +61,7 @@ namespace MongoTest2
             var Threads =
                 from t in db.GetColumnFamily("Threads").AsObjectQueryable<Thread>()
                 select t;
-            return Threads.Skip(skip).Take(0).ToList();
+            return Threads.ToList();
         }
 
         public Thread GetThread(object id)
@@ -90,33 +90,42 @@ namespace MongoTest2
        
         public Comment AddComment(Comment comentario)
         {
-            string addStmt = string.Format(getInsertStatementFor("Comments", "MongoTest2.Modelo"),
+            Guid id = Guid.NewGuid();
+            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
                 comentario.Author,
                 comentario.CommentCount,
                 comentario.Date,
-                comentario.Id,
+                id,
                 comentario.Parent_id,
                 comentario.Text,
                 comentario.Thread_id);
             db.ExecuteNonQuery(addStmt);
+            comentario.Id = id;
             return comentario;            
         }
 
         public Author AddAuthor(Author autor)
         {
-            string addStmt = string.Format(getInsertStatementFor("Authors", "MongoTest2.Modelo"),
-                autor.Name, autor.Id);
+            Guid id = Guid.NewGuid();
+            string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
+                id,
+                "'"+autor.Name+"'");
+            db.ExecuteNonQuery(addStmt);
+            autor.Id = id;
             return autor;            
         }
 
         public Thread AddThread(Thread thread)
         {
-            string addStmt = string.Format(getInsertStatementFor("Threads", "MongoTest2.Modelo"),
+            Guid id = Guid.NewGuid();
+            string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
                 thread.Author,
                 thread.CommentCount,
                 thread.Date,
-                thread.Id,
+                id,
                 thread.Title);
+            db.ExecuteNonQuery(addStmt);
+            thread.Id = id;
             return thread;
         }
 
@@ -137,7 +146,7 @@ namespace MongoTest2
 
         public bool IsDatabaseConnected()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public Dictionary<string, string> GetShards()
@@ -149,7 +158,7 @@ namespace MongoTest2
 
         public string ConnectionState()
         {
-            return "juju";
+            return "Conectado (mentira)";
         }
 
         public string Identidad()
@@ -208,7 +217,7 @@ namespace MongoTest2
                 var propertyTypes = new List<string>();
                 foreach (PropertyInfo pi in properties)
                 {
-                    createStatement = createStatement + pi.Name + " " + typeMapping(pi.PropertyType);
+                    createStatement = createStatement + @""""+pi.Name + @""" " + typeMapping(pi.PropertyType);
                     if (pi.Name.ToLower() == "id")
                         createStatement = createStatement + " PRIMARY KEY";
                     i++;
@@ -256,12 +265,12 @@ namespace MongoTest2
         /// <param name="columnFamilyName"></param>
         /// <param name="modelNamespacePath"></param>
         /// <returns></returns>
-        protected string getInsertStatementFor(string columnFamilyName, string modelNamespacePath)
+        protected string getInsertStatementFor(string entityName, string modelNamespacePath)
         {
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace == modelNamespacePath && t.Name == columnFamilyName
+                    where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
                     select t;
-            string stmt = @"INSERT INTO """ + columnFamilyName + @""" (";
+            string stmt = @"INSERT INTO """ + entityName + @"s"" (";
             var properties = q.First().GetProperties().OrderBy(p=>p.Name);
             int j = 0;
             foreach (PropertyInfo property in properties)
@@ -284,7 +293,6 @@ namespace MongoTest2
             }
             return stmt;
         }
-
         #endregion
     }
 }

@@ -36,12 +36,9 @@ namespace MongoTest2
 
             var Autores = db.GetAuthors();            
             foreach (var autor in Autores)
-            {
-                if (db.Identidad() == "MongoDB")
-                {
-                    comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
-                    comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
-                }
+            {    // sacado if de "identidad", no hace la diferencia                            
+                 comboBoxAutorCom.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
+                 comboBoxAutorThread.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });                
             }
             if (Autores.Count > 0)
             {
