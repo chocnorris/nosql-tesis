@@ -39,7 +39,7 @@ namespace MongoTest2
             throw new NotImplementedException();
         }
 
-        public Comment GetComments(object id)
+        public Comment GetComment(object id)
         {
             throw new NotImplementedException();
         }

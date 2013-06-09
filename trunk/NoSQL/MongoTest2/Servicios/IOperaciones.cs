@@ -55,7 +55,7 @@ namespace MongoTest2.Servicios
         /// Obtener un comentario
         /// </summary>
         /// <returns></returns>
-        Comment GetComments(object id);
+        Comment GetComment(object id);
 
         /// <summary>
         /// Agregar un comentario a la base de datos

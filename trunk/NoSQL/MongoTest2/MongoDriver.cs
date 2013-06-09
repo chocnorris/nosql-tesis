@@ -106,12 +106,18 @@ namespace MongoTest2
 
         public Thread GetThread(object id)
         {
-            return db.GetCollection<Thread>("threads").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            Thread thread = db.GetCollection<Thread>("threads").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            if(thread != null)
+                thread.CommentCount = db.GetCollection<Comment>("comments").Find(Query.EQ("Parent_id", (ObjectId)thread.Id)).Count();
+            return thread;
         }
 
-        public Comment GetComments(object id)
+        public Comment GetComment(object id)
         {
-            return db.GetCollection<Comment>("comments").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            Comment comment = db.GetCollection<Comment>("comments").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            if(comment != null)
+                comment.CommentCount = db.GetCollection<Comment>("comments").Find(Query.EQ("Parent_id", (ObjectId)comment.Id)).Count();
+            return comment;
         }
 
         public bool IsDatabaseConnected()
