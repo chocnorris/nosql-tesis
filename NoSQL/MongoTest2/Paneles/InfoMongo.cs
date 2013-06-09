@@ -45,9 +45,11 @@ namespace MongoTest2.Paneles
             detalles(comboBoxShardList.SelectedItem.ToString(), ((ComboItem)comboBoxShardList.SelectedItem).Value.ToString());
         }
 
-        private void buttonActualizarMonitor_MouseClick(object sender, MouseEventArgs e)
+        private void buttonActualizarMonitor_Click(object sender, EventArgs e)
         {
             serverState();
         }
+
+
     }
 }

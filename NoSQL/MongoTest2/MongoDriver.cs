@@ -180,6 +180,11 @@ namespace MongoTest2
                 res += "Tamaño: " +
                     stats.Response["raw"][value]["dataSize"] + " Kb";
             }
+            CommandDocument comandoStatus = new CommandDocument();
+            comandoStatus.Add("serverStatus", 1);
+            CommandResult status = db.RunCommand(comandoStatus);
+            res += Environment.NewLine;
+            res += "Uptime: " + (int)(status.Response["uptime"].AsDouble/60) + " minutos";
             return res;
         }
     }
