@@ -151,5 +151,36 @@ namespace MongoTest2
         {
             return db.GetCollection("comments").Count();
         }
+
+        public string ServerInfo(string key, string value)
+        {
+            CommandDocument comandoStats = new CommandDocument();
+            comandoStats.Add("dbstats", 1);
+            comandoStats.Add("scale", 1024); //Kb!!
+            CommandResult stats = db.RunCommand(comandoStats);
+
+            MongoCollection<BsonDocument> chunks = server.GetDatabase("config").GetCollection("chunks");
+            string res = "";
+            if (key == "Global")
+            {
+                res += "Chunks: " +chunks.Count();
+                res += Environment.NewLine;
+                res += "Tamaño: " + stats.Response["dataSize"] + " Kb";
+                /*
+                res += Environment.NewLine;
+                res += Environment.NewLine;
+                res += stats.Response.ToString();
+                 * */
+            }
+            else
+            {
+                res += "Chunks: " +
+                    chunks.Find(new QueryDocument("shard", key)).Count();
+                res += Environment.NewLine;
+                res += "Tamaño: " +
+                    stats.Response["raw"][value]["dataSize"] + " Kb";
+            }
+            return res;
+        }
     }
 }
