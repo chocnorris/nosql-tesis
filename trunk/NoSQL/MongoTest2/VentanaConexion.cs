@@ -36,8 +36,20 @@ namespace MongoTest2
                 padre.SetPanelInfo(panel);
                 panel.serverState();
             }
+            if (comboBoxDB.SelectedItem.ToString() == "Cassandra")
+            {
+                CassandraOperaciones cassandra = new CassandraOperaciones("forum", "localhost");
+                padre.SetDB(cassandra);
+                //padre.SetPanelInfo(panel);
+                //panel.serverState();
+            }
             padre.AfterConnection();
             this.Close();
+        }
+
+        private void comboBoxDB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
     }
