@@ -123,7 +123,7 @@ namespace MongoTest2
 
         private void buttonAgregarCom_Click(object sender, EventArgs e)
         {
-            if (textBoxCom.Text != "")
+            if (textBoxCom.Text != "" && treeViewCom.SelectedNode != null)
             {
                 db.AddComment(new Comment()
                 {
@@ -157,7 +157,6 @@ namespace MongoTest2
             {
                 treeViewCom.BeginUpdate();
                 int i = 1;
-                
                 foreach (Comment com in db.GetChildComments(treeViewCom.SelectedNode.Tag.ToString()) )
                 {
                     TreeNode nodo = new TreeNode("Comentario: " + i);
@@ -167,9 +166,10 @@ namespace MongoTest2
                 }
                 treeViewCom.EndUpdate();
             }
-            //Modificacion no recursiva            
-                //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+            //Modificacion no recursiva          
+            //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
             if (treeViewCom.SelectedNode.Level > 0)
+
             {
                 Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
                 textBoxContCom.Text =
@@ -190,11 +190,6 @@ namespace MongoTest2
                     "Autor: " + thread.Author.Name + Environment.NewLine +
                     "Comentarios: " + thread.CommentCount;
             }
-        }
-
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-
         }
 
     }
