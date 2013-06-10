@@ -6,6 +6,7 @@ using MongoTest2.Servicios;
 using MongoTest2.Modelo;
 using FluentCassandra;
 using System.Reflection;
+using FluentCassandra.Types;
 
 namespace MongoTest2
 {
@@ -54,14 +55,36 @@ namespace MongoTest2
                 where c.Parent_id == Parent_id
                 select c;
             return Comments.ToList();
-        }
+        }                     
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
-            var Threads =
-                from t in db.GetColumnFamily("Threads").AsObjectQueryable<Thread>()
-                select t;
-            return Threads.ToList();
+            var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();            
+            var threads = new List<Thread>();
+            foreach (FluentCqlRow row in threadRows)
+            {
+                var thread = new Thread();
+                foreach (FluentColumn column in row)
+                {
+                    var propertyValueInfo = thread.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                    if (column.ColumnName == "Author")
+                    {
+                        thread.Author = this.GetAuthor(column.ColumnValue.GetValue());                       
+                    }
+                    else
+                    {                        
+                        if (column.ColumnValue != null)
+                        {
+                            if (column.ColumnValue.GetType() == typeof(DateType))
+                                thread.Date = column.ColumnValue;
+                            else
+                                propertyValueInfo.SetValue(thread, column.ColumnValue.GetValue(), null);
+                        }
+                    }
+                }
+                threads.Add(thread);
+            }
+            return threads;
         }
 
         public Thread GetThread(object id)
@@ -74,10 +97,18 @@ namespace MongoTest2
 
         public Author GetAuthor(object id)
         {
-            var q = from a in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()
-                where a.Id == id
-                select a;
-            return q.First();
+            var result = db.ExecuteQuery(@"SELECT * FROM ""Authors"" WHERE ""Id""=" + id);
+            var author = new Author();
+            if (result.Count()>0)
+            {
+                
+                foreach (FluentColumn column in result.First().Columns)
+                {
+                    var propertyValueInfo = author.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                    propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
+                }
+            }
+            return author;                                
         }
 
         public Comment GetComment(object id)
@@ -92,13 +123,13 @@ namespace MongoTest2
         {
             Guid id = Guid.NewGuid();
             string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
-                comentario.Author,
-                comentario.CommentCount,
-                comentario.Date,
                 id,
-                comentario.Parent_id,
+                comentario.Author.Id,
                 comentario.Text,
-                comentario.Thread_id);
+                comentario.Parent_id,
+                comentario.Thread_id,
+                comentario.Date,
+                comentario.CommentCount);
             db.ExecuteNonQuery(addStmt);
             comentario.Id = id;
             return comentario;            
@@ -106,7 +137,7 @@ namespace MongoTest2
 
         public Author AddAuthor(Author autor)
         {
-            Guid id = Guid.NewGuid();
+            Guid id = Guid.NewGuid();            
             string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
                 id,
                 "'"+autor.Name+"'");
@@ -117,13 +148,18 @@ namespace MongoTest2
 
         public Thread AddThread(Thread thread)
         {
-            Guid id = Guid.NewGuid();
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            long millisecondsSinceEpoch = (long)t.TotalMilliseconds;
+
+            Guid id = Guid.NewGuid();            
+            UUIDType uuid = (UUIDType)thread.Author.Id;
+            string AuthorId = uuid.GetValue().ToString();
             string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
-                thread.Author,
-                thread.CommentCount,
-                thread.Date,
                 id,
-                thread.Title);
+                "'"+thread.Title+"'",
+                AuthorId,
+                millisecondsSinceEpoch,                
+                thread.CommentCount);
             db.ExecuteNonQuery(addStmt);
             thread.Id = id;
             return thread;
@@ -239,21 +275,21 @@ namespace MongoTest2
         protected string typeMapping(Type type)
         {
             if (type == typeof(char) || type == typeof(string))
-                return "text";
-            if (type == typeof(Int64))
+                return "text";            
+            if (type == typeof(Int64) || type==typeof(long))
                 return "bigint";
             if (type == typeof(int))
                 return "int";
             if (type == typeof(float))
-                return "float";
-            if (type == typeof(Guid) || type == typeof(object))
-                return "uuid";
+                return "float";                            
             if (type == typeof(double))
                 return "double";
             if (type == typeof(bool))
                 return "boolean";
             if (type == typeof(DateTime))
                 return "timestamp";
+            if (type == typeof(object) || !(type == typeof(ValueType)))
+                return "uuid";
 
             // por defecto:
             return "text";
@@ -271,7 +307,7 @@ namespace MongoTest2
                     where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
                     select t;
             string stmt = @"INSERT INTO """ + entityName + @"s"" (";
-            var properties = q.First().GetProperties().OrderBy(p=>p.Name);
+            var properties = q.First().GetProperties();
             int j = 0;
             foreach (PropertyInfo property in properties)
             {
