@@ -22,14 +22,20 @@ namespace MongoTest2
 
         private void buttonAgregarDatos_Click(object sender, EventArgs e)
         {
-            Form vd = new VentanaDatos(db);
-            vd.ShowDialog();
+            if (db != null && db.IsDatabaseConnected())
+            {
+                Form vd = new VentanaDatos(db);
+                vd.ShowDialog();
+            }
         }
 
         private void buttonRandom_Click(object sender, EventArgs e)
         {
-            Form vr = new VentanaRandom(db);
-            vr.Show();
+            if (db != null && db.IsDatabaseConnected())
+            {
+                Form vr = new VentanaRandom(db);
+                vr.Show();
+            }
         }
 
         private void buttonConectar_Click(object sender, EventArgs e)

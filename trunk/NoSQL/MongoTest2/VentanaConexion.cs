@@ -46,11 +46,5 @@ namespace MongoTest2
             padre.AfterConnection();
             this.Close();
         }
-
-        private void comboBoxDB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }
