@@ -50,11 +50,39 @@ namespace MongoTest2
 
         public List<Comment> GetChildComments(object Parent_id)
         {
-            var Comments =
-                from c in db.GetColumnFamily("Comments").AsObjectQueryable<Comment>()
-                where c.Parent_id == Parent_id
-                select c;
-            return Comments.ToList();
+            try
+            {
+                var commentRows = db.ExecuteQuery(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id).ToList();
+                var comments = new List<Comment>();
+                foreach (FluentCqlRow row in commentRows)
+                {
+                    var comment = new Comment();
+                    foreach (FluentColumn column in row)
+                    {
+                        var propertyValueInfo = comment.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                        if (column.ColumnName == "Author")
+                        {
+                            comment.Author = this.GetAuthor(column.ColumnValue.GetValue());
+                        }
+                        else
+                        {
+                            if (column.ColumnValue != null)
+                            {
+                                if (column.ColumnValue.GetType() == typeof(DateType))
+                                    comment.Date = column.ColumnValue;
+                                else
+                                    propertyValueInfo.SetValue(comment, column.ColumnValue.GetValue(), null);
+                            }
+                        }
+                    }
+                    comments.Add(comment);
+                }
+                return comments.ToList();
+            }
+            catch (Exception e)
+            {
+                return new List<Comment>();
+            }            
         }                     
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
@@ -84,15 +112,39 @@ namespace MongoTest2
                 }
                 threads.Add(thread);
             }
-            return threads;
+            return threads.Skip(skip).ToList();
         }
 
         public Thread GetThread(object id)
         {
-            var q = from t in db.GetColumnFamily("Threads").AsObjectQueryable<Thread>()
-               where t.Id == id
-               select t;
-            return q.First();
+            try
+            {
+                var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads"" WHERE ""Id""=" + id);
+                var thread = new Thread();
+                foreach (FluentColumn column in threadRows.First().Columns)
+                {
+                    var propertyValueInfo = thread.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                    if (column.ColumnName == "Author")
+                    {
+                        thread.Author = this.GetAuthor(column.ColumnValue.GetValue());
+                    }
+                    else
+                    {
+                        if (column.ColumnValue != null)
+                        {
+                            if (column.ColumnValue.GetType() == typeof(DateType))
+                                thread.Date = column.ColumnValue;
+                            else
+                                propertyValueInfo.SetValue(thread, column.ColumnValue.GetValue(), null);
+                        }
+                    }
+                }
+                return thread;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public Author GetAuthor(object id)
@@ -113,22 +165,54 @@ namespace MongoTest2
 
         public Comment GetComment(object id)
         {
-            var q = from c in db.GetColumnFamily("Comments").AsObjectQueryable<Comment>()
-                    where c.Id == id
-                    select c;
-            return q.First();
+            var commentRows = db.ExecuteQuery(@"SELECT * FROM ""Comments"" WHERE ""Id""=" + id);
+            var comment = new Comment();
+            foreach (FluentColumn column in commentRows.First().Columns)
+            {
+                var propertyValueInfo = comment.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                if (column.ColumnName == "Author")
+                {
+                    comment.Author = this.GetAuthor(column.ColumnValue.GetValue());
+                }
+                else
+                {
+                    if (column.ColumnValue != null)
+                    {
+                        if (column.ColumnValue.GetType() == typeof(DateType))
+                            comment.Date = column.ColumnValue;
+                        else
+                            propertyValueInfo.SetValue(comment, column.ColumnValue.GetValue(), null);
+                    }
+                }
+            }
+            return comment;
         }
        
         public Comment AddComment(Comment comentario)
         {
+             // Fecha para insertar timestamp
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            long millisecondsSinceEpoch = (long)t.TotalMilliseconds;
+ 
             Guid id = Guid.NewGuid();
+
+            // resolver Author Id            
+            UUIDType Autoruuid = (UUIDType)comentario.Author.Id;
+            string AuthorId = Autoruuid.GetValue().ToString();
+            
+            //UUIDType Parentuuid = (UUIDType)comentario.Parent_id;
+            //string ParentId = Parentuuid.GetValue().ToString();
+
+            //UUIDType Threaduuid = (UUIDType)comentario.Thread_id;
+            //string ThreadId = Parentuuid.GetValue().ToString();
+
             string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
                 id,
-                comentario.Author.Id,
-                comentario.Text,
+                AuthorId,
+                "'"+comentario.Text+"'",
                 comentario.Parent_id,
                 comentario.Thread_id,
-                comentario.Date,
+                millisecondsSinceEpoch,
                 comentario.CommentCount);
             db.ExecuteNonQuery(addStmt);
             comentario.Id = id;
@@ -148,6 +232,7 @@ namespace MongoTest2
 
         public Thread AddThread(Thread thread)
         {
+            // Fecha para insertar timestamp
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
             long millisecondsSinceEpoch = (long)t.TotalMilliseconds;
 
@@ -229,6 +314,9 @@ namespace MongoTest2
             var statements = getCassandraCreateStatementsBasedOnModel("MongoTest2.Modelo");
             foreach (string statement in statements)
                 db.ExecuteNonQuery(statement);
+
+            // Crear index
+            db.ExecuteNonQuery(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
         }
 
         /// <summary>
