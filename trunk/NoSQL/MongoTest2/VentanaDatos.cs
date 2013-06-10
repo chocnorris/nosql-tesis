@@ -167,11 +167,11 @@ namespace MongoTest2
                 }
                 treeViewCom.EndUpdate();
             }
-            //Modificacion no recursiva
-            Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
+            //Modificacion no recursiva            
                 //dbmongo.GetCollection("comments").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
-            if (comentario != null)
+            if (treeViewCom.SelectedNode.Level > 0)
             {
+                Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
                 textBoxContCom.Text =
                     "[Comentario] " + Environment.NewLine +
                     "Fecha: " + comentario.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
