@@ -41,6 +41,7 @@ namespace MongoTest2
         {
             if (worker.IsBusy)
                 return;
+            labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(AU);
         }
@@ -49,6 +50,7 @@ namespace MongoTest2
         {
             if (worker.IsBusy)
                 return;
+            labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(TH);
         }
@@ -57,6 +59,7 @@ namespace MongoTest2
         {
             if (worker.IsBusy)
                 return;
+            labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(CO);
         }
@@ -65,6 +68,7 @@ namespace MongoTest2
         {
             if (worker.IsBusy)
                 return;
+            labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(CO1MB);
         }
@@ -78,7 +82,6 @@ namespace MongoTest2
 
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            labelEstado.Text = "";
             int opc = (int)e.Argument;
             var start = DateTime.Now;
             switch (opc)
