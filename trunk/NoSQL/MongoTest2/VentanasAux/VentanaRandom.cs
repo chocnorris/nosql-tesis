@@ -73,8 +73,12 @@ namespace MongoTest2
         private const int TH = 2;
         private const int AU = 3;
         private const int CO1MB = 4;
+
+        private int elapsed;
+
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            labelEstado.Text = "";
             int opc = (int)e.Argument;
             var start = DateTime.Now;
             switch (opc)
@@ -93,8 +97,7 @@ namespace MongoTest2
                     break;
             }
             var finish = DateTime.Now;
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
-            MessageBox.Show("La operación tardó " + (int)finish.Subtract(start).TotalSeconds + " segundos", "Operación", MessageBoxButtons.OK);            
+            elapsed = (int)finish.Subtract(start).TotalSeconds;
         }
 
         private void cargarAutores(int n)
@@ -172,7 +175,7 @@ namespace MongoTest2
                 else
                     db.AddComment(new Comment()
                     {
-                        Text = System.IO.File.ReadAllText(@"..\..\1mb.txt"),
+                        Text = System.IO.File.ReadAllText(@"..\..\Data\1mb.txt"),
                         Thread_id = threadId,
                         Author = auth,
                         Date = DateTime.Now,
@@ -188,6 +191,8 @@ namespace MongoTest2
         {
             progressBar.Value = 0;
             progressBar.Visible = false;
+            labelEstado.Text = "La operación tardó " + elapsed + " segundos";
+            //MessageBox.Show("La operación tardó " + elapsed + " segundos", "Operación", MessageBoxButtons.OK);            
         }
 
         private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)

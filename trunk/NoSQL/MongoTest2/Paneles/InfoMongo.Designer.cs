@@ -69,8 +69,10 @@
             this.textBoxInfo.Multiline = true;
             this.textBoxInfo.Name = "textBoxInfo";
             this.textBoxInfo.ReadOnly = true;
+            this.textBoxInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBoxInfo.Size = new System.Drawing.Size(405, 245);
             this.textBoxInfo.TabIndex = 0;
+            this.textBoxInfo.WordWrap = false;
             // 
             // panel1
             // 

@@ -38,6 +38,7 @@
             this.worker = new System.ComponentModel.BackgroundWorker();
             this.buttonCom1MB = new System.Windows.Forms.Button();
             this.numericUpDownCom1MB = new System.Windows.Forms.NumericUpDown();
+            this.labelEstado = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).BeginInit();
@@ -142,11 +143,20 @@
             this.numericUpDownCom1MB.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownCom1MB.TabIndex = 6;
             // 
+            // labelEstado
+            // 
+            this.labelEstado.AutoSize = true;
+            this.labelEstado.Location = new System.Drawing.Point(12, 138);
+            this.labelEstado.Name = "labelEstado";
+            this.labelEstado.Size = new System.Drawing.Size(0, 13);
+            this.labelEstado.TabIndex = 7;
+            // 
             // VentanaRandom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(271, 160);
+            this.Controls.Add(this.labelEstado);
             this.Controls.Add(this.numericUpDownCom1MB);
             this.Controls.Add(this.buttonCom1MB);
             this.Controls.Add(this.progressBar);
@@ -167,6 +177,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom1MB)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -182,5 +193,6 @@
         private System.ComponentModel.BackgroundWorker worker;
         private System.Windows.Forms.Button buttonCom1MB;
         private System.Windows.Forms.NumericUpDown numericUpDownCom1MB;
+        private System.Windows.Forms.Label labelEstado;
     }
 }

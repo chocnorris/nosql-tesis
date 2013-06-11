@@ -30,11 +30,10 @@ namespace MongoTest2
         {
             if (comboBoxDB.SelectedItem.ToString() == "Mongo")
             {
-                MongoDriver md = new MongoDriver(comboBoxHost.Text);
+                MongoOperaciones md = new MongoOperaciones(comboBoxHost.Text);
                 InfoMongo panel = new InfoMongo(md);
                 padre.SetDB(md);
                 padre.SetPanelInfo(panel);
-                panel.serverState();
             }
             if (comboBoxDB.SelectedItem.ToString() == "Cassandra")
             {

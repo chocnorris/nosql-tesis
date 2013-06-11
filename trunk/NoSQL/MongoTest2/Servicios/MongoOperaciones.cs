@@ -7,10 +7,11 @@ using MongoTest2.Modelo;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Builders;
+using MongoTest2.Helpers;
 
 namespace MongoTest2
 {
-    public class MongoDriver : IOperaciones
+    public class MongoOperaciones : IOperaciones
     {
         MongoClient client;
         MongoServer server;
@@ -27,7 +28,7 @@ namespace MongoTest2
         /// <summary>
         /// Inicializar base de datos
         /// </summary>
-        public MongoDriver(string host)
+        public MongoOperaciones(string host)
         {
             client = new MongoClient("mongodb://"+host);
             server = client.GetServer();
@@ -172,6 +173,13 @@ namespace MongoTest2
                 res += "Chunks: " +chunks.Count();
                 res += Environment.NewLine;
                 res += "Tamaño: " + stats.Response["dataSize"] + " Kb";
+                res += Environment.NewLine;
+                res += Environment.NewLine;
+                res += "Autores: " + GetAuthorsCount();
+                res += Environment.NewLine;
+                res += "Threads: " + GetThreadsCount();
+                res += Environment.NewLine;
+                res += "Comentarios: " + GetCommentsCount();
                 /*
                 res += Environment.NewLine;
                 res += Environment.NewLine;
@@ -190,7 +198,10 @@ namespace MongoTest2
             comandoStatus.Add("serverStatus", 1);
             CommandResult status = db.RunCommand(comandoStatus);
             res += Environment.NewLine;
+            res += Environment.NewLine;
             res += "Uptime: " + (int)(status.Response["uptime"].AsDouble/60) + " minutos";
+            res += Environment.NewLine;
+            res += "Metrics: " + JsonHelper.FormatJson(status.Response.ToString());
             return res;
         }
     }
