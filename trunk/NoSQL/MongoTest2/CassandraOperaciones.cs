@@ -35,7 +35,7 @@ namespace MongoTest2
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {                
             var Authors =
-                from u in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()                                
+                from u in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()                
                 select u;
             return Authors.ToList();
         }

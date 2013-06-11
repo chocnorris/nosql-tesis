@@ -76,34 +76,38 @@ namespace MongoTest2
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             int opc = (int)e.Argument;
+            var start = DateTime.Now;
             switch (opc)
             {
-                case CO: 
+                case CO:
                     cargarComments((int)numericUpDownCom.Value, false);
                     break;
                 case TH:
                     cargarThreads((int)numericUpDownThreads.Value);
                     break;
-                case AU:
+                case AU:                    
                     cargarAutores((int)numericUpDownAutores.Value);
                     break;
                 case CO1MB:
                     cargarComments((int)numericUpDownCom1MB.Value, true);
                     break;
             }
+            var finish = DateTime.Now;
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+            MessageBox.Show("La operación tardó " + (int)finish.Subtract(start).TotalSeconds + " segundos", "Operación", MessageBoxButtons.OK);            
         }
 
         private void cargarAutores(int n)
         {
-            Random rand = new Random();
+            Random rand = new Random();            
             for (int i = 1; i <= n; i++)
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(2000);
                 db.AddAuthor(new Author() { Name = names[num] + num2 });
                 //db.GetCollection("authors").Insert(new { name = names[num] + num2 });
-                worker.ReportProgress((i / n) * 100);
-            }
+                worker.ReportProgress((i * 100) / n);
+            }            
         }
 
         private void cargarThreads(int n)
@@ -122,7 +126,7 @@ namespace MongoTest2
                     Author = auth,
                     Date = DateTime.Now
                 });
-                worker.ReportProgress((i / n) * 100);
+                worker.ReportProgress((i*100)/n);
             }
         }
 
@@ -175,7 +179,7 @@ namespace MongoTest2
                         Parent_id = parentId
                     });
 
-                worker.ReportProgress((i*100)/n);
+                worker.ReportProgress((i * 100) / n);
             }
 
         }
