@@ -225,14 +225,15 @@ namespace MongoTest2
             UUIDType Autoruuid = (UUIDType)comentario.Author.Id;
             string AuthorId = Autoruuid.GetValue().ToString();
              
-            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
-                id,
+            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),                
                 AuthorId,
-                "'"+comentario.Text+"'",
+                comentario.CommentCount,
+                getDateInMilliseconds(),                
+                id,
                 comentario.Parent_id,
-                comentario.Thread_id,
-                getDateInMilliseconds(),
-                comentario.CommentCount);
+                asCassandraString(comentario.Text),
+                comentario.Thread_id
+                );
             db.ExecuteNonQuery(addStmt);
             comentario.Id = id;
             return comentario;            
@@ -243,7 +244,7 @@ namespace MongoTest2
             Guid id = Guid.NewGuid();                       
             string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
                 id,
-                "'"+autor.Name+"'");
+                asCassandraString(autor.Name));
             db.ExecuteNonQuery(addStmt);
             autor.Id = id;            
             return autor;
@@ -256,11 +257,12 @@ namespace MongoTest2
             UUIDType uuid = (UUIDType)thread.Author.Id;
             string AuthorId = uuid.GetValue().ToString();
             string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
-                id,
-                "'"+thread.Title+"'",
                 AuthorId,
-                getDateInMilliseconds(),                
-                thread.CommentCount);
+                thread.CommentCount,
+                getDateInMilliseconds(),
+                id,
+                asCassandraString(thread.Title)
+                );
             db.ExecuteNonQuery(addStmt);
             thread.Id = id;
             return thread;
@@ -422,7 +424,7 @@ namespace MongoTest2
                     where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
                     select t;
             string stmt = @"INSERT INTO """ + entityName + @"s"" (";
-            var properties = q.First().GetProperties();
+            var properties = q.First().GetProperties().OrderBy(p=>p.Name.ToUpper());
             int j = 0;
             foreach (PropertyInfo property in properties)
             {
@@ -443,6 +445,16 @@ namespace MongoTest2
                     stmt = stmt + ");";
             }
             return stmt;
+        }
+
+        /// <summary>
+        /// Dado un string, devolver entre ''
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        protected string asCassandraString(string str)
+        {
+            return "'" + str + "'";
         }
         #endregion
     }
