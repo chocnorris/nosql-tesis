@@ -12,16 +12,17 @@ namespace MongoTest2.Paneles
     public partial class InfoMongo : UserControl
     {
 
-        private MongoDriver db;
+        private MongoOperaciones db;
         private Dictionary<string, string> shards;
 
-        public InfoMongo(MongoDriver md)
+        public InfoMongo(MongoOperaciones md)
         {
             db = md;
             InitializeComponent();
+            serverState();
         }
 
-        public void serverState()
+        private void serverState()
         {
             comboBoxShardList.Items.Clear();
             //comboBoxShardList.Items.Add("Global");

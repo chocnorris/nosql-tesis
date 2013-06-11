@@ -66,12 +66,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraOperaciones.cs" />
-    <Compile Include="ComboItem.cs" />
+    <Compile Include="Servicios\CassandraOperaciones.cs" />
+    <Compile Include="Helpers\ComboItem.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Modelo\Author.cs" />
     <Compile Include="Modelo\Comment.cs" />
     <Compile Include="Modelo\Thread.cs" />
-    <Compile Include="MongoDriver.cs" />
+    <Compile Include="Servicios\MongoOperaciones.cs" />
     <Compile Include="Paneles\InfoMongo.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -87,22 +88,22 @@
     <Compile Include="Ventana.Designer.cs">
       <DependentUpon>Ventana.cs</DependentUpon>
     </Compile>
-    <Compile Include="VentanaConexion.cs">
+    <Compile Include="VentanasAux\VentanaConexion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VentanaConexion.Designer.cs">
+    <Compile Include="VentanasAux\VentanaConexion.Designer.cs">
       <DependentUpon>VentanaConexion.cs</DependentUpon>
     </Compile>
-    <Compile Include="VentanaDatos.cs">
+    <Compile Include="VentanasAux\VentanaDatos.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VentanaDatos.Designer.cs">
+    <Compile Include="VentanasAux\VentanaDatos.Designer.cs">
       <DependentUpon>VentanaDatos.cs</DependentUpon>
     </Compile>
-    <Compile Include="VentanaRandom.cs">
+    <Compile Include="VentanasAux\VentanaRandom.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VentanaRandom.Designer.cs">
+    <Compile Include="VentanasAux\VentanaRandom.Designer.cs">
       <DependentUpon>VentanaRandom.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Paneles\InfoMongo.resx">
@@ -121,13 +122,13 @@
     <EmbeddedResource Include="Ventana.resx">
       <DependentUpon>Ventana.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VentanaConexion.resx">
+    <EmbeddedResource Include="VentanasAux\VentanaConexion.resx">
       <DependentUpon>VentanaConexion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VentanaDatos.resx">
+    <EmbeddedResource Include="VentanasAux\VentanaDatos.resx">
       <DependentUpon>VentanaDatos.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VentanaRandom.resx">
+    <EmbeddedResource Include="VentanasAux\VentanaRandom.resx">
       <DependentUpon>VentanaRandom.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -143,7 +144,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="1mb.txt" />
+    <Content Include="Data\1mb.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
