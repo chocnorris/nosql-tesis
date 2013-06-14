@@ -281,6 +281,21 @@ namespace MongoTest2
             return GetComments().Count;
         }
 
+        public bool RemoveAuthor(Author autor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveThread(Thread thread)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveComment(Comment comentario)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsDatabaseConnected()
         {
             return true;

@@ -159,6 +159,29 @@ namespace MongoTest2
             return db.GetCollection("comments").Count();
         }
 
+        public bool RemoveAuthor(Author autor)
+        {
+            //Eliminación recursiva!!!
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveThread(Thread thread)
+        {
+            db.GetCollection<Comment>("comments").Remove(Query.EQ("thread_id", new ObjectId(thread.Id.ToString())));
+            var res = db.GetCollection<Thread>("threads").Remove(Query.EQ("_id", new ObjectId(thread.Id.ToString())));
+            return true;
+        }
+
+        public bool RemoveComment(Comment comentario)
+        {
+            //Eliminación recursiva
+            var hijos = db.GetCollection<Comment>("comments").Find(Query.EQ("parent_id", new ObjectId(comentario.Id.ToString())));
+            foreach (Comment c in hijos)
+                RemoveComment(c);
+            var res = db.GetCollection<Comment>("comments").Remove(Query.EQ("_id", new ObjectId(comentario.Id.ToString())));
+            return true;
+        }
+
         public string ServerInfo(string key, string value)
         {
             CommandDocument comandoStats = new CommandDocument();

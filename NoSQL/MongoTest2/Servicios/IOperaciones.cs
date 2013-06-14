@@ -107,6 +107,26 @@ namespace MongoTest2.Servicios
         /// <returns></returns>
         long GetCommentsCount();
 
+        /// <summary>
+        /// Elimina un autor de la base de datos y todo otro dato asociado
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool RemoveAuthor(Author autor);
+
+        /// <summary>
+        /// Elimina un thread de la base de datos y todo otro dato asociado
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool RemoveThread(Thread thread);
+
+        /// <summary>
+        /// Elimina un comentario de la base de datos y todo otro dato asociado
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool RemoveComment(Comment comentario);
         #endregion
 
         #region Otras
