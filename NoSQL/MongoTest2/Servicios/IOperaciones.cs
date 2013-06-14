@@ -12,6 +12,20 @@ namespace MongoTest2.Servicios
     /// </summary>
     public interface IOperaciones
     {
+        #region Configuración
+        /// <summary>
+        /// Inicializar la base de datos.
+        /// </summary>
+        /// <param name="dropExistent">true para descartar la base de datos existente</param>
+        /// <returns>resultado del proceso</returns>
+        bool Initialize(bool dropExistent);
+
+        /// <summary>
+        /// Vaciar la base de datos.
+        /// </summary>
+        /// <returns>resultado del proceso</returns>
+        bool Cleanup();
+        #endregion
 
         #region operaciones CRUD
         /// <summary>

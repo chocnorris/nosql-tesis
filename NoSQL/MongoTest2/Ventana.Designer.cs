@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panelAcciones = new System.Windows.Forms.Panel();
+            this.buttonDesconectar = new System.Windows.Forms.Button();
             this.buttonConectar = new System.Windows.Forms.Button();
             this.buttonRandom = new System.Windows.Forms.Button();
             this.buttonAgregarDatos = new System.Windows.Forms.Button();
@@ -39,6 +40,7 @@
             // panelAcciones
             // 
             this.panelAcciones.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panelAcciones.Controls.Add(this.buttonDesconectar);
             this.panelAcciones.Controls.Add(this.buttonConectar);
             this.panelAcciones.Controls.Add(this.buttonRandom);
             this.panelAcciones.Controls.Add(this.buttonAgregarDatos);
@@ -47,6 +49,16 @@
             this.panelAcciones.Name = "panelAcciones";
             this.panelAcciones.Size = new System.Drawing.Size(160, 420);
             this.panelAcciones.TabIndex = 0;
+            // 
+            // buttonDesconectar
+            // 
+            this.buttonDesconectar.Location = new System.Drawing.Point(13, 42);
+            this.buttonDesconectar.Name = "buttonDesconectar";
+            this.buttonDesconectar.Size = new System.Drawing.Size(133, 23);
+            this.buttonDesconectar.TabIndex = 0;
+            this.buttonDesconectar.Text = "Desconectar";
+            this.buttonDesconectar.UseVisualStyleBackColor = true;
+            this.buttonDesconectar.Click += new System.EventHandler(this.buttonDesconectar_Click_1);
             // 
             // buttonConectar
             // 
@@ -60,7 +72,7 @@
             // 
             // buttonRandom
             // 
-            this.buttonRandom.Location = new System.Drawing.Point(12, 100);
+            this.buttonRandom.Location = new System.Drawing.Point(12, 136);
             this.buttonRandom.Name = "buttonRandom";
             this.buttonRandom.Size = new System.Drawing.Size(134, 23);
             this.buttonRandom.TabIndex = 3;
@@ -70,7 +82,7 @@
             // 
             // buttonAgregarDatos
             // 
-            this.buttonAgregarDatos.Location = new System.Drawing.Point(13, 71);
+            this.buttonAgregarDatos.Location = new System.Drawing.Point(13, 107);
             this.buttonAgregarDatos.Name = "buttonAgregarDatos";
             this.buttonAgregarDatos.Size = new System.Drawing.Size(134, 23);
             this.buttonAgregarDatos.TabIndex = 2;
@@ -107,6 +119,7 @@
         private System.Windows.Forms.Button buttonRandom;
         private System.Windows.Forms.Button buttonConectar;
         private System.Windows.Forms.Panel panelInfo;
+        private System.Windows.Forms.Button buttonDesconectar;
 
 
     }
