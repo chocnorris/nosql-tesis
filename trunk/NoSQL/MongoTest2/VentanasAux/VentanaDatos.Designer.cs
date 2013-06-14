@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBoxAutores = new System.Windows.Forms.GroupBox();
             this.buttonAgregarAutor = new System.Windows.Forms.Button();
             this.textBoxNombreAutor = new System.Windows.Forms.TextBox();
@@ -38,7 +39,9 @@
             this.textBoxContCom = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.treeViewCom = new System.Windows.Forms.TreeView();
+            this.panel5 = new System.Windows.Forms.Panel();
             this.textBoxCom = new System.Windows.Forms.TextBox();
+            this.panel4 = new System.Windows.Forms.Panel();
             this.buttonAgregarCom = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.comboBoxAutorCom = new System.Windows.Forms.ComboBox();
@@ -50,8 +53,8 @@
             this.labelNombreThread = new System.Windows.Forms.Label();
             this.comboBoxAutorThread = new System.Windows.Forms.ComboBox();
             this.labelAutorThread = new System.Windows.Forms.Label();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.panel5 = new System.Windows.Forms.Panel();
+            this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -60,10 +63,11 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel5.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBoxThreads.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
+            this.contextMenuStripNode.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxAutores
@@ -177,6 +181,15 @@
             this.treeViewCom.TabIndex = 6;
             this.treeViewCom.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCom_AfterSelect);
             // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.textBoxCom);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(507, 100);
+            this.panel5.TabIndex = 10;
+            // 
             // textBoxCom
             // 
             this.textBoxCom.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -186,6 +199,16 @@
             this.textBoxCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxCom.Size = new System.Drawing.Size(507, 100);
             this.textBoxCom.TabIndex = 7;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.buttonAgregarCom);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel4.Location = new System.Drawing.Point(507, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.panel4.Size = new System.Drawing.Size(85, 100);
+            this.panel4.TabIndex = 9;
             // 
             // buttonAgregarCom
             // 
@@ -295,24 +318,19 @@
             this.labelAutorThread.TabIndex = 0;
             this.labelAutorThread.Text = "Autor";
             // 
-            // panel4
+            // contextMenuStripNode
             // 
-            this.panel4.Controls.Add(this.buttonAgregarCom);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel4.Location = new System.Drawing.Point(507, 0);
-            this.panel4.Name = "panel4";
-            this.panel4.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
-            this.panel4.Size = new System.Drawing.Size(85, 100);
-            this.panel4.TabIndex = 9;
+            this.contextMenuStripNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.eliminarToolStripMenuItem});
+            this.contextMenuStripNode.Name = "contextMenuStripNode";
+            this.contextMenuStripNode.Size = new System.Drawing.Size(153, 48);
             // 
-            // panel5
+            // eliminarToolStripMenuItem
             // 
-            this.panel5.Controls.Add(this.textBoxCom);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(0, 0);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(507, 100);
-            this.panel5.TabIndex = 10;
+            this.eliminarToolStripMenuItem.Name = "eliminarToolStripMenuItem";
+            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.eliminarToolStripMenuItem.Text = "Eliminar";
+            this.eliminarToolStripMenuItem.Click += new System.EventHandler(this.eliminarToolStripMenuItem_Click);
             // 
             // VentanaDatos
             // 
@@ -335,13 +353,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
+            this.panel4.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.groupBoxThreads.ResumeLayout(false);
             this.groupBoxThreads.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
+            this.contextMenuStripNode.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -372,5 +391,7 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripNode;
+        private System.Windows.Forms.ToolStripMenuItem eliminarToolStripMenuItem;
     }
 }

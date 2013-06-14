@@ -56,6 +56,7 @@ namespace MongoTest2
                 TreeNode nodo = new TreeNode(th.Title + "");
                 //TreeNode nodo = new TreeNode(th["title"] + "", subComments(th["_id"] + "").ToArray());
                 nodo.Tag = th.Id.ToString();
+                nodo.ContextMenuStrip = contextMenuStripNode;
                 treeViewCom.Nodes.Add(nodo);
             }
         }
@@ -163,6 +164,7 @@ namespace MongoTest2
                     i++;
                     nodo.Tag = com.Id.ToString();
                     treeViewCom.SelectedNode.Nodes.Add(nodo);
+                    nodo.ContextMenuStrip = contextMenuStripNode;
                 }
                 treeViewCom.EndUpdate();
             }
@@ -190,6 +192,21 @@ namespace MongoTest2
                     "Autor: " + thread.Author.Name + Environment.NewLine +
                     "Comentarios: " + thread.CommentCount;
             }
+        }
+
+        private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeViewCom.SelectedNode.Level > 0)
+            {
+                Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
+                db.RemoveComment(comentario);
+            }
+            else
+            {
+                Thread thread = db.GetThread(treeViewCom.SelectedNode.Tag.ToString());
+                db.RemoveThread(thread);
+            }
+            treeViewCom.Nodes.Remove(treeViewCom.SelectedNode);
         }
 
     }
