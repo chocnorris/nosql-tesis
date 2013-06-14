@@ -25,9 +25,7 @@ namespace MongoTest2
         public CassandraOperaciones(string dbname, string host)
         {
             KeyspaceName = dbname;
-            db = new CassandraContext(dbname, host);
-            createKeyspace();
-            createColumnFamilies();
+            db = new CassandraContext(dbname, host);            
         }
 
         #region Implementaciones de interfaz
@@ -323,15 +321,11 @@ namespace MongoTest2
         /// Crear keyspace de nombre keyspacename
         /// </summary>
         protected void createKeyspace()
-        {
-            if (db.KeyspaceExists(KeyspaceName))
-                db.DropKeyspace(KeyspaceName);
-
+        {          
             Keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema
             {
                 Name = KeyspaceName
             }, db);
-
             Keyspace.TryCreateSelf();
         }
 
@@ -457,5 +451,45 @@ namespace MongoTest2
             return "'" + str + "'";
         }
         #endregion
+
+        public bool Initialize(bool dropExistent)
+        {
+            try
+            {
+                if (db.KeyspaceExists(KeyspaceName) && dropExistent)
+                {
+                    db.DropKeyspace(KeyspaceName);
+                    createKeyspace();
+                    createColumnFamilies();
+                }
+                else
+                {
+                    Keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema
+                    {
+                        Name = KeyspaceName
+                    }, db);
+                }
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool Cleanup()
+        {
+            try
+            {
+                db.DropKeyspace(KeyspaceName);
+                createKeyspace();
+                createColumnFamilies();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
     }
 }

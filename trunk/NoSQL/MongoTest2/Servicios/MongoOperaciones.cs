@@ -204,5 +204,15 @@ namespace MongoTest2
             res += "Metrics: " + JsonHelper.FormatJson(status.Response.ToString());
             return res;
         }
+
+        public bool Initialize(bool drop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Cleanup()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
