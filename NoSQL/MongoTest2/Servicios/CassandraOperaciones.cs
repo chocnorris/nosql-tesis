@@ -283,17 +283,41 @@ namespace MongoTest2
 
         public bool RemoveAuthor(Author autor)
         {
-            throw new NotImplementedException();
+            try
+            {
+            db.ExecuteNonQuery(@"DELETE FROM ""Authors"" WHERE Id = "+autor.Id);                
+            return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
         }
 
         public bool RemoveThread(Thread thread)
         {
-            throw new NotImplementedException();
+            try
+            {
+            db.ExecuteNonQuery(@"DELETE FROM ""Threads"" WHERE ""Id"" = "+thread.Id);                
+            return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
         }
 
         public bool RemoveComment(Comment comentario)
         {
-            throw new NotImplementedException();
+            try
+            {
+            db.ExecuteNonQuery(@"DELETE FROM ""Comments"" WHERE ""Id"" = "+comentario.Id);                
+            return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
         }
 
         public bool IsDatabaseConnected()

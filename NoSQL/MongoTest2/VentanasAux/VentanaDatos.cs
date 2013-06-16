@@ -202,17 +202,19 @@ namespace MongoTest2
 
         private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            bool result = false;
             if (treeViewCom.SelectedNode.Level > 0)
             {
                 Comment comentario = db.GetComment(treeViewCom.SelectedNode.Tag.ToString());
-                db.RemoveComment(comentario);
+                result = db.RemoveComment(comentario);
             }
             else
             {
                 Thread thread = db.GetThread(treeViewCom.SelectedNode.Tag.ToString());
-                db.RemoveThread(thread);
+                result = db.RemoveThread(thread);
             }
-            treeViewCom.Nodes.Remove(treeViewCom.SelectedNode);
+            if (result) 
+                treeViewCom.Nodes.Remove(treeViewCom.SelectedNode);
         }
 
         private void numericUpDownDesde_ValueChanged(object sender, EventArgs e)
