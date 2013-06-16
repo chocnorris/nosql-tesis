@@ -119,11 +119,11 @@ namespace MongoTest2
         private void cargarThreads(int n)
         {
             Random rand = new Random();
+            int nAut = (int)db.GetAuthorsCount();
             for (int i = 1; i <= n; i++)
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(50);
-                int nAut = (int)db.GetAuthorsCount();
                 int num3 = rand.Next(nAut);
                 Author auth = db.GetAuthors(num3,1).First();
                 db.AddThread(new Thread()
@@ -139,6 +139,9 @@ namespace MongoTest2
         private void cargarComments(int n,bool mb)
         {
             Random rand = new Random();
+            int nTh = (int)db.GetThreads().Count();
+            int nCom = (int)db.GetCommentsCount();
+            int cargaNCom = n / 10;
             for (int i = 1; i <= n; i++)
             {
                 int num = rand.Next(50);
@@ -150,10 +153,8 @@ namespace MongoTest2
                 string threadId = null;
                 int num4 = rand.Next(10);
                 int num5 = 0;
-                int nCom = (int)db.GetCommentsCount();
                 if (num4 <= 3 || nCom == 0)
                 {
-                    int nTh = (int)db.GetThreads().Count();
                     num5 = rand.Next(nTh);
                     Thread thread = db.GetThreads(num5,1).First();
                     parentId = thread.Id.ToString();
@@ -161,6 +162,12 @@ namespace MongoTest2
                 }
                 else
                 {
+                    //Calucla el núemero de comentarios a lo sumo 10 veces
+                    if (i > cargaNCom)
+                    {
+                        nCom = (int)db.GetCommentsCount();
+                        cargaNCom += n / 10;
+                    }
                     num5 = rand.Next(nCom);
                     Comment com = db.GetComments(num5,1).First();
                     parentId = com.Id.ToString();

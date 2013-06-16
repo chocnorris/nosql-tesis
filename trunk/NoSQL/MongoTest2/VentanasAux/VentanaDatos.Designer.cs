@@ -55,6 +55,12 @@
             this.labelAutorThread = new System.Windows.Forms.Label();
             this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.numericUpDownInicio = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownCant = new System.Windows.Forms.NumericUpDown();
+            this.labelInicio = new System.Windows.Forms.Label();
+            this.labelCant = new System.Windows.Forms.Label();
+            this.labelPaginación = new System.Windows.Forms.Label();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -68,6 +74,9 @@
             this.panel2.SuspendLayout();
             this.groupBoxThreads.SuspendLayout();
             this.contextMenuStripNode.SuspendLayout();
+            this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInicio)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxAutores
@@ -135,7 +144,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 63);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 68);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -148,8 +157,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel5);
             this.splitContainer1.Panel2.Controls.Add(this.panel4);
-            this.splitContainer1.Size = new System.Drawing.Size(592, 230);
-            this.splitContainer1.SplitterDistance = 126;
+            this.splitContainer1.Size = new System.Drawing.Size(592, 225);
+            this.splitContainer1.SplitterDistance = 123;
             this.splitContainer1.TabIndex = 12;
             // 
             // textBoxContCom
@@ -160,7 +169,7 @@
             this.textBoxContCom.Name = "textBoxContCom";
             this.textBoxContCom.ReadOnly = true;
             this.textBoxContCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxContCom.Size = new System.Drawing.Size(335, 126);
+            this.textBoxContCom.Size = new System.Drawing.Size(335, 123);
             this.textBoxContCom.TabIndex = 9;
             // 
             // panel3
@@ -169,7 +178,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(257, 126);
+            this.panel3.Size = new System.Drawing.Size(257, 123);
             this.panel3.TabIndex = 10;
             // 
             // treeViewCom
@@ -177,7 +186,7 @@
             this.treeViewCom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewCom.Location = new System.Drawing.Point(0, 0);
             this.treeViewCom.Name = "treeViewCom";
-            this.treeViewCom.Size = new System.Drawing.Size(257, 126);
+            this.treeViewCom.Size = new System.Drawing.Size(257, 123);
             this.treeViewCom.TabIndex = 6;
             this.treeViewCom.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCom_AfterSelect);
             // 
@@ -187,7 +196,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(507, 100);
+            this.panel5.Size = new System.Drawing.Size(507, 98);
             this.panel5.TabIndex = 10;
             // 
             // textBoxCom
@@ -197,7 +206,7 @@
             this.textBoxCom.Multiline = true;
             this.textBoxCom.Name = "textBoxCom";
             this.textBoxCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxCom.Size = new System.Drawing.Size(507, 100);
+            this.textBoxCom.Size = new System.Drawing.Size(507, 98);
             this.textBoxCom.TabIndex = 7;
             // 
             // panel4
@@ -207,13 +216,13 @@
             this.panel4.Location = new System.Drawing.Point(507, 0);
             this.panel4.Name = "panel4";
             this.panel4.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
-            this.panel4.Size = new System.Drawing.Size(85, 100);
+            this.panel4.Size = new System.Drawing.Size(85, 98);
             this.panel4.TabIndex = 9;
             // 
             // buttonAgregarCom
             // 
             this.buttonAgregarCom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonAgregarCom.Location = new System.Drawing.Point(0, 67);
+            this.buttonAgregarCom.Location = new System.Drawing.Point(0, 65);
             this.buttonAgregarCom.Name = "buttonAgregarCom";
             this.buttonAgregarCom.Size = new System.Drawing.Size(85, 23);
             this.buttonAgregarCom.TabIndex = 8;
@@ -223,13 +232,14 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.panel6);
             this.panel2.Controls.Add(this.comboBoxAutorCom);
             this.panel2.Controls.Add(this.labelThreadsTree);
             this.panel2.Controls.Add(this.labelAutorCom);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(3, 16);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(592, 47);
+            this.panel2.Size = new System.Drawing.Size(592, 52);
             this.panel2.TabIndex = 11;
             // 
             // comboBoxAutorCom
@@ -244,7 +254,7 @@
             // labelThreadsTree
             // 
             this.labelThreadsTree.AutoSize = true;
-            this.labelThreadsTree.Location = new System.Drawing.Point(3, 29);
+            this.labelThreadsTree.Location = new System.Drawing.Point(4, 36);
             this.labelThreadsTree.Name = "labelThreadsTree";
             this.labelThreadsTree.Size = new System.Drawing.Size(46, 13);
             this.labelThreadsTree.TabIndex = 10;
@@ -323,14 +333,70 @@
             this.contextMenuStripNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.eliminarToolStripMenuItem});
             this.contextMenuStripNode.Name = "contextMenuStripNode";
-            this.contextMenuStripNode.Size = new System.Drawing.Size(153, 48);
+            this.contextMenuStripNode.Size = new System.Drawing.Size(118, 26);
             // 
             // eliminarToolStripMenuItem
             // 
             this.eliminarToolStripMenuItem.Name = "eliminarToolStripMenuItem";
-            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.eliminarToolStripMenuItem.Text = "Eliminar";
             this.eliminarToolStripMenuItem.Click += new System.EventHandler(this.eliminarToolStripMenuItem_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.labelPaginación);
+            this.panel6.Controls.Add(this.labelCant);
+            this.panel6.Controls.Add(this.labelInicio);
+            this.panel6.Controls.Add(this.numericUpDownCant);
+            this.panel6.Controls.Add(this.numericUpDownInicio);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel6.Location = new System.Drawing.Point(323, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(269, 52);
+            this.panel6.TabIndex = 11;
+            // 
+            // numericUpDownInicio
+            // 
+            this.numericUpDownInicio.Location = new System.Drawing.Point(59, 21);
+            this.numericUpDownInicio.Name = "numericUpDownInicio";
+            this.numericUpDownInicio.Size = new System.Drawing.Size(75, 20);
+            this.numericUpDownInicio.TabIndex = 0;
+            this.numericUpDownInicio.ValueChanged += new System.EventHandler(this.numericUpDownDesde_ValueChanged);
+            // 
+            // numericUpDownCant
+            // 
+            this.numericUpDownCant.Location = new System.Drawing.Point(195, 21);
+            this.numericUpDownCant.Name = "numericUpDownCant";
+            this.numericUpDownCant.Size = new System.Drawing.Size(71, 20);
+            this.numericUpDownCant.TabIndex = 1;
+            this.numericUpDownCant.ValueChanged += new System.EventHandler(this.numericUpDownHasta_ValueChanged);
+            // 
+            // labelInicio
+            // 
+            this.labelInicio.AutoSize = true;
+            this.labelInicio.Location = new System.Drawing.Point(21, 23);
+            this.labelInicio.Name = "labelInicio";
+            this.labelInicio.Size = new System.Drawing.Size(32, 13);
+            this.labelInicio.TabIndex = 2;
+            this.labelInicio.Text = "Inicio";
+            // 
+            // labelCant
+            // 
+            this.labelCant.AutoSize = true;
+            this.labelCant.Location = new System.Drawing.Point(140, 23);
+            this.labelCant.Name = "labelCant";
+            this.labelCant.Size = new System.Drawing.Size(49, 13);
+            this.labelCant.TabIndex = 3;
+            this.labelCant.Text = "Cantidad";
+            // 
+            // labelPaginación
+            // 
+            this.labelPaginación.AutoSize = true;
+            this.labelPaginación.Location = new System.Drawing.Point(3, 5);
+            this.labelPaginación.Name = "labelPaginación";
+            this.labelPaginación.Size = new System.Drawing.Size(60, 13);
+            this.labelPaginación.TabIndex = 4;
+            this.labelPaginación.Text = "Paginación";
             // 
             // VentanaDatos
             // 
@@ -361,6 +427,10 @@
             this.groupBoxThreads.ResumeLayout(false);
             this.groupBoxThreads.PerformLayout();
             this.contextMenuStripNode.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInicio)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -393,5 +463,11 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripNode;
         private System.Windows.Forms.ToolStripMenuItem eliminarToolStripMenuItem;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Label labelPaginación;
+        private System.Windows.Forms.Label labelCant;
+        private System.Windows.Forms.Label labelInicio;
+        private System.Windows.Forms.NumericUpDown numericUpDownCant;
+        private System.Windows.Forms.NumericUpDown numericUpDownInicio;
     }
 }

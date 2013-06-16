@@ -26,6 +26,12 @@ namespace MongoTest2
         private void VentanaDatos_Load(object sender, EventArgs e)
         {
             cargarAutores();
+            numericUpDownInicio.Minimum = 1;
+            numericUpDownCant.Minimum = 1;
+            numericUpDownInicio.Maximum = db.GetThreadsCount();
+            numericUpDownCant.Maximum = numericUpDownInicio.Maximum;
+            numericUpDownInicio.Value = 1;
+            numericUpDownCant.Value = 10;
             cargarThreads();
         }
 
@@ -49,8 +55,8 @@ namespace MongoTest2
 
         private void cargarThreads()
         {
-            treeViewCom.Nodes.Clear();           
-            var Threads = db.GetThreads();            
+            treeViewCom.Nodes.Clear();       
+            var Threads = db.GetThreads((int)numericUpDownInicio.Value, (int)numericUpDownCant.Value);            
             foreach (var th in Threads)
             {
                 TreeNode nodo = new TreeNode(th.Title + "");
@@ -207,6 +213,16 @@ namespace MongoTest2
                 db.RemoveThread(thread);
             }
             treeViewCom.Nodes.Remove(treeViewCom.SelectedNode);
+        }
+
+        private void numericUpDownDesde_ValueChanged(object sender, EventArgs e)
+        {
+            cargarThreads();
+        }
+
+        private void numericUpDownHasta_ValueChanged(object sender, EventArgs e)
+        {
+            cargarThreads();
         }
 
     }
