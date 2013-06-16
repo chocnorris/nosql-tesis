@@ -71,5 +71,16 @@ namespace MongoTest2
             buttonConectar.Enabled = true;
             buttonDesconectar.Enabled = false;
         }
+
+        private void buttonDrop_Click(object sender, EventArgs e)
+        {
+            if (db != null && db.IsDatabaseConnected())
+            {
+                if (MessageBox.Show("Se borrarán todos los datos" + Environment.NewLine + "¿Desea continuar?", "Confirmar borrado", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    db.Cleanup();
+                }
+            }
+        }
     }
 }

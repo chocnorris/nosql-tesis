@@ -34,12 +34,14 @@
             this.buttonRandom = new System.Windows.Forms.Button();
             this.buttonAgregarDatos = new System.Windows.Forms.Button();
             this.panelInfo = new System.Windows.Forms.Panel();
+            this.buttonDrop = new System.Windows.Forms.Button();
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelAcciones
             // 
             this.panelAcciones.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panelAcciones.Controls.Add(this.buttonDrop);
             this.panelAcciones.Controls.Add(this.buttonDesconectar);
             this.panelAcciones.Controls.Add(this.buttonConectar);
             this.panelAcciones.Controls.Add(this.buttonRandom);
@@ -98,6 +100,16 @@
             this.panelInfo.Size = new System.Drawing.Size(416, 420);
             this.panelInfo.TabIndex = 1;
             // 
+            // buttonDrop
+            // 
+            this.buttonDrop.Location = new System.Drawing.Point(13, 192);
+            this.buttonDrop.Name = "buttonDrop";
+            this.buttonDrop.Size = new System.Drawing.Size(133, 23);
+            this.buttonDrop.TabIndex = 4;
+            this.buttonDrop.Text = "Borrar BD";
+            this.buttonDrop.UseVisualStyleBackColor = true;
+            this.buttonDrop.Click += new System.EventHandler(this.buttonDrop_Click);
+            // 
             // Ventana
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -120,6 +132,7 @@
         private System.Windows.Forms.Button buttonConectar;
         private System.Windows.Forms.Panel panelInfo;
         private System.Windows.Forms.Button buttonDesconectar;
+        private System.Windows.Forms.Button buttonDrop;
 
 
     }

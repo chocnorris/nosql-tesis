@@ -161,7 +161,12 @@ namespace MongoTest2
 
         public bool RemoveAuthor(Author autor)
         {
-            //Eliminación recursiva!!!
+            var coms = db.GetCollection<Comment>("comments").Find(Query.EQ("author._id", new ObjectId(autor.Id.ToString())));
+            foreach (Comment c in coms)
+                RemoveComment(c);
+            var ths = db.GetCollection<Thread>("threads").Find(Query.EQ("author._id", new ObjectId(autor.Id.ToString())));
+            foreach (Thread t in ths)
+                RemoveThread(t);
             throw new NotImplementedException();
         }
 
@@ -224,18 +229,44 @@ namespace MongoTest2
             res += Environment.NewLine;
             res += "Uptime: " + (int)(status.Response["uptime"].AsDouble/60) + " minutos";
             res += Environment.NewLine;
-            res += "Metrics: " + JsonHelper.FormatJson(status.Response.ToString());
+            res += "Metrics: " + JsonHelper.FormatJson(status.Response["mem"].ToString());
             return res;
+        }
+        /// <summary>
+        /// Retorna el uso de memoria por parte del servidor
+        /// </summary>
+        /// <returns></returns>
+        public List<int> MemUse()
+        {
+            List<int> lista = new List<int>();
+            CommandDocument comandoStatus = new CommandDocument();
+            comandoStatus.Add("serverStatus", 1);
+            return lista;
         }
 
         public bool Initialize(bool drop)
         {
-            throw new NotImplementedException();
+            //Nota: Mongo no requiere inicialización, salvo para el sharding
+            if (drop)
+                db.Drop();
+            ShardDB();
+            return true;
+        }
+        //Ver cómo parametrizar (o no) el sharding de la db
+        private bool ShardDB()
+        {
+            /** Código a ejecutar por consola
+            sh.enableSharding("forum")
+            sh.shardCollection("forum.comments",{"thread_id":1, "_id":1})
+            sh.shardCollection("forum.threads",{"_id":1})
+            sh.shardCollection("forum.authors",{"_id":1})
+            */
+            return true;
         }
 
         public bool Cleanup()
         {
-            throw new NotImplementedException();
+            return Initialize(true);
         }
     }
 }
