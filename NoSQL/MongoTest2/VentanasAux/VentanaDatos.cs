@@ -14,7 +14,7 @@ namespace MongoTest2
     public partial class VentanaDatos : Form
     {
         IOperaciones db;
-
+        private bool init = true; //Se usa por rendimiento
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
 
         public VentanaDatos(IOperaciones db)
@@ -24,14 +24,18 @@ namespace MongoTest2
         }
 
         private void VentanaDatos_Load(object sender, EventArgs e)
-        {
-            cargarAutores();
-            numericUpDownInicio.Minimum = 1;
-            numericUpDownCant.Minimum = 1;
+        {            
+            numericUpDownInicio.Minimum = 0;
+            numericUpDownCant.Minimum = 0;
             numericUpDownInicio.Maximum = db.GetThreadsCount();
             numericUpDownCant.Maximum = numericUpDownInicio.Maximum;
-            numericUpDownInicio.Value = 1;
-            numericUpDownCant.Value = 10;
+            numericUpDownInicio.Value = 0;
+            if(numericUpDownCant.Maximum > 100)
+                numericUpDownCant.Value = 100;
+            else
+                numericUpDownCant.Value = numericUpDownCant.Maximum;
+            init = false;
+            cargarAutores();
             cargarThreads();
         }
 
@@ -219,11 +223,15 @@ namespace MongoTest2
 
         private void numericUpDownDesde_ValueChanged(object sender, EventArgs e)
         {
+            if (init)
+                return;
             cargarThreads();
         }
 
         private void numericUpDownHasta_ValueChanged(object sender, EventArgs e)
         {
+            if (init)
+                return;
             cargarThreads();
         }
 
