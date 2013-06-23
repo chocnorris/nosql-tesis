@@ -268,17 +268,23 @@ namespace MongoTest2
 
         public long GetAuthorsCount()
         {
-            return GetAuthors().Count;
+            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Authors""");
+            var cant = resu.First().Columns.First().ColumnValue;
+            return cant;
         }
 
         public long GetThreadsCount()
         {
-            return GetThreads().Count;
+            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Threads""");
+            var cant = resu.First().Columns.First().ColumnValue;
+            return cant;
         }
 
         public long GetCommentsCount()
         {
-            return GetComments().Count;
+            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Comments""");
+            var cant = resu.First().Columns.First().ColumnValue;
+            return cant;
         }
 
         public bool RemoveAuthor(Author autor)
