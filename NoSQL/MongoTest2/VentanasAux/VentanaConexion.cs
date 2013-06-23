@@ -23,6 +23,8 @@ namespace MongoTest2
             comboBoxHost.Items.Add("localhost");
             comboBoxHost.Items.Add("127.0.0.1");
             comboBoxHost.Items.Add("192.168.56.201");
+            comboBoxHost.Items.Add("192.168.56.202");
+            comboBoxHost.Items.Add("192.168.56.203");
 
         }
 
@@ -30,14 +32,14 @@ namespace MongoTest2
         {
             if (comboBoxDB.SelectedItem.ToString() == "Mongo")
             {
-                MongoOperaciones md = new MongoOperaciones(comboBoxHost.Text);
+                MongoOperaciones md = new MongoOperaciones("forum", comboBoxHost.Text);
                 InfoMongo panel = new InfoMongo(md);
                 padre.SetDB(md);
                 padre.SetPanelInfo(panel);
             }
             if (comboBoxDB.SelectedItem.ToString() == "Cassandra")
             {
-                CassandraOperaciones cassandra = new CassandraOperaciones("forum", "localhost");
+                CassandraOperaciones cassandra = new CassandraOperaciones("forum", comboBoxHost.Text);
                 cassandra.Initialize(false);
                 padre.SetDB(cassandra);
                 //padre.SetPanelInfo(panel);

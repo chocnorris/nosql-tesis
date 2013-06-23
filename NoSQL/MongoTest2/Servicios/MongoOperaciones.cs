@@ -28,11 +28,11 @@ namespace MongoTest2
         /// <summary>
         /// Inicializar base de datos
         /// </summary>
-        public MongoOperaciones(string host)
+        public MongoOperaciones(string dbname, string host)
         {
             client = new MongoClient("mongodb://"+host);
             server = client.GetServer();
-            db = server.GetDatabase("forum");            
+            db = server.GetDatabase(dbname);            
         }
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
@@ -252,7 +252,7 @@ namespace MongoTest2
             ShardDB();
             return true;
         }
-        //Ver cómo parametrizar (o no) el sharding de la db
+        //TODO: Ver cómo parametrizar (o no) el sharding de la db
         private bool ShardDB()
         {
             /** Código a ejecutar por consola
