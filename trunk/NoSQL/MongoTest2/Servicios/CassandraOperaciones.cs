@@ -225,7 +225,7 @@ namespace MongoTest2
              
             string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),                
                 AuthorId,
-                comentario.CommentCount,
+                0,
                 getDateInMilliseconds(),                
                 id,
                 comentario.Parent_id,
@@ -233,6 +233,7 @@ namespace MongoTest2
                 comentario.Thread_id
                 );
             db.ExecuteNonQuery(addStmt);
+            //TODO: Actualizar el contador de comentarios del padre!!
             comentario.Id = id;
             return comentario;            
         }
@@ -317,7 +318,8 @@ namespace MongoTest2
         {
             try
             {
-            db.ExecuteNonQuery(@"DELETE FROM ""Comments"" WHERE ""Id"" = "+comentario.Id);                
+            db.ExecuteNonQuery(@"DELETE FROM ""Comments"" WHERE ""Id"" = "+comentario.Id);
+                //TODO: Actualizar el contador de comentarios del padre
             return true;
             }
             catch(Exception e)

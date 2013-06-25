@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.panelAcciones = new System.Windows.Forms.Panel();
+            this.buttonDrop = new System.Windows.Forms.Button();
             this.buttonDesconectar = new System.Windows.Forms.Button();
             this.buttonConectar = new System.Windows.Forms.Button();
             this.buttonRandom = new System.Windows.Forms.Button();
             this.buttonAgregarDatos = new System.Windows.Forms.Button();
             this.panelInfo = new System.Windows.Forms.Panel();
-            this.buttonDrop = new System.Windows.Forms.Button();
+            this.buttonConsultas = new System.Windows.Forms.Button();
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelAcciones
             // 
             this.panelAcciones.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panelAcciones.Controls.Add(this.buttonConsultas);
             this.panelAcciones.Controls.Add(this.buttonDrop);
             this.panelAcciones.Controls.Add(this.buttonDesconectar);
             this.panelAcciones.Controls.Add(this.buttonConectar);
@@ -52,11 +54,21 @@
             this.panelAcciones.Size = new System.Drawing.Size(160, 420);
             this.panelAcciones.TabIndex = 0;
             // 
+            // buttonDrop
+            // 
+            this.buttonDrop.Location = new System.Drawing.Point(14, 211);
+            this.buttonDrop.Name = "buttonDrop";
+            this.buttonDrop.Size = new System.Drawing.Size(132, 23);
+            this.buttonDrop.TabIndex = 4;
+            this.buttonDrop.Text = "Borrar BD";
+            this.buttonDrop.UseVisualStyleBackColor = true;
+            this.buttonDrop.Click += new System.EventHandler(this.buttonDrop_Click);
+            // 
             // buttonDesconectar
             // 
-            this.buttonDesconectar.Location = new System.Drawing.Point(13, 42);
+            this.buttonDesconectar.Location = new System.Drawing.Point(14, 42);
             this.buttonDesconectar.Name = "buttonDesconectar";
-            this.buttonDesconectar.Size = new System.Drawing.Size(133, 23);
+            this.buttonDesconectar.Size = new System.Drawing.Size(132, 23);
             this.buttonDesconectar.TabIndex = 0;
             this.buttonDesconectar.Text = "Desconectar";
             this.buttonDesconectar.UseVisualStyleBackColor = true;
@@ -64,9 +76,9 @@
             // 
             // buttonConectar
             // 
-            this.buttonConectar.Location = new System.Drawing.Point(13, 13);
+            this.buttonConectar.Location = new System.Drawing.Point(14, 13);
             this.buttonConectar.Name = "buttonConectar";
-            this.buttonConectar.Size = new System.Drawing.Size(133, 23);
+            this.buttonConectar.Size = new System.Drawing.Size(132, 23);
             this.buttonConectar.TabIndex = 0;
             this.buttonConectar.Text = "Conectar";
             this.buttonConectar.UseVisualStyleBackColor = true;
@@ -74,9 +86,9 @@
             // 
             // buttonRandom
             // 
-            this.buttonRandom.Location = new System.Drawing.Point(12, 136);
+            this.buttonRandom.Location = new System.Drawing.Point(14, 120);
             this.buttonRandom.Name = "buttonRandom";
-            this.buttonRandom.Size = new System.Drawing.Size(134, 23);
+            this.buttonRandom.Size = new System.Drawing.Size(132, 23);
             this.buttonRandom.TabIndex = 3;
             this.buttonRandom.Text = "Agregar Datos Aleatorios";
             this.buttonRandom.UseVisualStyleBackColor = true;
@@ -84,9 +96,9 @@
             // 
             // buttonAgregarDatos
             // 
-            this.buttonAgregarDatos.Location = new System.Drawing.Point(13, 107);
+            this.buttonAgregarDatos.Location = new System.Drawing.Point(14, 91);
             this.buttonAgregarDatos.Name = "buttonAgregarDatos";
-            this.buttonAgregarDatos.Size = new System.Drawing.Size(134, 23);
+            this.buttonAgregarDatos.Size = new System.Drawing.Size(132, 23);
             this.buttonAgregarDatos.TabIndex = 2;
             this.buttonAgregarDatos.Text = "Agregar Datos Manual";
             this.buttonAgregarDatos.UseVisualStyleBackColor = true;
@@ -100,15 +112,15 @@
             this.panelInfo.Size = new System.Drawing.Size(416, 420);
             this.panelInfo.TabIndex = 1;
             // 
-            // buttonDrop
+            // buttonConsultas
             // 
-            this.buttonDrop.Location = new System.Drawing.Point(13, 192);
-            this.buttonDrop.Name = "buttonDrop";
-            this.buttonDrop.Size = new System.Drawing.Size(133, 23);
-            this.buttonDrop.TabIndex = 4;
-            this.buttonDrop.Text = "Borrar BD";
-            this.buttonDrop.UseVisualStyleBackColor = true;
-            this.buttonDrop.Click += new System.EventHandler(this.buttonDrop_Click);
+            this.buttonConsultas.Location = new System.Drawing.Point(14, 149);
+            this.buttonConsultas.Name = "buttonConsultas";
+            this.buttonConsultas.Size = new System.Drawing.Size(132, 23);
+            this.buttonConsultas.TabIndex = 5;
+            this.buttonConsultas.Text = "Consultas";
+            this.buttonConsultas.UseVisualStyleBackColor = true;
+            this.buttonConsultas.Click += new System.EventHandler(this.buttonConsultas_Click);
             // 
             // Ventana
             // 
@@ -133,6 +145,7 @@
         private System.Windows.Forms.Panel panelInfo;
         private System.Windows.Forms.Button buttonDesconectar;
         private System.Windows.Forms.Button buttonDrop;
+        private System.Windows.Forms.Button buttonConsultas;
 
 
     }

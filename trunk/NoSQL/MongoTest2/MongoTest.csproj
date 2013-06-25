@@ -95,6 +95,12 @@
     <Compile Include="VentanasAux\VentanaConexion.Designer.cs">
       <DependentUpon>VentanaConexion.cs</DependentUpon>
     </Compile>
+    <Compile Include="VentanasAux\VentanaConsultas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VentanasAux\VentanaConsultas.Designer.cs">
+      <DependentUpon>VentanaConsultas.cs</DependentUpon>
+    </Compile>
     <Compile Include="VentanasAux\VentanaDatos.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,6 +131,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="VentanasAux\VentanaConexion.resx">
       <DependentUpon>VentanaConexion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VentanasAux\VentanaConsultas.resx">
+      <DependentUpon>VentanaConsultas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VentanasAux\VentanaDatos.resx">
       <DependentUpon>VentanaDatos.cs</DependentUpon>
