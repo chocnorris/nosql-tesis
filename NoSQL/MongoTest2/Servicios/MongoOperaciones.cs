@@ -82,7 +82,16 @@ namespace MongoTest2
             comentario.Id = ObjectId.GenerateNewId();
             comentario.Thread_id = ObjectId.Parse(comentario.Thread_id.ToString());
             comentario.Parent_id = ObjectId.Parse(comentario.Parent_id.ToString());
+            comentario.CommentCount = 0;
             db.GetCollection<Comment>("comments").Insert(comentario);
+            string colPadre = "";
+            if (comentario.Thread_id.Equals(comentario.Parent_id))
+                colPadre = "threads";
+            else
+            {
+                colPadre = "comments";
+            }
+            db.GetCollection(colPadre).Update(Query.EQ("_id", new ObjectId(comentario.Parent_id.ToString())), Update.Inc("CommentCount", 1));
             return comentario;
         }
 
@@ -96,6 +105,7 @@ namespace MongoTest2
         public Thread AddThread(Thread thread)
         {
             thread.Id = ObjectId.GenerateNewId();
+            thread.CommentCount = 0;
             db.GetCollection<Thread>("threads").Insert(thread);
             return thread;
         }
@@ -108,16 +118,12 @@ namespace MongoTest2
         public Thread GetThread(object id)
         {
             Thread thread = db.GetCollection<Thread>("threads").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
-            if(thread != null)
-                thread.CommentCount = db.GetCollection<Comment>("comments").Find(Query.EQ("Parent_id", (ObjectId)thread.Id)).Count();
             return thread;
         }
 
         public Comment GetComment(object id)
         {
             Comment comment = db.GetCollection<Comment>("comments").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
-            if(comment != null)
-                comment.CommentCount = db.GetCollection<Comment>("comments").Find(Query.EQ("Parent_id", (ObjectId)comment.Id)).Count();
             return comment;
         }
 
@@ -183,6 +189,14 @@ namespace MongoTest2
             var hijos = db.GetCollection<Comment>("comments").Find(Query.EQ("parent_id", new ObjectId(comentario.Id.ToString())));
             foreach (Comment c in hijos)
                 RemoveComment(c);
+            string colPadre = "";
+            if (comentario.Thread_id.Equals(comentario.Parent_id))
+                colPadre = "threads";
+            else
+            {
+                colPadre = "comments";
+            }
+            db.GetCollection(colPadre).Update(Query.EQ("_id", new ObjectId(comentario.Parent_id.ToString())), Update.Inc("CommentCount", -1));
             var res = db.GetCollection<Comment>("comments").Remove(Query.EQ("_id", new ObjectId(comentario.Id.ToString())));
             return true;
         }

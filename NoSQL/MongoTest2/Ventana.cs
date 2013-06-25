@@ -18,7 +18,7 @@ namespace MongoTest2
         public Ventana()
         {
             InitializeComponent();
-            buttonDesconectar.Enabled = false;
+            bloquearBotones(true);
         }       
 
         private void buttonAgregarDatos_Click(object sender, EventArgs e)
@@ -44,8 +44,6 @@ namespace MongoTest2
         {
             Form vc = new VentanaConexion(this);
             vc.ShowDialog();
-            if (db != null)
-                buttonDesconectar.Enabled = true;
         }
 
         public void SetPanelInfo(UserControl panel)
@@ -62,14 +60,14 @@ namespace MongoTest2
         public void AfterConnection()
         {
             if (db.IsDatabaseConnected())
-                buttonConectar.Enabled = false;    
+                bloquearBotones(false);
         }
 
         private void buttonDesconectar_Click_1(object sender, EventArgs e)
         {            
             db = null;
-            buttonConectar.Enabled = true;
-            buttonDesconectar.Enabled = false;
+            panelInfo.Controls.Clear();
+            bloquearBotones(true);
         }
 
         private void buttonDrop_Click(object sender, EventArgs e)
@@ -81,6 +79,23 @@ namespace MongoTest2
                     db.Cleanup();
                 }
             }
+        }
+
+        private void bloquearBotones(bool bloqueo)
+        {
+            bloqueo = !bloqueo;
+            buttonAgregarDatos.Enabled = bloqueo;
+            buttonConectar.Enabled = !bloqueo;
+            buttonDesconectar.Enabled = bloqueo;
+            buttonRandom.Enabled = bloqueo;
+            buttonConsultas.Enabled = bloqueo;
+            buttonDrop.Enabled = bloqueo;
+        }
+
+        private void buttonConsultas_Click(object sender, EventArgs e)
+        {
+            Form vc = new VentanaConsultas();
+            vc.ShowDialog();
         }
     }
 }
