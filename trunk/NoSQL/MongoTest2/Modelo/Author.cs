@@ -10,5 +10,6 @@ namespace MongoTest2.Modelo
     {        
         public object Id { get; set; }
         public string Name { get; set; }
+        //TODO: Agregar más información para los autores/usuarios del sistema
     }
 }

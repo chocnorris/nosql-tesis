@@ -233,8 +233,14 @@ namespace MongoTest2
                 res += "Chunks: " +
                     chunks.Find(new QueryDocument("shard", key)).Count();
                 res += Environment.NewLine;
-                res += "Tamaño: " +
-                    stats.Response["raw"][value]["dataSize"] + " Kb";
+                //Uno de los shards esta vacio
+                try
+                {
+                    res += "Tamaño: " +
+                        stats.Response["raw"][value]["dataSize"] + " Kb";
+                }catch
+                {
+                }
             }
             CommandDocument comandoStatus = new CommandDocument();
             comandoStatus.Add("serverStatus", 1);

@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.panelAcciones = new System.Windows.Forms.Panel();
+            this.buttonConsultas = new System.Windows.Forms.Button();
             this.buttonDrop = new System.Windows.Forms.Button();
             this.buttonDesconectar = new System.Windows.Forms.Button();
             this.buttonConectar = new System.Windows.Forms.Button();
             this.buttonRandom = new System.Windows.Forms.Button();
             this.buttonAgregarDatos = new System.Windows.Forms.Button();
             this.panelInfo = new System.Windows.Forms.Panel();
-            this.buttonConsultas = new System.Windows.Forms.Button();
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,6 +53,16 @@
             this.panelAcciones.Name = "panelAcciones";
             this.panelAcciones.Size = new System.Drawing.Size(160, 420);
             this.panelAcciones.TabIndex = 0;
+            // 
+            // buttonConsultas
+            // 
+            this.buttonConsultas.Location = new System.Drawing.Point(14, 149);
+            this.buttonConsultas.Name = "buttonConsultas";
+            this.buttonConsultas.Size = new System.Drawing.Size(132, 23);
+            this.buttonConsultas.TabIndex = 5;
+            this.buttonConsultas.Text = "Consultas";
+            this.buttonConsultas.UseVisualStyleBackColor = true;
+            this.buttonConsultas.Click += new System.EventHandler(this.buttonConsultas_Click);
             // 
             // buttonDrop
             // 
@@ -111,16 +121,6 @@
             this.panelInfo.Name = "panelInfo";
             this.panelInfo.Size = new System.Drawing.Size(416, 420);
             this.panelInfo.TabIndex = 1;
-            // 
-            // buttonConsultas
-            // 
-            this.buttonConsultas.Location = new System.Drawing.Point(14, 149);
-            this.buttonConsultas.Name = "buttonConsultas";
-            this.buttonConsultas.Size = new System.Drawing.Size(132, 23);
-            this.buttonConsultas.TabIndex = 5;
-            this.buttonConsultas.Text = "Consultas";
-            this.buttonConsultas.UseVisualStyleBackColor = true;
-            this.buttonConsultas.Click += new System.EventHandler(this.buttonConsultas_Click);
             // 
             // Ventana
             // 

@@ -19,6 +19,7 @@ namespace MongoTest2
             InitializeComponent();
             comboBoxDB.Items.Add("Mongo");
             comboBoxDB.Items.Add("Cassandra");
+            comboBoxDB.Items.Add("MySQL");
             comboBoxDB.SelectedIndex = 0;
             comboBoxHost.Items.Add("localhost");
             comboBoxHost.Items.Add("127.0.0.1");
@@ -44,6 +45,14 @@ namespace MongoTest2
                 padre.SetDB(cassandra);
                 //padre.SetPanelInfo(panel);
                 //panel.serverState();                
+            }
+            if (comboBoxDB.SelectedItem.ToString() == "MySQL")
+            {
+                MysqlOperaciones mysql = new MysqlOperaciones("forum", comboBoxHost.Text);
+                //mysql.Initialize(false);
+                padre.SetDB(mysql);
+                //padre.SetPanelInfo(panel);
+                //panel.serverState;
             }
             padre.AfterConnection();
             this.Close();
