@@ -14,7 +14,6 @@ namespace MongoTest2
     public partial class VentanaDatos : Form
     {
         IOperaciones db;
-        private bool init = true; //Se usa por rendimiento
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
 
         public VentanaDatos(IOperaciones db)
@@ -25,16 +24,11 @@ namespace MongoTest2
 
         private void VentanaDatos_Load(object sender, EventArgs e)
         {            
-            numericUpDownInicio.Minimum = 0;
-            numericUpDownCant.Minimum = 0;
-            numericUpDownInicio.Maximum = db.GetThreadsCount();
-            numericUpDownCant.Maximum = numericUpDownInicio.Maximum;
-            numericUpDownInicio.Value = 0;
-            if(numericUpDownCant.Maximum > 100)
+            numericUpDownPag.Value = 1;
+            if(db.GetThreadsCount() > 100)
                 numericUpDownCant.Value = 100;
             else
-                numericUpDownCant.Value = numericUpDownCant.Maximum;
-            init = false;
+                numericUpDownCant.Value = db.GetThreadsCount();
             cargarAutores();
             cargarThreads();
         }
@@ -59,8 +53,8 @@ namespace MongoTest2
 
         private void cargarThreads()
         {
-            treeViewCom.Nodes.Clear();       
-            var Threads = db.GetThreads((int)numericUpDownInicio.Value, (int)numericUpDownCant.Value);            
+            treeViewCom.Nodes.Clear();
+            var Threads = db.GetThreads(((int)numericUpDownPag.Value - 1) * (int)numericUpDownCant.Value, (int)numericUpDownCant.Value);            
             foreach (var th in Threads)
             {
                 TreeNode nodo = new TreeNode(th.Title + "");
@@ -112,6 +106,7 @@ namespace MongoTest2
             {
                 try
                 {
+                    string[] tags = { "Hola", "Chau" };
                     db.AddThread(new Thread()
                     {
                         Title = textBoxNombreThread.Text,
@@ -120,8 +115,11 @@ namespace MongoTest2
                             Name = ((ComboItem)comboBoxAutorThread.SelectedItem).Text.ToString(),
                             Id = ((ComboItem)comboBoxAutorThread.SelectedItem).Value
                         },
-                        Date = DateTime.Now
+                        Date = DateTime.Now,
+                        Tags = tags
                     });
+                    if(numericUpDownCant.Value < 100)
+                        numericUpDownCant.Value++;
                     textBoxNombreThread.Text = "";
                     cargarThreads();
                 }                                
@@ -188,19 +186,23 @@ namespace MongoTest2
                     "[Comentario] " + Environment.NewLine +
                     "Fecha: " + comentario.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
                     "Autor: " + comentario.Author.Name + Environment.NewLine +
-                    "Respuestas: " + comentario.CommentCount + Environment.NewLine +Environment.NewLine +
-                    comentario.Text ;
+                    "Respuestas: " + comentario.CommentCount + Environment.NewLine + Environment.NewLine +
+                    comentario.Text;
             }
             else
             {
                 Thread thread = db.GetThread(treeViewCom.SelectedNode.Tag.ToString());
                 //BsonDocument thread = dbmongo.GetCollection("threads").FindOne(Query.EQ("_id", new BsonObjectId(new ObjectId(treeViewCom.SelectedNode.Tag.ToString()))));
+                string tags = "";
+                if(thread.Tags != null)
+                    tags = "Tags: ["+ String.Join(", ",thread.Tags)+"]";
                 textBoxContCom.Text =
                     "[Thread] " + Environment.NewLine +
                     "Fecha: " + thread.Date.ToLocalTime().ToShortDateString() + Environment.NewLine +
                     "Título: " + thread.Title + Environment.NewLine +
                     "Autor: " + thread.Author.Name + Environment.NewLine +
-                    "Comentarios: " + thread.CommentCount;
+                    "Comentarios: " + thread.CommentCount + Environment.NewLine  +
+                    tags;
             }
         }
 
@@ -223,15 +225,11 @@ namespace MongoTest2
 
         private void numericUpDownDesde_ValueChanged(object sender, EventArgs e)
         {
-            if (init)
-                return;
             cargarThreads();
         }
 
         private void numericUpDownHasta_ValueChanged(object sender, EventArgs e)
         {
-            if (init)
-                return;
             cargarThreads();
         }
 

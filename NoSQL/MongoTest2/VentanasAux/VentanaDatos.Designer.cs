@@ -44,6 +44,12 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.buttonAgregarCom = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.labelPaginación = new System.Windows.Forms.Label();
+            this.labelCant = new System.Windows.Forms.Label();
+            this.labelPag = new System.Windows.Forms.Label();
+            this.numericUpDownCant = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownPag = new System.Windows.Forms.NumericUpDown();
             this.comboBoxAutorCom = new System.Windows.Forms.ComboBox();
             this.labelThreadsTree = new System.Windows.Forms.Label();
             this.labelAutorCom = new System.Windows.Forms.Label();
@@ -55,12 +61,6 @@
             this.labelAutorThread = new System.Windows.Forms.Label();
             this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.numericUpDownInicio = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownCant = new System.Windows.Forms.NumericUpDown();
-            this.labelInicio = new System.Windows.Forms.Label();
-            this.labelCant = new System.Windows.Forms.Label();
-            this.labelPaginación = new System.Windows.Forms.Label();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -72,11 +72,11 @@
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPag)).BeginInit();
             this.groupBoxThreads.SuspendLayout();
             this.contextMenuStripNode.SuspendLayout();
-            this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInicio)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxAutores
@@ -242,6 +242,72 @@
             this.panel2.Size = new System.Drawing.Size(592, 52);
             this.panel2.TabIndex = 11;
             // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.labelPaginación);
+            this.panel6.Controls.Add(this.labelCant);
+            this.panel6.Controls.Add(this.labelPag);
+            this.panel6.Controls.Add(this.numericUpDownCant);
+            this.panel6.Controls.Add(this.numericUpDownPag);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel6.Location = new System.Drawing.Point(323, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(269, 52);
+            this.panel6.TabIndex = 11;
+            // 
+            // labelPaginación
+            // 
+            this.labelPaginación.AutoSize = true;
+            this.labelPaginación.Location = new System.Drawing.Point(3, 5);
+            this.labelPaginación.Name = "labelPaginación";
+            this.labelPaginación.Size = new System.Drawing.Size(60, 13);
+            this.labelPaginación.TabIndex = 4;
+            this.labelPaginación.Text = "Paginación";
+            // 
+            // labelCant
+            // 
+            this.labelCant.AutoSize = true;
+            this.labelCant.Location = new System.Drawing.Point(140, 23);
+            this.labelCant.Name = "labelCant";
+            this.labelCant.Size = new System.Drawing.Size(49, 13);
+            this.labelCant.TabIndex = 3;
+            this.labelCant.Text = "Cantidad";
+            // 
+            // labelPag
+            // 
+            this.labelPag.AutoSize = true;
+            this.labelPag.Location = new System.Drawing.Point(13, 23);
+            this.labelPag.Name = "labelPag";
+            this.labelPag.Size = new System.Drawing.Size(40, 13);
+            this.labelPag.TabIndex = 2;
+            this.labelPag.Text = "Página";
+            // 
+            // numericUpDownCant
+            // 
+            this.numericUpDownCant.Location = new System.Drawing.Point(195, 21);
+            this.numericUpDownCant.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDownCant.Name = "numericUpDownCant";
+            this.numericUpDownCant.Size = new System.Drawing.Size(71, 20);
+            this.numericUpDownCant.TabIndex = 1;
+            this.numericUpDownCant.ValueChanged += new System.EventHandler(this.numericUpDownHasta_ValueChanged);
+            // 
+            // numericUpDownPag
+            // 
+            this.numericUpDownPag.Location = new System.Drawing.Point(59, 21);
+            this.numericUpDownPag.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDownPag.Name = "numericUpDownPag";
+            this.numericUpDownPag.Size = new System.Drawing.Size(75, 20);
+            this.numericUpDownPag.TabIndex = 0;
+            this.numericUpDownPag.ValueChanged += new System.EventHandler(this.numericUpDownDesde_ValueChanged);
+            // 
             // comboBoxAutorCom
             // 
             this.comboBoxAutorCom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -342,62 +408,6 @@
             this.eliminarToolStripMenuItem.Text = "Eliminar";
             this.eliminarToolStripMenuItem.Click += new System.EventHandler(this.eliminarToolStripMenuItem_Click);
             // 
-            // panel6
-            // 
-            this.panel6.Controls.Add(this.labelPaginación);
-            this.panel6.Controls.Add(this.labelCant);
-            this.panel6.Controls.Add(this.labelInicio);
-            this.panel6.Controls.Add(this.numericUpDownCant);
-            this.panel6.Controls.Add(this.numericUpDownInicio);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel6.Location = new System.Drawing.Point(323, 0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(269, 52);
-            this.panel6.TabIndex = 11;
-            // 
-            // numericUpDownInicio
-            // 
-            this.numericUpDownInicio.Location = new System.Drawing.Point(59, 21);
-            this.numericUpDownInicio.Name = "numericUpDownInicio";
-            this.numericUpDownInicio.Size = new System.Drawing.Size(75, 20);
-            this.numericUpDownInicio.TabIndex = 0;
-            this.numericUpDownInicio.ValueChanged += new System.EventHandler(this.numericUpDownDesde_ValueChanged);
-            // 
-            // numericUpDownCant
-            // 
-            this.numericUpDownCant.Location = new System.Drawing.Point(195, 21);
-            this.numericUpDownCant.Name = "numericUpDownCant";
-            this.numericUpDownCant.Size = new System.Drawing.Size(71, 20);
-            this.numericUpDownCant.TabIndex = 1;
-            this.numericUpDownCant.ValueChanged += new System.EventHandler(this.numericUpDownHasta_ValueChanged);
-            // 
-            // labelInicio
-            // 
-            this.labelInicio.AutoSize = true;
-            this.labelInicio.Location = new System.Drawing.Point(21, 23);
-            this.labelInicio.Name = "labelInicio";
-            this.labelInicio.Size = new System.Drawing.Size(32, 13);
-            this.labelInicio.TabIndex = 2;
-            this.labelInicio.Text = "Inicio";
-            // 
-            // labelCant
-            // 
-            this.labelCant.AutoSize = true;
-            this.labelCant.Location = new System.Drawing.Point(140, 23);
-            this.labelCant.Name = "labelCant";
-            this.labelCant.Size = new System.Drawing.Size(49, 13);
-            this.labelCant.TabIndex = 3;
-            this.labelCant.Text = "Cantidad";
-            // 
-            // labelPaginación
-            // 
-            this.labelPaginación.AutoSize = true;
-            this.labelPaginación.Location = new System.Drawing.Point(3, 5);
-            this.labelPaginación.Name = "labelPaginación";
-            this.labelPaginación.Size = new System.Drawing.Size(60, 13);
-            this.labelPaginación.TabIndex = 4;
-            this.labelPaginación.Text = "Paginación";
-            // 
             // VentanaDatos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -424,13 +434,13 @@
             this.panel4.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPag)).EndInit();
             this.groupBoxThreads.ResumeLayout(false);
             this.groupBoxThreads.PerformLayout();
             this.contextMenuStripNode.ResumeLayout(false);
-            this.panel6.ResumeLayout(false);
-            this.panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInicio)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCant)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -466,8 +476,8 @@
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label labelPaginación;
         private System.Windows.Forms.Label labelCant;
-        private System.Windows.Forms.Label labelInicio;
+        private System.Windows.Forms.Label labelPag;
         private System.Windows.Forms.NumericUpDown numericUpDownCant;
-        private System.Windows.Forms.NumericUpDown numericUpDownInicio;
+        private System.Windows.Forms.NumericUpDown numericUpDownPag;
     }
 }

@@ -130,7 +130,8 @@ namespace MongoTest2
                 {
                     Title = names[num] + names[num2],
                     Author = auth,
-                    Date = DateTime.Now
+                    Date = DateTime.Now,
+                    Tags = new string [0]
                 });
                 worker.ReportProgress((i*100)/n);
             }
