@@ -12,5 +12,6 @@ namespace MongoTest2.Modelo
         public Author Author { get; set; }
         public DateTime Date { get; set; }
         public long CommentCount { get; set; }
+        public string [] Tags { get; set; }
     }
 }

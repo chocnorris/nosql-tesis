@@ -43,6 +43,8 @@ namespace MongoTest2
             }
             if (comboBoxDB.SelectedItem.ToString() == "Cassandra")
             {
+                if (!testPort(comboBoxHost.Text, 9160))
+                    return;
                 CassandraOperaciones cassandra = new CassandraOperaciones("forum", comboBoxHost.Text);
                 cassandra.Initialize(false);
                 padre.SetDB(cassandra);
@@ -51,6 +53,8 @@ namespace MongoTest2
             }
             if (comboBoxDB.SelectedItem.ToString() == "MySQL")
             {
+                if (!testPort(comboBoxHost.Text, 3306))
+                    return;
                 MysqlOperaciones mysql = new MysqlOperaciones("forum", comboBoxHost.Text);
                 //mysql.Initialize(false);
                 padre.SetDB(mysql);
@@ -68,11 +72,13 @@ namespace MongoTest2
                 try
                 {
                     socket.Connect(host, port);
+                    socket.Close();
                 }
                 catch (SocketException ex)
                 {
                     if (ex.SocketErrorCode == SocketError.ConnectionRefused)
                     {
+                        MessageBox.Show("No se puede conectar", "Error");
                         return false;
                     }
                 }
