@@ -110,7 +110,7 @@ namespace MongoTest2
             {
                 int num = rand.Next(50);
                 int num2 = rand.Next(2000);
-                db.AddAuthor(new Author() { Name = names[num] + num2 });
+                db.AddAuthor(new Author() { Name = names[num] + num2, Photo = (Bitmap)Image.FromFile(@"..\..\Data\nophoto.jpg")});
                 //db.GetCollection("authors").Insert(new { name = names[num] + num2 });
                 worker.ReportProgress((i * 100) / n);
             }            

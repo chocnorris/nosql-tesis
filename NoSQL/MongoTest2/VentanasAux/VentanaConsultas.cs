@@ -6,14 +6,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MongoTest2.Modelo;
+using MongoTest2.Servicios;
 
 namespace MongoTest2
 {
     public partial class VentanaConsultas : Form
     {
-        public VentanaConsultas()
+        IOperaciones db;
+        public VentanaConsultas(IOperaciones db)
         {
+            this.db = db;
             InitializeComponent();
+            Author auth = db.GetAuthors(0, 1).First();
+            pictureBoxFoto.Image = auth.Photo;
         }
     }
 }

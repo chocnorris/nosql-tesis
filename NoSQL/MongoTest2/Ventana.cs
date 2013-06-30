@@ -94,7 +94,7 @@ namespace MongoTest2
 
         private void buttonConsultas_Click(object sender, EventArgs e)
         {
-            Form vc = new VentanaConsultas();
+            Form vc = new VentanaConsultas(db);
             vc.ShowDialog();
         }
     }

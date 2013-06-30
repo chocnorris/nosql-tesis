@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBoxAutores = new System.Windows.Forms.GroupBox();
+            this.buttonFoto = new System.Windows.Forms.Button();
             this.buttonAgregarAutor = new System.Windows.Forms.Button();
             this.textBoxNombreAutor = new System.Windows.Forms.TextBox();
             this.labelNombreAutor = new System.Windows.Forms.Label();
@@ -54,6 +55,7 @@
             this.labelThreadsTree = new System.Windows.Forms.Label();
             this.labelAutorCom = new System.Windows.Forms.Label();
             this.groupBoxThreads = new System.Windows.Forms.GroupBox();
+            this.buttonTags = new System.Windows.Forms.Button();
             this.buttonAgregarThread = new System.Windows.Forms.Button();
             this.textBoxNombreThread = new System.Windows.Forms.TextBox();
             this.labelNombreThread = new System.Windows.Forms.Label();
@@ -61,6 +63,7 @@
             this.labelAutorThread = new System.Windows.Forms.Label();
             this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialogFoto = new System.Windows.Forms.OpenFileDialog();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -81,6 +84,7 @@
             // 
             // groupBoxAutores
             // 
+            this.groupBoxAutores.Controls.Add(this.buttonFoto);
             this.groupBoxAutores.Controls.Add(this.buttonAgregarAutor);
             this.groupBoxAutores.Controls.Add(this.textBoxNombreAutor);
             this.groupBoxAutores.Controls.Add(this.labelNombreAutor);
@@ -91,6 +95,16 @@
             this.groupBoxAutores.TabIndex = 0;
             this.groupBoxAutores.TabStop = false;
             this.groupBoxAutores.Text = "Autores";
+            // 
+            // buttonFoto
+            // 
+            this.buttonFoto.Location = new System.Drawing.Point(510, 24);
+            this.buttonFoto.Name = "buttonFoto";
+            this.buttonFoto.Size = new System.Drawing.Size(75, 23);
+            this.buttonFoto.TabIndex = 3;
+            this.buttonFoto.Text = "Foto";
+            this.buttonFoto.UseVisualStyleBackColor = true;
+            this.buttonFoto.Click += new System.EventHandler(this.buttonFoto_Click);
             // 
             // buttonAgregarAutor
             // 
@@ -250,9 +264,9 @@
             this.panel6.Controls.Add(this.numericUpDownCant);
             this.panel6.Controls.Add(this.numericUpDownPag);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel6.Location = new System.Drawing.Point(323, 0);
+            this.panel6.Location = new System.Drawing.Point(345, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(269, 52);
+            this.panel6.Size = new System.Drawing.Size(247, 52);
             this.panel6.TabIndex = 11;
             // 
             // labelPaginación
@@ -267,7 +281,7 @@
             // labelCant
             // 
             this.labelCant.AutoSize = true;
-            this.labelCant.Location = new System.Drawing.Point(140, 23);
+            this.labelCant.Location = new System.Drawing.Point(141, 23);
             this.labelCant.Name = "labelCant";
             this.labelCant.Size = new System.Drawing.Size(49, 13);
             this.labelCant.TabIndex = 3;
@@ -276,7 +290,7 @@
             // labelPag
             // 
             this.labelPag.AutoSize = true;
-            this.labelPag.Location = new System.Drawing.Point(13, 23);
+            this.labelPag.Location = new System.Drawing.Point(14, 23);
             this.labelPag.Name = "labelPag";
             this.labelPag.Size = new System.Drawing.Size(40, 13);
             this.labelPag.TabIndex = 2;
@@ -284,28 +298,43 @@
             // 
             // numericUpDownCant
             // 
-            this.numericUpDownCant.Location = new System.Drawing.Point(195, 21);
+            this.numericUpDownCant.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownCant.Location = new System.Drawing.Point(196, 21);
             this.numericUpDownCant.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.numericUpDownCant.Name = "numericUpDownCant";
-            this.numericUpDownCant.Size = new System.Drawing.Size(71, 20);
+            this.numericUpDownCant.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownCant.TabIndex = 1;
             this.numericUpDownCant.ValueChanged += new System.EventHandler(this.numericUpDownHasta_ValueChanged);
             // 
             // numericUpDownPag
             // 
-            this.numericUpDownPag.Location = new System.Drawing.Point(59, 21);
+            this.numericUpDownPag.Location = new System.Drawing.Point(60, 21);
             this.numericUpDownPag.Maximum = new decimal(new int[] {
             1000,
+            0,
+            0,
+            0});
+            this.numericUpDownPag.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
             this.numericUpDownPag.Name = "numericUpDownPag";
             this.numericUpDownPag.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownPag.TabIndex = 0;
+            this.numericUpDownPag.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDownPag.ValueChanged += new System.EventHandler(this.numericUpDownDesde_ValueChanged);
             // 
             // comboBoxAutorCom
@@ -337,6 +366,7 @@
             // 
             // groupBoxThreads
             // 
+            this.groupBoxThreads.Controls.Add(this.buttonTags);
             this.groupBoxThreads.Controls.Add(this.buttonAgregarThread);
             this.groupBoxThreads.Controls.Add(this.textBoxNombreThread);
             this.groupBoxThreads.Controls.Add(this.labelNombreThread);
@@ -350,9 +380,19 @@
             this.groupBoxThreads.TabStop = false;
             this.groupBoxThreads.Text = "Threads";
             // 
+            // buttonTags
+            // 
+            this.buttonTags.Location = new System.Drawing.Point(229, 28);
+            this.buttonTags.Name = "buttonTags";
+            this.buttonTags.Size = new System.Drawing.Size(75, 23);
+            this.buttonTags.TabIndex = 5;
+            this.buttonTags.Text = "Tags";
+            this.buttonTags.UseVisualStyleBackColor = true;
+            this.buttonTags.Click += new System.EventHandler(this.buttonTags_Click);
+            // 
             // buttonAgregarThread
             // 
-            this.buttonAgregarThread.Location = new System.Drawing.Point(338, 61);
+            this.buttonAgregarThread.Location = new System.Drawing.Point(296, 60);
             this.buttonAgregarThread.Name = "buttonAgregarThread";
             this.buttonAgregarThread.Size = new System.Drawing.Size(75, 23);
             this.buttonAgregarThread.TabIndex = 4;
@@ -364,7 +404,7 @@
             // 
             this.textBoxNombreThread.Location = new System.Drawing.Point(57, 63);
             this.textBoxNombreThread.Name = "textBoxNombreThread";
-            this.textBoxNombreThread.Size = new System.Drawing.Size(275, 20);
+            this.textBoxNombreThread.Size = new System.Drawing.Size(233, 20);
             this.textBoxNombreThread.TabIndex = 3;
             // 
             // labelNombreThread
@@ -407,6 +447,12 @@
             this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.eliminarToolStripMenuItem.Text = "Eliminar";
             this.eliminarToolStripMenuItem.Click += new System.EventHandler(this.eliminarToolStripMenuItem_Click);
+            // 
+            // openFileDialogFoto
+            // 
+            this.openFileDialogFoto.Filter = "Imagen|*.jpg";
+            this.openFileDialogFoto.Title = "Elegir imagen";
+            this.openFileDialogFoto.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialogFoto_FileOk);
             // 
             // VentanaDatos
             // 
@@ -479,5 +525,8 @@
         private System.Windows.Forms.Label labelPag;
         private System.Windows.Forms.NumericUpDown numericUpDownCant;
         private System.Windows.Forms.NumericUpDown numericUpDownPag;
+        private System.Windows.Forms.Button buttonTags;
+        private System.Windows.Forms.Button buttonFoto;
+        private System.Windows.Forms.OpenFileDialog openFileDialogFoto;
     }
 }

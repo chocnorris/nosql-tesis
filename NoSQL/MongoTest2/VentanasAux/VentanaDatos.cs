@@ -15,6 +15,8 @@ namespace MongoTest2
     {
         IOperaciones db;
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
+        string[] tags = new string [0];
+        Image foto = Image.FromFile(@"..\..\Data\nophoto.jpg");
 
         public VentanaDatos(IOperaciones db)
         {
@@ -89,7 +91,7 @@ namespace MongoTest2
             {
                 try
                 {
-                    db.AddAuthor(new Author() { Name = textBoxNombreAutor.Text });
+                    db.AddAuthor(new Author() { Name = textBoxNombreAutor.Text, Photo = (Bitmap)foto });
                     textBoxNombreAutor.Text = "";
                     cargarAutores();
                 }
@@ -106,7 +108,6 @@ namespace MongoTest2
             {
                 try
                 {
-                    string[] tags = { "Hola", "Chau" };
                     db.AddThread(new Thread()
                     {
                         Title = textBoxNombreThread.Text,
@@ -231,6 +232,27 @@ namespace MongoTest2
         private void numericUpDownHasta_ValueChanged(object sender, EventArgs e)
         {
             cargarThreads();
+        }
+
+        private void buttonTags_Click(object sender, EventArgs e)
+        {
+            Form vt = new VentanaTags(this, tags);
+            vt.ShowDialog();
+        }
+
+        public void SetTags(string[] tags)
+        {
+            this.tags = tags;
+        }
+
+        private void buttonFoto_Click(object sender, EventArgs e)
+        {
+            openFileDialogFoto.ShowDialog();
+        }
+
+        private void openFileDialogFoto_FileOk(object sender, CancelEventArgs e)
+        {
+            foto = Image.FromFile(openFileDialogFoto.FileName);
         }
 
     }
