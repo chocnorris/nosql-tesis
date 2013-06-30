@@ -16,7 +16,7 @@ namespace MongoTest2
 
         public MysqlOperaciones(string dbname, string host)
         {
-            string connStr = "server="+host+";user=root;database="+dbname+";password=2010;";
+            string connStr = "server="+host+";user=forum;database="+dbname+";password=2010;";
             conn = new MySqlConnection(connStr);
             conn.Open();
         }
@@ -127,12 +127,12 @@ namespace MongoTest2
 
         public string ConnectionState()
         {
-            throw new NotImplementedException();
+            return conn.State.ToString();
         }
 
         public string Identidad()
         {
-            throw new NotImplementedException();
+            return "MySQL";
         }
     }
 }
