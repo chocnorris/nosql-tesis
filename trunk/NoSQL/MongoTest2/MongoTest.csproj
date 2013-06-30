@@ -91,6 +91,12 @@
     <Compile Include="Ventana.Designer.cs">
       <DependentUpon>Ventana.cs</DependentUpon>
     </Compile>
+    <Compile Include="VentanasAux\VentanaTags.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VentanasAux\VentanaTags.Designer.cs">
+      <DependentUpon>VentanaTags.cs</DependentUpon>
+    </Compile>
     <Compile Include="VentanasAux\VentanaConexion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -131,6 +137,9 @@
     <EmbeddedResource Include="Ventana.resx">
       <DependentUpon>Ventana.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="VentanasAux\VentanaTags.resx">
+      <DependentUpon>VentanaTags.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="VentanasAux\VentanaConexion.resx">
       <DependentUpon>VentanaConexion.cs</DependentUpon>
     </EmbeddedResource>
@@ -157,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\1mb.txt" />
+    <Content Include="Data\nophoto.jpg" />
     <Content Include="Data\script.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
