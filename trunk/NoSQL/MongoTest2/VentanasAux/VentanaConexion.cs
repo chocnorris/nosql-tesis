@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MongoTest2.Paneles;
+using System.Net.Sockets;
 
 namespace MongoTest2
 {
@@ -33,6 +34,8 @@ namespace MongoTest2
         {
             if (comboBoxDB.SelectedItem.ToString() == "Mongo")
             {
+                if (!testPort(comboBoxHost.Text, 27017))
+                    return;
                 MongoOperaciones md = new MongoOperaciones("forum", comboBoxHost.Text);
                 InfoMongo panel = new InfoMongo(md);
                 padre.SetDB(md);
@@ -56,6 +59,25 @@ namespace MongoTest2
             }
             padre.AfterConnection();
             this.Close();
+        }
+
+        private bool testPort(string host, int port)
+        {
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                try
+                {
+                    socket.Connect(host, port);
+                }
+                catch (SocketException ex)
+                {
+                    if (ex.SocketErrorCode == SocketError.ConnectionRefused)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }
