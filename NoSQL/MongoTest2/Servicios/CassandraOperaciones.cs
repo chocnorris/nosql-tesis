@@ -7,6 +7,7 @@ using MongoTest2.Modelo;
 using FluentCassandra;
 using System.Reflection;
 using FluentCassandra.Types;
+using System.Drawing;
 
 namespace MongoTest2
 {
@@ -35,6 +36,7 @@ namespace MongoTest2
             var Authors =
                 from u in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()                
                 select u;
+
             return Authors.ToList();
         }
 
@@ -239,11 +241,15 @@ namespace MongoTest2
         }
 
         public Author AddAuthor(Author autor)
-        {            
-            Guid id = Guid.NewGuid();                       
+        {                        
+            ImageConverter converter = new ImageConverter();
+            byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));        
+
+            Guid id = Guid.NewGuid();                                               
             string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
                 id,
-                asCassandraString(autor.Name));
+                asCassandraString(autor.Name),
+                asCassandraString(BitConverter.ToString(bytes).Replace("-","")));           
             db.ExecuteNonQuery(addStmt);
             autor.Id = id;            
             return autor;
@@ -264,6 +270,13 @@ namespace MongoTest2
                 );
             db.ExecuteNonQuery(addStmt);
             thread.Id = id;
+
+            string tagsQuery = @"UPDATE ""Threads"" SET tags = tags +";
+            foreach (string tag in thread.Tags)
+            {
+                tagsQuery = tag + "{'" + tag + "'}";
+            }
+            db.ExecuteNonQuery(tagsQuery);
             return thread;
         }
 
@@ -384,9 +397,13 @@ namespace MongoTest2
             var statements = getCassandraCreateStatementsBasedOnModel("MongoTest2.Modelo");
             foreach (string statement in statements)
                 db.ExecuteNonQuery(statement);
+            
+            // Coleccion de tags
+            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear index
             db.ExecuteNonQuery(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
+
         }
 
         /// <summary>
@@ -432,6 +449,8 @@ namespace MongoTest2
         /// <returns>un tipo cassandra</returns>
         protected string typeMapping(Type type)
         {
+            if (type == typeof(Bitmap))
+                return "blob";
             if (type == typeof(char) || type == typeof(string))
                 return "text";            
             if (type == typeof(Int64) || type==typeof(long))
