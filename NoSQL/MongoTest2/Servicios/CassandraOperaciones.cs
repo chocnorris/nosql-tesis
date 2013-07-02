@@ -32,12 +32,35 @@ namespace MongoTest2
         #region Implementaciones de interfaz
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
-        {                
-            var Authors =
-                from u in db.GetColumnFamily("Authors").AsObjectQueryable<Author>()                
-                select u;
-
-            return Authors.ToList();
+        {                            
+            try
+            {
+                var authorRows = db.ExecuteQuery(@"SELECT * FROM ""Authors""").ToList();
+                var authors = new List<Author>();
+                foreach (FluentCqlRow row in authorRows)
+                {
+                    var author = new Author();
+                    foreach (FluentColumn column in row)
+                    {
+                        var propertyValueInfo = author.GetType().GetProperty(column.ColumnName.GetValue<string>());
+                        if (column.ColumnName == "Photo")                        
+                            author.Photo = ConvertToBitmap((byte[])column.ColumnValue.GetValue());                        
+                        else
+                        {
+                            if (column.ColumnValue != null)
+                            {
+                                    propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
+                            }
+                        }
+                    }
+                    authors.Add(author);
+                }
+                return authors.ToList().Skip(skip).ToList();
+            }
+            catch (Exception e)
+            {
+                return new List<Author>();
+            }            
         }
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
@@ -366,11 +389,23 @@ namespace MongoTest2
         #region Helpers
 
         /// <summary>
+        /// Obtener un bitmap en base a un array de bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        protected Bitmap ConvertToBitmap(byte[] bytes)
+        {
+            ImageConverter ic = new ImageConverter();
+            Image img = (Image)ic.ConvertFrom(bytes);
+            return new Bitmap(img);
+        }        
+
+        /// <summary>
         /// Convertir String hexadecimal a byte
         /// </summary>
         /// <param name="hex"></param>
         /// <returns></returns>
-        public static byte[] StringToByteArray(String hex)
+        protected static byte[] StringToByteArray(String hex)
         {
             int NumberChars = hex.Length;
             byte[] bytes = new byte[NumberChars / 2];
