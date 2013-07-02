@@ -208,7 +208,15 @@ namespace MongoTest2
                 foreach (FluentColumn column in result.First().Columns)
                 {
                     var propertyValueInfo = author.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                    propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
+                    if (column.ColumnName == "Photo")
+                        author.Photo = ConvertToBitmap((byte[])column.ColumnValue.GetValue());
+                    else
+                    {
+                        if (column.ColumnValue != null)
+                        {
+                            propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
+                        }
+                    }
                 }
             }
             return author;                                
