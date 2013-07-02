@@ -40,6 +40,8 @@ namespace MongoTest2
 
             MongoCollection<Author> col = db.GetCollection<Author>("authors");
             MongoCursor<Author> autores = col.FindAll();
+            //OJO! optimización, no trae la foto cuando pedís muchos autores
+            autores.SetFields("_id", "Name");
             if (skip != 0)
                 autores = autores.SetSkip(skip);
             if (take != 0)
@@ -112,7 +114,8 @@ namespace MongoTest2
         
         public Author GetAuthor(object id)
         {
-            return db.GetCollection<Author>("author").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            Author author = db.GetCollection<Author>("authors").FindOne(Query.EQ("_id", new ObjectId(id.ToString())));
+            return author;
         }
 
         public Thread GetThread(object id)
@@ -275,12 +278,43 @@ namespace MongoTest2
         //TODO: Ver cómo parametrizar (o no) el sharding de la db
         private bool ShardDB()
         {
+            if (server.Instance.InstanceType != MongoServerInstanceType.ShardRouter)
+                return true;
+            MongoDatabase db = server.GetDatabase("admin");
+
             /** Código a ejecutar por consola
             sh.enableSharding("forum")
             sh.shardCollection("forum.comments",{"thread_id":1, "_id":1})
             sh.shardCollection("forum.threads",{"_id":1})
             sh.shardCollection("forum.authors",{"_id":1})
             */
+
+            CommandDocument comandoShard = new CommandDocument();
+            comandoShard.Add("enableSharding", "forum");
+            CommandResult res = db.RunCommand(comandoShard);
+
+            comandoShard = new CommandDocument();
+            comandoShard.Add("shardCollection", "forum.comments");
+            BsonDocument doc = new BsonDocument();
+            doc.Add("thread_id", 1);
+            doc.Add("_id", 1);
+            comandoShard.Add("key", doc);
+            res = db.RunCommand(comandoShard);
+
+            comandoShard = new CommandDocument();
+            comandoShard.Add("shardCollection", "forum.threads");
+            doc = new BsonDocument();
+            doc.Add("_id", 1);
+            comandoShard.Add("key", doc);
+            res = db.RunCommand(comandoShard);
+
+            comandoShard = new CommandDocument();
+            comandoShard.Add("shardCollection", "forum.authors");
+            doc = new BsonDocument();
+            doc.Add("_id", 1);
+            comandoShard.Add("key", doc);
+            res = db.RunCommand(comandoShard);
+
             return true;
         }
 
