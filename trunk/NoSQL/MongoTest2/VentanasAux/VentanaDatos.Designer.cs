@@ -98,7 +98,7 @@
             // 
             // buttonFoto
             // 
-            this.buttonFoto.Location = new System.Drawing.Point(510, 24);
+            this.buttonFoto.Location = new System.Drawing.Point(215, 19);
             this.buttonFoto.Name = "buttonFoto";
             this.buttonFoto.Size = new System.Drawing.Size(75, 23);
             this.buttonFoto.TabIndex = 3;
@@ -108,7 +108,7 @@
             // 
             // buttonAgregarAutor
             // 
-            this.buttonAgregarAutor.Location = new System.Drawing.Point(215, 19);
+            this.buttonAgregarAutor.Location = new System.Drawing.Point(296, 19);
             this.buttonAgregarAutor.Name = "buttonAgregarAutor";
             this.buttonAgregarAutor.Size = new System.Drawing.Size(75, 23);
             this.buttonAgregarAutor.TabIndex = 2;
@@ -382,7 +382,7 @@
             // 
             // buttonTags
             // 
-            this.buttonTags.Location = new System.Drawing.Point(229, 28);
+            this.buttonTags.Location = new System.Drawing.Point(215, 28);
             this.buttonTags.Name = "buttonTags";
             this.buttonTags.Size = new System.Drawing.Size(75, 23);
             this.buttonTags.TabIndex = 5;

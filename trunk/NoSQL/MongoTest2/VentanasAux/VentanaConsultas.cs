@@ -19,6 +19,7 @@ namespace MongoTest2
             this.db = db;
             InitializeComponent();
             Author auth = db.GetAuthors(0, 1).First();
+            auth = db.GetAuthor(auth.Id);
             pictureBoxFoto.Image = auth.Photo;
         }
     }
