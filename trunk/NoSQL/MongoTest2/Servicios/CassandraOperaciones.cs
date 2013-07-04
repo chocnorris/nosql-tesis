@@ -49,6 +49,11 @@ namespace MongoTest2
                         {
                             if (column.ColumnValue != null)
                             {
+                                if (column.ColumnName == "Id")
+                                {
+                                    author.Id = column.ColumnValue;
+                                }
+                                else
                                     propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
                             }
                         }
@@ -288,25 +293,31 @@ namespace MongoTest2
         public Thread AddThread(Thread thread)
         {           
 
-            Guid id = Guid.NewGuid();            
+            Guid id = Guid.NewGuid();        
             UUIDType uuid = (UUIDType)thread.Author.Id;
             string AuthorId = uuid.GetValue().ToString();
+            string tags = "";
+            thread.Tags = new string[3];
+            thread.Tags[0] = "asd";
+            thread.Tags[1] = "asddd";
+            thread.Tags[2] = "asfass";
+
+            foreach (string tag in thread.Tags)
+            {
+                tags = tags+ "'" + tag + "',";
+            }
+            tags = tags.Remove(tags.Length-1);
+            tags = "{" + tags + "}";
             string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
                 AuthorId,
                 thread.CommentCount,
                 getDateInMilliseconds(),
                 id,
+                tags,
                 asCassandraString(thread.Title)
                 );
             db.ExecuteNonQuery(addStmt);
-            thread.Id = id;
-
-            string tagsQuery = @"UPDATE ""Threads"" SET tags = tags +";
-            foreach (string tag in thread.Tags)
-            {
-                tagsQuery = tag + "{'" + tag + "'}";
-            }
-            db.ExecuteNonQuery(tagsQuery);
+            thread.Id = id;            
             return thread;
         }
 
