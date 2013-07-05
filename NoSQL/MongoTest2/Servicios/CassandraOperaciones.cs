@@ -143,8 +143,10 @@ namespace MongoTest2
         }                     
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
-        {
-            var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();            
+        {        
+        var threadRows = db.ExecuteQuery(@"SELECT ""Id"",""Title"",""Author"",""Date"",""CommentCount"" FROM ""Threads""").ToList();
+        // TODO: no se logran mapear el SET de tag, la consulta de abajo falla
+        // var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();                       
             var threads = new List<Thread>();
             foreach (FluentCqlRow row in threadRows)
             {
@@ -465,7 +467,7 @@ namespace MongoTest2
                 db.ExecuteNonQuery(statement);
             
             // Coleccion de tags
-            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
+//            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear index
             db.ExecuteNonQuery(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
@@ -531,6 +533,8 @@ namespace MongoTest2
                 return "boolean";
             if (type == typeof(DateTime))
                 return "timestamp";
+            if (type == typeof(string[]))
+                return "set<text>";
             if (type == typeof(object) || !(type == typeof(ValueType)))
                 return "uuid";
 
@@ -588,9 +592,10 @@ namespace MongoTest2
         {
             try
             {
-                if (db.KeyspaceExists(KeyspaceName) && dropExistent)
+                if ( (db.KeyspaceExists(KeyspaceName) && dropExistent) || !db.KeyspaceExists(KeyspaceName))
                 {
-                    db.DropKeyspace(KeyspaceName);
+                    if (db.KeyspaceExists(KeyspaceName))
+                        db.DropKeyspace(KeyspaceName);
                     createKeyspace();
                     createColumnFamilies();
                 }
