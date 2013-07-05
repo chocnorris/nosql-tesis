@@ -4,60 +4,43 @@ using System.Linq;
 using System.Text;
 using MongoTest2.Servicios;
 using MongoTest2.Modelo;
-using FluentCassandra;
 using System.Reflection;
-using FluentCassandra.Types;
 using System.Drawing;
+using Cassandra;
+using Cassandra.Data;
 
 namespace MongoTest2
 {
     public class CassandraOperaciones : IOperaciones
     {
 
-        protected CassandraContext db;        
-        protected CassandraKeyspace Keyspace;
-        protected string KeyspaceName;
+        protected Cluster cluster;
+        protected Session session;
+        protected string keySpaceName;
 
-        /// <summary>
-        /// Crear una instancia de base de datos para Cassandra
-        /// </summary>
-        /// <param name="dbname">Base de datos/ keyspace</param>
-        /// <param name="host">Host</param>
         public CassandraOperaciones(string dbname, string host)
         {
-            KeyspaceName = dbname;
-            db = new CassandraContext(dbname, host);            
+            cluster = Cluster.Builder().AddContactPoint(host).Build();
+            session = cluster.Connect(dbname);
+            keySpaceName = dbname;
         }
-
         #region Implementaciones de interfaz
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
-        {                            
+        {
             try
             {
-                var authorRows = db.ExecuteQuery(@"SELECT * FROM ""Authors""").ToList();
+                var authorRows = session.Execute(@"SELECT * FROM ""Authors"""); ;
                 var authors = new List<Author>();
-                foreach (FluentCqlRow row in authorRows)
+                foreach (Row row in authorRows.GetRows())
                 {
-                    var author = new Author();
-                    foreach (FluentColumn column in row)
+                    var author = new Author()
                     {
-                        var propertyValueInfo = author.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                        if (column.ColumnName == "Photo")                        
-                            author.Photo = ConvertToBitmap((byte[])column.ColumnValue.GetValue());                        
-                        else
-                        {
-                            if (column.ColumnValue != null)
-                            {
-                                if (column.ColumnName == "Id")
-                                {
-                                    author.Id = column.ColumnValue;
-                                }
-                                else
-                                    propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
-                            }
-                        }
-                    }
+                        Id = row.GetValue<Guid>(0),
+                        Name = row.GetValue<string>("Name"),
+                        Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"))
+
+                    };
                     authors.Add(author);
                 }
                 return authors.ToList().Skip(skip).ToList();
@@ -65,36 +48,27 @@ namespace MongoTest2
             catch (Exception e)
             {
                 return new List<Author>();
-            }            
+            }
         }
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
             try
             {
-                var commentRows = db.ExecuteQuery(@"SELECT * FROM ""Comments""").ToList();
+                var commentRows = session.Execute(@"SELECT * FROM ""Comments""");
                 var comments = new List<Comment>();
-                foreach (FluentCqlRow row in commentRows)
+                foreach (Row row in commentRows.GetRows())
                 {
-                    var comment = new Comment();
-                    foreach (FluentColumn column in row)
+                    var comment = new Comment()
                     {
-                        var propertyValueInfo = comment.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                        if (column.ColumnName == "Author")
-                        {
-                            comment.Author = this.GetAuthor(column.ColumnValue.GetValue());
-                        }
-                        else
-                        {
-                            if (column.ColumnValue != null)
-                            {
-                                if (column.ColumnValue.GetType() == typeof(DateType))
-                                    comment.Date = column.ColumnValue;
-                                else
-                                    propertyValueInfo.SetValue(comment, column.ColumnValue.GetValue(), null);
-                            }
-                        }
-                    }
+                        Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                        CommentCount = 0,
+                        Date = row.GetValue<DateTime>("Date"),
+                        Id = row.GetValue<Guid>(0),
+                        Parent_id = row.GetValue<Guid>("Parent_id"),
+                        Thread_id = row.GetValue<Guid>("Thread_id"),
+                        Text = row.GetValue<string>("Text"),
+                    };    
                     comments.Add(comment);
                 }
                 return comments.ToList().Skip(skip).ToList();
@@ -102,36 +76,28 @@ namespace MongoTest2
             catch (Exception e)
             {
                 return new List<Comment>();
-            }            
+            }
         }
 
         public List<Comment> GetChildComments(object Parent_id)
         {
             try
             {
-                var commentRows = db.ExecuteQuery(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id).ToList();
+                var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id);
                 var comments = new List<Comment>();
-                foreach (FluentCqlRow row in commentRows)
+
+                foreach (Row row in commentRows.GetRows())
                 {
-                    var comment = new Comment();
-                    foreach (FluentColumn column in row)
+                    var comment = new Comment()
                     {
-                        var propertyValueInfo = comment.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                        if (column.ColumnName == "Author")
-                        {
-                            comment.Author = this.GetAuthor(column.ColumnValue.GetValue());
-                        }
-                        else
-                        {
-                            if (column.ColumnValue != null)
-                            {
-                                if (column.ColumnValue.GetType() == typeof(DateType))
-                                    comment.Date = column.ColumnValue;
-                                else
-                                    propertyValueInfo.SetValue(comment, column.ColumnValue.GetValue(), null);
-                            }
-                        }
-                    }
+                        Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                        CommentCount = 0,
+                        Date = row.GetValue<DateTime>("Date"),
+                        Id = row.GetValue<Guid>(0),
+                        Parent_id = row.GetValue<Guid>("Parent_id"),
+                        Thread_id = row.GetValue<Guid>("Thread_id"),
+                        Text = row.GetValue<string>("Text")
+                    };
                     comments.Add(comment);
                 }
                 return comments.ToList();
@@ -139,36 +105,26 @@ namespace MongoTest2
             catch (Exception e)
             {
                 return new List<Comment>();
-            }            
-        }                     
+            }
+        }
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
-        {        
-        var threadRows = db.ExecuteQuery(@"SELECT ""Id"",""Title"",""Author"",""Date"",""CommentCount"" FROM ""Threads""").ToList();
-        // TODO: no se logran mapear el SET de tag, la consulta de abajo falla
-        // var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();                       
+        {
+            var threadRows = session.Execute(@"SELECT * FROM ""Threads""");
+            // TODO: no se logran mapear el SET de tag, la consulta de abajo falla
+            // var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();                       
             var threads = new List<Thread>();
-            foreach (FluentCqlRow row in threadRows)
+            foreach (Row row in threadRows.GetRows())
             {
-                var thread = new Thread();
-                foreach (FluentColumn column in row)
+                var thread = new Thread()
                 {
-                    var propertyValueInfo = thread.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                    if (column.ColumnName == "Author")
-                    {
-                        thread.Author = this.GetAuthor(column.ColumnValue.GetValue());                       
-                    }
-                    else
-                    {                        
-                        if (column.ColumnValue != null)
-                        {
-                            if (column.ColumnValue.GetType() == typeof(DateType))
-                                thread.Date = column.ColumnValue;
-                            else
-                                propertyValueInfo.SetValue(thread, column.ColumnValue.GetValue(), null);
-                        }
-                    }
-                }
+                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                    CommentCount = 0,
+                    Date = row.GetValue<DateTime>("Date"),
+                    Id = row.GetValue<Guid>(0),
+                    Title = row.GetValue<string>("Title"),
+                    Tags = row.GetValue<List<string>>("Tags").ToArray()
+                };
                 threads.Add(thread);
             }
             return threads.Skip(skip).ToList();
@@ -178,26 +134,17 @@ namespace MongoTest2
         {
             try
             {
-                var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads"" WHERE ""Id""=" + id);
-                var thread = new Thread();
-                foreach (FluentColumn column in threadRows.First().Columns)
+                var threadRows = session.Execute(@"SELECT * FROM ""Threads"" WHERE ""Id""=" + id).GetRows();
+                Row row = threadRows.First();
+                var thread = new Thread()
                 {
-                    var propertyValueInfo = thread.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                    if (column.ColumnName == "Author")
-                    {
-                        thread.Author = this.GetAuthor(column.ColumnValue.GetValue());
-                    }
-                    else
-                    {
-                        if (column.ColumnValue != null)
-                        {                            
-                            if (column.ColumnValue.GetType() == typeof(DateType))
-                                thread.Date = column.ColumnValue;
-                            else                             
-                                propertyValueInfo.SetValue(thread, column.ColumnValue.GetValue(), null);
-                        }
-                    }
-                }
+                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                    CommentCount = 0,
+                    Date = row.GetValue<DateTime>("Date"),
+                    Id = row.GetValue<Guid>(0),
+                    Title = row.GetValue<string>("Title"),
+                    Tags = row.GetValue<List<string>>("Tags").ToArray()
+                };
                 return thread;
             }
             catch (Exception e)
@@ -208,96 +155,80 @@ namespace MongoTest2
 
         public Author GetAuthor(object id)
         {
-            var result = db.ExecuteQuery(@"SELECT * FROM ""Authors"" WHERE ""Id""=" + id);
+            var result = session.Execute(@"SELECT * FROM ""Authors"" WHERE ""Id""="+id).GetRows();
             var author = new Author();
-            if (result.Count()>0)
-            {                
-                foreach (FluentColumn column in result.First().Columns)
-                {
-                    var propertyValueInfo = author.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                    if (column.ColumnName == "Photo")
-                        author.Photo = ConvertToBitmap((byte[])column.ColumnValue.GetValue());
-                    else
-                    {
-                        if (column.ColumnValue != null)
-                        {
-                            propertyValueInfo.SetValue(author, column.ColumnValue.GetValue(), null);
-                        }
-                    }
-                }
-            }
-            return author;                                
+            Row row = result.First();
+            row.GetValue<Guid>(0);
+            row.GetValue<string>("Name");
+            ConvertToBitmap(row.GetValue<byte[]>("Photo"));
+            author = new Author()
+            {
+                Id = row.GetValue<Guid>(0),
+                Name = row.GetValue<string>("Name"),
+                Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"))
+
+            };
+            return author;
         }
 
         public Comment GetComment(object id)
         {
-            var commentRows = db.ExecuteQuery(@"SELECT * FROM ""Comments"" WHERE ""Id""=" + id);
-            var comment = new Comment();
-            foreach (FluentColumn column in commentRows.First().Columns)
-            {
-                var propertyValueInfo = comment.GetType().GetProperty(column.ColumnName.GetValue<string>());
-                if (column.ColumnName == "Author")
+            var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Id""=" + id).GetRows();
+            Row row = commentRows.First();
+            var comment = new Comment()
                 {
-                    comment.Author = this.GetAuthor(column.ColumnValue.GetValue());
-                }
-                else
-                {
-                    if (column.ColumnValue != null)
-                    {
-                        if (column.ColumnValue.GetType() == typeof(DateType))
-                            comment.Date = column.ColumnValue;
-                        else
-                            propertyValueInfo.SetValue(comment, column.ColumnValue.GetValue(), null);
-                    }
-                }
-            }
+                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                    CommentCount = 0,
+                    Date = row.GetValue<DateTime>("Date"),
+                    Id = row.GetValue<Guid>(0),
+                    Parent_id = row.GetValue<Guid>("Parent_id"),
+                    Thread_id = row.GetValue<Guid>("Thread_id"),
+                    Text = row.GetValue<string>("Text")
+                };
             return comment;
         }
-       
+
         public Comment AddComment(Comment comentario)
-        {                        
+        {
             // Generar nuevo Id
             Guid id = Guid.NewGuid();
 
             // Resolver Author Id            
-            UUIDType Autoruuid = (UUIDType)comentario.Author.Id;
-            string AuthorId = Autoruuid.GetValue().ToString();
-             
-            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),                
+            string AuthorId = comentario.Author.Id.ToString();
+
+            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
                 AuthorId,
                 0,
-                getDateInMilliseconds(),                
+                getDateInMilliseconds(),
                 id,
                 comentario.Parent_id,
                 asCassandraString(comentario.Text),
                 comentario.Thread_id
                 );
-            db.ExecuteNonQuery(addStmt);
+            session.Execute(addStmt);
             //TODO: Actualizar el contador de comentarios del padre!!
             comentario.Id = id;
-            return comentario;            
+            return comentario;
         }
 
         public Author AddAuthor(Author autor)
-        {                        
+        {
             ImageConverter converter = new ImageConverter();
-            byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));                        
-            Guid id = Guid.NewGuid();                                               
+            byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
+            Guid id = Guid.NewGuid();
             string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
                 id,
                 asCassandraString(autor.Name),
-                asCassandraString(BitConverter.ToString(bytes).Replace("-","")));           
-            db.ExecuteNonQuery(addStmt);
-            autor.Id = id;            
+                asCassandraString(BitConverter.ToString(bytes).Replace("-", "")));
+            session.Execute(addStmt);
+            autor.Id = id;
             return autor;
         }
 
         public Thread AddThread(Thread thread)
-        {           
-
-            Guid id = Guid.NewGuid();        
-            UUIDType uuid = (UUIDType)thread.Author.Id;
-            string AuthorId = uuid.GetValue().ToString();
+        {
+            Guid id = Guid.NewGuid();
+            string AuthorId = thread.Author.Id.ToString();
             string tags = "";
             thread.Tags = new string[3];
             thread.Tags[0] = "asd";
@@ -306,9 +237,9 @@ namespace MongoTest2
 
             foreach (string tag in thread.Tags)
             {
-                tags = tags+ "'" + tag + "',";
+                tags = tags + "'" + tag + "',";
             }
-            tags = tags.Remove(tags.Length-1);
+            tags = tags.Remove(tags.Length - 1);
             tags = "{" + tags + "}";
             string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
                 AuthorId,
@@ -318,40 +249,40 @@ namespace MongoTest2
                 tags,
                 asCassandraString(thread.Title)
                 );
-            db.ExecuteNonQuery(addStmt);
-            thread.Id = id;            
+            session.Execute(addStmt);
+            thread.Id = id;
             return thread;
         }
 
         public long GetAuthorsCount()
         {
-            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Authors""");
-            var cant = resu.First().Columns.First().ColumnValue;
-            return cant;
+            var resu = session.Execute(@"SELECT Count(*) FROM ""Authors""").GetRows();
+            long num = resu.First().GetValue<long>(0);
+            return num;
         }
 
         public long GetThreadsCount()
         {
-            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Threads""");
-            var cant = resu.First().Columns.First().ColumnValue;
-            return cant;
+            var resu = session.Execute(@"SELECT Count(*) FROM ""Authors""").GetRows();
+            long num = resu.First().GetValue<long>(0);
+            return num;
         }
 
         public long GetCommentsCount()
         {
-            var resu = db.ExecuteQuery(@"SELECT Count(*) FROM ""Comments""");
-            var cant = resu.First().Columns.First().ColumnValue;
-            return cant;
+            var resu = session.Execute(@"SELECT Count(*) FROM ""Authors""").GetRows();
+            long num = resu.First().GetValue<long>(0);
+            return num;
         }
 
         public bool RemoveAuthor(Author autor)
         {
             try
             {
-            db.ExecuteNonQuery(@"DELETE FROM ""Authors"" WHERE Id = "+autor.Id);                
-            return true;
+                session.Execute(@"DELETE FROM ""Authors"" WHERE Id = " + autor.Id);
+                return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
@@ -361,10 +292,10 @@ namespace MongoTest2
         {
             try
             {
-            db.ExecuteNonQuery(@"DELETE FROM ""Threads"" WHERE ""Id"" = "+thread.Id);                
-            return true;
+                session.Execute(@"DELETE FROM ""Threads"" WHERE ""Id"" = " + thread.Id);
+                return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
@@ -374,11 +305,11 @@ namespace MongoTest2
         {
             try
             {
-            db.ExecuteNonQuery(@"DELETE FROM ""Comments"" WHERE ""Id"" = "+comentario.Id);
+                session.Execute(@"DELETE FROM ""Comments"" WHERE ""Id"" = " + comentario.Id);
                 //TODO: Actualizar el contador de comentarios del padre
-            return true;
+                return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
@@ -419,7 +350,7 @@ namespace MongoTest2
             ImageConverter ic = new ImageConverter();
             Image img = (Image)ic.ConvertFrom(bytes);
             return new Bitmap(img);
-        }        
+        }
 
         /// <summary>
         /// Convertir String hexadecimal a byte
@@ -449,12 +380,8 @@ namespace MongoTest2
         /// Crear keyspace de nombre keyspacename
         /// </summary>
         protected void createKeyspace()
-        {          
-            Keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema
-            {
-                Name = KeyspaceName
-            }, db);
-            Keyspace.TryCreateSelf();
+        {
+            session.CreateKeyspaceIfNotExists(keySpaceName);
         }
 
         /// <summary>
@@ -464,13 +391,13 @@ namespace MongoTest2
         {
             var statements = getCassandraCreateStatementsBasedOnModel("MongoTest2.Modelo");
             foreach (string statement in statements)
-                db.ExecuteNonQuery(statement);
-            
+                session.Execute(statement);
+
             // Coleccion de tags
-//            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
+            //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear index
-            db.ExecuteNonQuery(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
+            session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
         }
 
@@ -496,7 +423,7 @@ namespace MongoTest2
                 var propertyTypes = new List<string>();
                 foreach (PropertyInfo pi in properties)
                 {
-                    createStatement = createStatement + @""""+pi.Name + @""" " + typeMapping(pi.PropertyType);
+                    createStatement = createStatement + @"""" + pi.Name + @""" " + typeMapping(pi.PropertyType);
                     if (pi.Name.ToLower() == "id")
                         createStatement = createStatement + " PRIMARY KEY";
                     i++;
@@ -520,13 +447,13 @@ namespace MongoTest2
             if (type == typeof(Bitmap))
                 return "blob";
             if (type == typeof(char) || type == typeof(string))
-                return "text";            
-            if (type == typeof(Int64) || type==typeof(long))
+                return "text";
+            if (type == typeof(Int64) || type == typeof(long))
                 return "bigint";
             if (type == typeof(int))
                 return "int";
             if (type == typeof(float))
-                return "float";                            
+                return "float";
             if (type == typeof(double))
                 return "double";
             if (type == typeof(bool))
@@ -554,7 +481,7 @@ namespace MongoTest2
                     where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
                     select t;
             string stmt = @"INSERT INTO """ + entityName + @"s"" (";
-            var properties = q.First().GetProperties().OrderBy(p=>p.Name.ToUpper());
+            var properties = q.First().GetProperties().OrderBy(p => p.Name.ToUpper());
             int j = 0;
             foreach (PropertyInfo property in properties)
             {
@@ -590,35 +517,14 @@ namespace MongoTest2
 
         public bool Initialize(bool dropExistent)
         {
-            try
-            {
-                if ( (db.KeyspaceExists(KeyspaceName) && dropExistent) || !db.KeyspaceExists(KeyspaceName))
-                {
-                    if (db.KeyspaceExists(KeyspaceName))
-                        db.DropKeyspace(KeyspaceName);
-                    createKeyspace();
-                    createColumnFamilies();
-                }
-                else
-                {
-                    Keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema
-                    {
-                        Name = KeyspaceName
-                    }, db);
-                }
-                return true;
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
+            return true;
         }
 
         public bool Cleanup()
         {
             try
             {
-                db.DropKeyspace(KeyspaceName);
+                session.DeleteKeyspaceIfExists(keySpaceName);
                 createKeyspace();
                 createColumnFamilies();
                 return true;

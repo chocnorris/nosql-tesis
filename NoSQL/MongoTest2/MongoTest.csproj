@@ -43,8 +43,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentCassandra">
-      <HintPath>..\packages\FluentCassandra.1.2.2\lib\net40\FluentCassandra.dll</HintPath>
+    <Reference Include="Cassandra">
+      <HintPath>..\packages\CassandraCSharpDriver.1.0.0\lib\Cassandra.dll</HintPath>
+    </Reference>
+    <Reference Include="Cassandra.Data">
+      <HintPath>..\packages\CassandraCSharpDriver.1.0.0\lib\Cassandra.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Cassandra.Data.Linq">
+      <HintPath>..\packages\CassandraCSharpDriver.1.0.0\lib\Cassandra.Data.Linq.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson">
       <HintPath>..\packages\mongocsharpdriver.1.8.1\lib\net35\MongoDB.Bson.dll</HintPath>
