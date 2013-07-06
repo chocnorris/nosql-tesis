@@ -322,5 +322,11 @@ namespace MongoTest2
         {
             return Initialize(true);
         }
+
+
+        public bool Shutdown()
+        {
+            return true;
+        }
     }
 }

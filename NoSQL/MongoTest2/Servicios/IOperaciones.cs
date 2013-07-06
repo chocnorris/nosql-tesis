@@ -155,6 +155,12 @@ namespace MongoTest2.Servicios
         /// <returns></returns>
         string Identidad();
 
+        /// <summary>
+        /// Desconceta la base de datos
+        /// </summary>
+        /// <returns></returns>
+        bool Shutdown();
+
         #endregion
     }
 }

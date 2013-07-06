@@ -566,5 +566,19 @@ namespace MongoTest2
                 return false;
             }
         }
+
+
+        public bool Shutdown()
+        {
+            try
+            {
+                cluster.Shutdown();
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
     }
 }
