@@ -122,9 +122,10 @@ namespace MongoTest2
                     CommentCount = 0,
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
-                    Title = row.GetValue<string>("Title"),
-                    Tags = row.GetValue<List<string>>("Tags").ToArray()
+                    Title = row.GetValue<string>("Title"),                    
                 };
+                if (row.GetValue<List<string>>("Tags") != null)
+                    thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
                 threads.Add(thread);
             }
             return threads.Skip(skip).ToList();
@@ -142,9 +143,10 @@ namespace MongoTest2
                     CommentCount = 0,
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
-                    Title = row.GetValue<string>("Title"),
-                    Tags = row.GetValue<List<string>>("Tags").ToArray()
+                    Title = row.GetValue<string>("Title"),                    
                 };
+                if (row.GetValue<List<string>>("Tags") != null)
+                    thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
                 return thread;
             }
             catch (Exception e)
@@ -230,16 +232,12 @@ namespace MongoTest2
             Guid id = Guid.NewGuid();
             string AuthorId = thread.Author.Id.ToString();
             string tags = "";
-            thread.Tags = new string[3];
-            thread.Tags[0] = "asd";
-            thread.Tags[1] = "asddd";
-            thread.Tags[2] = "asfass";
-
             foreach (string tag in thread.Tags)
             {
                 tags = tags + "'" + tag + "',";
             }
-            tags = tags.Remove(tags.Length - 1);
+            if (thread.Tags.Count() > 0)
+                tags = tags.Remove(tags.Length - 1);
             tags = "{" + tags + "}";
             string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
                 AuthorId,
@@ -517,6 +515,11 @@ namespace MongoTest2
 
         public bool Initialize(bool dropExistent)
         {
+            /*
+            cluster.Connect();
+            if (cluster.Metadata.GetKeyspace("unkeyspace") == null)
+                return false;
+             * */
             return true;
         }
 
