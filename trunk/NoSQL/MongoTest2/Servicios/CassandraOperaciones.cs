@@ -315,7 +315,15 @@ namespace MongoTest2
 
         public bool IsDatabaseConnected()
         {
-            return true;
+            try
+            {
+                cluster.Metadata.GetKeyspace(keySpaceName);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public Dictionary<string, string> GetShards()
@@ -327,7 +335,10 @@ namespace MongoTest2
 
         public string ConnectionState()
         {
-            return "Conectado (mentira)";
+            if (this.IsDatabaseConnected())
+                return "Conectado";
+            else
+                return "Desconectado";
         }
 
         public string Identidad()
