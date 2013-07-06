@@ -134,5 +134,12 @@ namespace MongoTest2
         {
             return "MySQL";
         }
+
+
+        public bool Shutdown()
+        {
+            conn.Close();
+            return true;
+        }
     }
 }

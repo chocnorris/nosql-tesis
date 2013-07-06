@@ -64,7 +64,8 @@ namespace MongoTest2
         }
 
         private void buttonDesconectar_Click_1(object sender, EventArgs e)
-        {            
+        {
+            db.Shutdown();
             db = null;
             panelInfo.Controls.Clear();
             bloquearBotones(true);
@@ -96,6 +97,11 @@ namespace MongoTest2
         {
             Form vc = new VentanaConsultas(db);
             vc.ShowDialog();
+        }
+
+        private void VentanaRandom_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            db.Shutdown();
         }
     }
 }
