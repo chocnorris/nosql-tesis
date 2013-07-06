@@ -21,7 +21,8 @@ namespace MongoTest2
         public CassandraOperaciones(string dbname, string host)
         {
             cluster = Cluster.Builder().AddContactPoint(host).Build();
-            session = cluster.Connect(dbname);
+            //session = cluster.Connect(dbname);
+            session = cluster.Connect();
             keySpaceName = dbname;
         }
         #region Implementaciones de interfaz
@@ -398,6 +399,7 @@ namespace MongoTest2
         /// </summary>
         protected void createColumnFamilies()
         {
+            session.Execute("use " + keySpaceName);
             var statements = getCassandraCreateStatementsBasedOnModel("MongoTest2.Modelo");
             foreach (string statement in statements)
                 session.Execute(statement);
@@ -524,13 +526,31 @@ namespace MongoTest2
         }
         #endregion
 
+        protected bool existsDatabase()
+        {
+            try
+            {
+                session.Execute("use " + keySpaceName);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         public bool Initialize(bool dropExistent)
         {
-            /*
-            cluster.Connect();
-            if (cluster.Metadata.GetKeyspace("unkeyspace") == null)
-                return false;
-             * */
+            session.Execute("use system");
+            if (dropExistent)
+                session.DeleteKeyspaceIfExists(keySpaceName);
+            if (!existsDatabase())
+            {
+                createKeyspace();
+                session.Execute("use " + keySpaceName);
+                createColumnFamilies();
+            }
+            cluster.Connect(keySpaceName);
             return true;
         }
 
@@ -538,9 +558,7 @@ namespace MongoTest2
         {
             try
             {
-                session.DeleteKeyspaceIfExists(keySpaceName);
-                createKeyspace();
-                createColumnFamilies();
+                Initialize(true); // JUJUJUJU
                 return true;
             }
             catch (Exception e)
