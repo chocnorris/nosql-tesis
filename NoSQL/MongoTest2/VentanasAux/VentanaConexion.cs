@@ -27,6 +27,7 @@ namespace MongoTest2
             comboBoxHost.Items.Add("192.168.56.201");
             comboBoxHost.Items.Add("192.168.56.202");
             comboBoxHost.Items.Add("192.168.56.203");
+            comboBoxHost.Items.Add("mongo201:27017,mongo202:27017,mongo203:27017/?replicaSet=rs0");
 
         }
 
