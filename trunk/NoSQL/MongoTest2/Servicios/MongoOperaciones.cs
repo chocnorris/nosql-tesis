@@ -90,9 +90,7 @@ namespace MongoTest2
             if (comentario.Thread_id.Equals(comentario.Parent_id))
                 colPadre = "threads";
             else
-            {
                 colPadre = "comments";
-            }
             db.GetCollection(colPadre).Update(Query.EQ("_id", new ObjectId(comentario.Parent_id.ToString())), Update.Inc("CommentCount", 1));
             return comentario;
         }
@@ -132,7 +130,7 @@ namespace MongoTest2
 
         public bool IsDatabaseConnected()
         {
-            return server.State == MongoServerState.Connected; 
+            return server.State == MongoServerState.Connected || server.State == MongoServerState.ConnectedToSubset; 
         }
 
 
@@ -270,8 +268,11 @@ namespace MongoTest2
         public bool Initialize(bool drop)
         {
             //Nota: Mongo no requiere inicialización, salvo para el sharding
+            //TODO: Ver índices para las colecciones
             if (drop)
                 db.Drop();
+            //Éste es uno necesario por las fotos
+            db.GetCollection("authors").EnsureIndex(new IndexKeysBuilder().Ascending("Name"), IndexOptions.SetUnique(false));
             ShardDB();
             return true;
         }
@@ -279,7 +280,9 @@ namespace MongoTest2
         private bool ShardDB()
         {
             if (server.Instance.InstanceType != MongoServerInstanceType.ShardRouter)
+            {
                 return true;
+            }
             MongoDatabase db = server.GetDatabase("admin");
 
             /** Código a ejecutar por consola
