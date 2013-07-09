@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoTest2.Servicios;
-using MongoTest2.Modelo;
+using NoSQL.Servicios;
+using NoSQL.Modelo;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Builders;
-using MongoTest2.Helpers;
+using NoSQL.Helpers;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public class MongoOperaciones : IOperaciones
     {

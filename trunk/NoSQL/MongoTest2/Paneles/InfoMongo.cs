@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MongoTest2.Paneles
+namespace NoSQL.Paneles
 {
     public partial class InfoMongo : UserControl
     {

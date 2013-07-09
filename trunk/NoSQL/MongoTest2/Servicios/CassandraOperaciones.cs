@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoTest2.Servicios;
-using MongoTest2.Modelo;
+using NoSQL.Servicios;
+using NoSQL.Modelo;
 using System.Reflection;
 using System.Drawing;
 using Cassandra;
 using Cassandra.Data;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public class CassandraOperaciones : IOperaciones
     {
@@ -199,7 +199,7 @@ namespace MongoTest2
             // Resolver Author Id            
             string AuthorId = comentario.Author.Id.ToString();
 
-            string addStmt = string.Format(getInsertStatementFor("Comment", "MongoTest2.Modelo"),
+            string addStmt = string.Format(getInsertStatementFor("Comment", "NoSQL.Modelo"),
                 AuthorId,
                 0,
                 getDateInMilliseconds(),
@@ -219,7 +219,7 @@ namespace MongoTest2
             ImageConverter converter = new ImageConverter();
             byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
             Guid id = Guid.NewGuid();
-            string addStmt = string.Format(getInsertStatementFor("Author", "MongoTest2.Modelo"),
+            string addStmt = string.Format(getInsertStatementFor("Author", "NoSQL.Modelo"),
                 id,
                 asCassandraString(autor.Name),
                 asCassandraString(BitConverter.ToString(bytes).Replace("-", "")));
@@ -240,7 +240,7 @@ namespace MongoTest2
             if (thread.Tags.Count() > 0)
                 tags = tags.Remove(tags.Length - 1);
             tags = "{" + tags + "}";
-            string addStmt = string.Format(getInsertStatementFor("Thread", "MongoTest2.Modelo"),
+            string addStmt = string.Format(getInsertStatementFor("Thread", "NoSQL.Modelo"),
                 AuthorId,
                 thread.CommentCount,
                 getDateInMilliseconds(),
@@ -400,7 +400,7 @@ namespace MongoTest2
         protected void createColumnFamilies()
         {
             session.Execute("use " + keySpaceName);
-            var statements = getCassandraCreateStatementsBasedOnModel("MongoTest2.Modelo");
+            var statements = getCassandraCreateStatementsBasedOnModel("NoSQL.Modelo");
             foreach (string statement in statements)
                 session.Execute(statement);
 

@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using MongoTest2.Modelo;
-using MongoTest2.Servicios;
+using NoSQL.Modelo;
+using NoSQL.Servicios;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public partial class VentanaConsultas : Form
     {
