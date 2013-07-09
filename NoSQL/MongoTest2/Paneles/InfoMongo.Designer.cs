@@ -1,4 +1,4 @@
-﻿namespace MongoTest2.Paneles
+﻿namespace NoSQL.Paneles
 {
     partial class InfoMongo
     {

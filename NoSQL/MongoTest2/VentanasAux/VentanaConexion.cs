@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using MongoTest2.Paneles;
+using NoSQL.Paneles;
 using System.Net.Sockets;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public partial class VentanaConexion : Form
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoTest2.Helpers
+namespace NoSQL.Helpers
 {
     class JsonHelper
     {

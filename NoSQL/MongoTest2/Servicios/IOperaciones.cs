@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoTest2.Modelo;
+using NoSQL.Modelo;
 using MongoDB.Driver;
 
-namespace MongoTest2.Servicios
+namespace NoSQL.Servicios
 {
     /// <summary>
     /// Interfaz para ser utilizada por las diferentes implementaciones de base de datos.

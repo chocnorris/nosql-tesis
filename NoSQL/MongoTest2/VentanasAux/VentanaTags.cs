@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public partial class VentanaTags : Form
     {

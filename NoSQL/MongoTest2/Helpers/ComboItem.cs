@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Bson;
 
-namespace MongoTest2
+namespace NoSQL
 {
     public class ComboItem
     {

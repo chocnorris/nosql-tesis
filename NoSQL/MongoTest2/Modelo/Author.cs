@@ -5,7 +5,7 @@ using System.Text;
 using MongoDB.Bson;
 using System.Drawing;
 
-namespace MongoTest2.Modelo
+namespace NoSQL.Modelo
 {
     public class Author 
     {        

@@ -1,4 +1,4 @@
-﻿namespace MongoTest2
+﻿namespace NoSQL
 {
     partial class VentanaTags
     {

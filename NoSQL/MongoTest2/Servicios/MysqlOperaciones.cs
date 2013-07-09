@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoTest2.Modelo;
-using MongoTest2.Servicios;
+using NoSQL.Modelo;
+using NoSQL.Servicios;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
-namespace MongoTest2
+namespace NoSQL
 {
     class MysqlOperaciones: IOperaciones
     {

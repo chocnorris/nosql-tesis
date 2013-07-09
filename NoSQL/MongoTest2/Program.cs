@@ -6,7 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace MongoTest2
+namespace NoSQL
 {
     static class Program
     {
