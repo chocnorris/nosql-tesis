@@ -255,5 +255,21 @@ namespace NoSQL
             foto = Image.FromFile(openFileDialogFoto.FileName);
         }
 
+        private void textBoxNombreAutor_TextChanged(object sender, EventArgs e)
+        {
+            if (textBoxNombreAutor.Text.Length == 0)
+                buttonAgregarAutor.Enabled = false;
+            else
+                buttonAgregarAutor.Enabled = true;
+        }
+
+        private void textBoxNombreThread_TextChanged(object sender, EventArgs e)
+        {
+            if (textBoxNombreThread.Text.Length == 0)
+                buttonAgregarThread.Enabled = false;
+            else
+                buttonAgregarThread.Enabled = true;
+        }
+
     }
 }
