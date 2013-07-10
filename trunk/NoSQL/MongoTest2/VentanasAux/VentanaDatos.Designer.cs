@@ -108,6 +108,7 @@
             // 
             // buttonAgregarAutor
             // 
+            this.buttonAgregarAutor.Enabled = false;
             this.buttonAgregarAutor.Location = new System.Drawing.Point(296, 19);
             this.buttonAgregarAutor.Name = "buttonAgregarAutor";
             this.buttonAgregarAutor.Size = new System.Drawing.Size(75, 23);
@@ -122,6 +123,7 @@
             this.textBoxNombreAutor.Name = "textBoxNombreAutor";
             this.textBoxNombreAutor.Size = new System.Drawing.Size(152, 20);
             this.textBoxNombreAutor.TabIndex = 1;
+            this.textBoxNombreAutor.TextChanged += new System.EventHandler(this.textBoxNombreAutor_TextChanged);
             // 
             // labelNombreAutor
             // 
@@ -392,6 +394,7 @@
             // 
             // buttonAgregarThread
             // 
+            this.buttonAgregarThread.Enabled = false;
             this.buttonAgregarThread.Location = new System.Drawing.Point(296, 60);
             this.buttonAgregarThread.Name = "buttonAgregarThread";
             this.buttonAgregarThread.Size = new System.Drawing.Size(75, 23);
@@ -406,6 +409,7 @@
             this.textBoxNombreThread.Name = "textBoxNombreThread";
             this.textBoxNombreThread.Size = new System.Drawing.Size(233, 20);
             this.textBoxNombreThread.TabIndex = 3;
+            this.textBoxNombreThread.TextChanged += new System.EventHandler(this.textBoxNombreThread_TextChanged);
             // 
             // labelNombreThread
             // 
