@@ -154,6 +154,7 @@ namespace NoSQL.Servicios
                 };
                 if (row.GetValue<List<string>>("Tags") != null)
                     thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
+                thread.CommentCount = GetChildCommentCounts(id);
                 return thread;               
         }
 
@@ -252,9 +253,10 @@ namespace NoSQL.Servicios
                 id,
                 tags,
                 asCassandraString(thread.Title)
-                );
-            session.Execute(addStmt);
-            IncrCounter("Thread");
+                );                 
+            session.Execute(addStmt);            
+            thread.CommentCount = GetChildCommentCounts(id);
+            IncrCounter("Thread");            
             thread.Id = id;
             return thread;
         }
