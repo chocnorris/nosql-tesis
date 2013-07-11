@@ -60,7 +60,8 @@ namespace NoSQL.Servicios
             {
                 skip = 0;
                 take = rows.Count();
-            }                        
+            }
+            take += skip;
             while (skip < take)
             {
                 var author = new Author();
@@ -346,9 +347,10 @@ namespace NoSQL.Servicios
         /// <returns></returns>
         protected long GetChildCommentCounts(object ParentId)
         {
-            var results = session.Execute(@"select * from ""CommentCounts"" where ""Id""=" + ParentId).GetRows();
-            Row row = results.First();
-            return row.GetValue<long>("count");                        
+            var results = session.Execute(@"select * from ""CommentCounts"" where ""Id""=" + ParentId).GetRows().ToList();
+            if (results.Count() > 0)
+                return results.First().GetValue<long>("count");
+            return 0;
         }
 
         /// <summary>
