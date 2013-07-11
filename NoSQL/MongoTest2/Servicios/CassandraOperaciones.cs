@@ -27,36 +27,55 @@ namespace NoSQL
         }
         #region Implementaciones de interfaz
 
+        /*
         public List<Author> GetAuthors(int skip = 0, int take = 0)
-        {
-            try
-            {
-                var authorRows = session.Execute(@"SELECT * FROM ""Authors"""); ;
+        {            
+                var authorRows = session.Execute(@"SELECT ""Id"" FROM ""Authors"""); 
                 var authors = new List<Author>();
                 foreach (Row row in authorRows.GetRows())
                 {
-                    var author = new Author()
-                    {
-                        Id = row.GetValue<Guid>(0),
-                        Name = row.GetValue<string>("Name"),
-                        Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"))
-
-                    };
+                    ConvertToBitmap(row.GetValue<byte[]>("Photo"));
+                    var author = new Author();                    
+                    author.Id = row.GetValue<Guid>(0);
+                    author.Name = row.GetValue<string>("Name");
+                    //author.Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"));
+                    author.Photo = new Bitmap(1,1);
+                    
                     authors.Add(author);
                 }
-                return authors.ToList().Skip(skip).ToList();
-            }
-            catch (Exception e)
+                return authors.ToList().Skip(skip).ToList();                        
+        }
+         */
+
+        // Implementación alternativa de GetAuthors
+        public List<Author> GetAuthors(int skip = 0, int take = 0)
+        {
+            var authors = new List<Author>();
+            var authorRows = session.Execute(@"SELECT ""Id"" FROM ""Authors""");                        
+            var rows = authorRows.GetRows().ToArray();                           
+            Row cursor = null;
+            if (rows.Count() == 0)                            
+                return authors;
+
+            if (skip == 0 && take == 0)
             {
-                return new List<Author>();
+                skip = 0;
+                take = rows.Count();
+            }                        
+            while (skip < take)
+            {
+                var author = new Author();
+                author.Id = rows[skip].GetValue<Guid>(0);
+                author = this.GetAuthor(author.Id);
+                authors.Add(author);
+                skip++;
             }
+            return authors;                        
         }
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
-            try
-            {
-                var commentRows = session.Execute(@"SELECT * FROM ""Comments""");
+            var commentRows = session.Execute(@"SELECT * FROM ""Comments""");
                 var comments = new List<Comment>();
                 foreach (Row row in commentRows.GetRows())
                 {
@@ -72,18 +91,11 @@ namespace NoSQL
                     };    
                     comments.Add(comment);
                 }
-                return comments.ToList().Skip(skip).ToList();
-            }
-            catch (Exception e)
-            {
-                return new List<Comment>();
-            }
+                return comments.ToList().Skip(skip).ToList();            
         }
 
         public List<Comment> GetChildComments(object Parent_id)
         {
-            try
-            {
                 var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id);
                 var comments = new List<Comment>();
 
@@ -101,12 +113,7 @@ namespace NoSQL
                     };
                     comments.Add(comment);
                 }
-                return comments.ToList();
-            }
-            catch (Exception e)
-            {
-                return new List<Comment>();
-            }
+                return comments.ToList();            
         }
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
@@ -133,9 +140,7 @@ namespace NoSQL
         }
 
         public Thread GetThread(object id)
-        {
-            try
-            {
+        {            
                 var threadRows = session.Execute(@"SELECT * FROM ""Threads"" WHERE ""Id""=" + id).GetRows();
                 Row row = threadRows.First();
                 var thread = new Thread()
@@ -148,12 +153,7 @@ namespace NoSQL
                 };
                 if (row.GetValue<List<string>>("Tags") != null)
                     thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
-                return thread;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+                return thread;               
         }
 
         public Author GetAuthor(object id)
@@ -275,43 +275,23 @@ namespace NoSQL
         }
 
         public bool RemoveAuthor(Author autor)
-        {
-            try
-            {
+        {            
                 session.Execute(@"DELETE FROM ""Authors"" WHERE Id = " + autor.Id);
                 return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
+        }                    
 
         public bool RemoveThread(Thread thread)
         {
-            try
-            {
+           
                 session.Execute(@"DELETE FROM ""Threads"" WHERE ""Id"" = " + thread.Id);
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+                return true;            
         }
 
         public bool RemoveComment(Comment comentario)
-        {
-            try
-            {
+        {            
                 session.Execute(@"DELETE FROM ""Comments"" WHERE ""Id"" = " + comentario.Id);
                 //TODO: Actualizar el contador de comentarios del padre
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+                return true;            
         }
 
         public bool IsDatabaseConnected()
@@ -533,10 +513,10 @@ namespace NoSQL
                 session.Execute("use " + keySpaceName);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return false;
-            }
+            }            
         }
 
         public bool Initialize(bool dropExistent)
@@ -555,30 +535,16 @@ namespace NoSQL
         }
 
         public bool Cleanup()
-        {
-            try
-            {
+        {            
                 Initialize(true); // JUJUJUJU
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+                return true;                        
         }
 
 
         public bool Shutdown()
-        {
-            try
-            {
+        {            
                 cluster.Shutdown();
-                return true;
-            }
-            catch(Exception)
-            {
-                return false;
-            }
+                return true;                        
         }
     }
 }

@@ -18,8 +18,16 @@ namespace NoSQL
         {
             this.db = db;
             InitializeComponent();
-            Author auth = db.GetAuthors(0, 1).First();
-            auth = db.GetAuthor(auth.Id);
+            var authors = db.GetAuthors(0, 1);
+            Author auth = new Author();
+            if (authors.Count > 0)
+                auth = authors.First();
+            else
+            {
+                auth = new Author();
+                auth.Name = "dummy author";
+                auth.Photo = new Bitmap(1, 1);     
+            }
             pictureBoxFoto.Image = auth.Photo;
         }
     }
