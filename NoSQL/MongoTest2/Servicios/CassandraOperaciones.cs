@@ -9,7 +9,7 @@ using System.Drawing;
 using Cassandra;
 using Cassandra.Data;
 
-namespace NoSQL
+namespace NoSQL.Servicios
 {
     public class CassandraOperaciones : IOperaciones
     {
@@ -52,8 +52,7 @@ namespace NoSQL
         {
             var authors = new List<Author>();
             var authorRows = session.Execute(@"SELECT ""Id"" FROM ""Authors""");                        
-            var rows = authorRows.GetRows().ToArray();                           
-            Row cursor = null;
+            var rows = authorRows.GetRows().ToArray();                                       
             if (rows.Count() == 0)                            
                 return authors;
 
@@ -88,7 +87,8 @@ namespace NoSQL
                         Parent_id = row.GetValue<Guid>("Parent_id"),
                         Thread_id = row.GetValue<Guid>("Thread_id"),
                         Text = row.GetValue<string>("Text"),
-                    };    
+                    };
+                    comment.CommentCount = GetChildCommentCounts(comment.Id);                         
                     comments.Add(comment);
                 }
                 return comments.ToList().Skip(skip).ToList();            
@@ -188,6 +188,7 @@ namespace NoSQL
                     Thread_id = row.GetValue<Guid>("Thread_id"),
                     Text = row.GetValue<string>("Text")
                 };
+            comment.CommentCount = GetChildCommentCounts(comment.Id);                         
             return comment;
         }
 
@@ -211,6 +212,8 @@ namespace NoSQL
             session.Execute(addStmt);
             //TODO: Actualizar el contador de comentarios del padre!!
             comentario.Id = id;
+            IncrCounter("Comment");
+            IncrCounterParent(comentario.Parent_id);
             return comentario;
         }
 
@@ -225,6 +228,7 @@ namespace NoSQL
                 asCassandraString(BitConverter.ToString(bytes).Replace("-", "")));
             session.Execute(addStmt);
             autor.Id = id;
+            IncrCounter("Author");
             return autor;
         }
 
@@ -249,6 +253,7 @@ namespace NoSQL
                 asCassandraString(thread.Title)
                 );
             session.Execute(addStmt);
+            IncrCounter("Thread");
             thread.Id = id;
             return thread;
         }
@@ -277,6 +282,7 @@ namespace NoSQL
         public bool RemoveAuthor(Author autor)
         {            
                 session.Execute(@"DELETE FROM ""Authors"" WHERE Id = " + autor.Id);
+                DecrCounter("Author");
                 return true;
         }                    
 
@@ -284,13 +290,15 @@ namespace NoSQL
         {
            
                 session.Execute(@"DELETE FROM ""Threads"" WHERE ""Id"" = " + thread.Id);
+                DecrCounter("Thread");
                 return true;            
         }
 
         public bool RemoveComment(Comment comentario)
         {            
                 session.Execute(@"DELETE FROM ""Comments"" WHERE ""Id"" = " + comentario.Id);
-                //TODO: Actualizar el contador de comentarios del padre
+                //TODO: Actualizar el contador de comentarios del padre hmm
+                DecrCounter("Comment");
                 return true;            
         }
 
@@ -329,6 +337,42 @@ namespace NoSQL
         #endregion
 
         #region Helpers
+
+
+        /// <summary>
+        /// Obtener la cantidad de respuestas de un comentario
+        /// </summary>
+        /// <param name="ParentId"></param>
+        /// <returns></returns>
+        protected long GetChildCommentCounts(object ParentId)
+        {
+            var results = session.Execute(@"select * from ""CommentCounts"" where ""Id""=" + ParentId).GetRows();
+            Row row = results.First();
+            return row.GetValue<long>("count");                        
+        }
+
+        /// <summary>
+        /// Incrementar el contador para una entidad
+        /// </summary>
+        /// <param name="EntityName"></param>
+        protected void IncrCounter(string EntityName)
+        {
+            session.Execute(@"update ""Counters"" set ""count""=""count""+1 where ""name""='" + EntityName + "'");
+        }
+
+        /// <summary>
+        /// Decrementar el contador para una entidad
+        /// </summary>
+        /// <param name="EntityName"></param>
+        protected void DecrCounter(string EntityName)
+        {
+            session.Execute(@"update ""Counters"" set ""count""=""count""-1 where ""name""='" + EntityName + "'");
+        }
+
+        protected void IncrCounterParent(object parentId)
+        {
+            session.Execute(@"update ""CommentCounts"" set ""count""=""count""+1 where ""Id""=" + parentId);
+        }
 
         /// <summary>
         /// Obtener un bitmap en base a un array de bytes
@@ -387,9 +431,13 @@ namespace NoSQL
             // Coleccion de tags
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
-            // Crear index
+            // Crear indexes
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
+            // Crear counter column family
+            session.Execute(@"create columnfamily ""Counters""(""name"" text primary key, ""count"" counter)");
+
+            session.Execute(@"create columnfamily ""CommentCounts""(""Id"" uuid primary key, ""count"" counter)");            
         }
 
         /// <summary>
