@@ -239,7 +239,7 @@ namespace NoSQL
             }
             if (thread.Tags.Count() > 0)
                 tags = tags.Remove(tags.Length - 1);
-            tags = "{" + tags + "}";
+            tags = "[" + tags + "]";
             string addStmt = string.Format(getInsertStatementFor("Thread", "NoSQL.Modelo"),
                 AuthorId,
                 thread.CommentCount,
@@ -380,7 +380,7 @@ namespace NoSQL
         protected void createColumnFamilies()
         {
             session.Execute("use " + keySpaceName);
-            var statements = getCassandraCreateStatementsBasedOnModel("NoSQL.Modelo");
+            var statements = CassandraCreateStatementsBasedOnModel("NoSQL.Modelo");
             foreach (string statement in statements)
                 session.Execute(statement);
 
@@ -398,7 +398,7 @@ namespace NoSQL
         /// </summary>
         /// <param name="modelNamespacePath"></param>
         /// <returns>lista de sentencias ejecutables que crean column family</returns>
-        protected List<string> getCassandraCreateStatementsBasedOnModel(string modelNamespacePath)
+        protected List<string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath)
         {
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass && t.Namespace == modelNamespacePath
@@ -452,7 +452,7 @@ namespace NoSQL
             if (type == typeof(DateTime))
                 return "timestamp";
             if (type == typeof(string[]))
-                return "set<text>";
+                return "list<text>";
             if (type == typeof(object) || !(type == typeof(ValueType)))
                 return "uuid";
 
