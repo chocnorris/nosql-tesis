@@ -271,9 +271,9 @@ namespace NoSQL
             //TODO: Ver índices para las colecciones
             if (drop)
                 db.Drop();
+            ShardDB();
             //Éste es uno necesario por las fotos
             db.GetCollection("authors").EnsureIndex(new IndexKeysBuilder().Ascending("Name"), IndexOptions.SetUnique(false));
-            ShardDB();
             return true;
         }
         //TODO: Ver cómo parametrizar (o no) el sharding de la db

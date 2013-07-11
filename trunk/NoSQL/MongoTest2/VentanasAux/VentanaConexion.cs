@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using NoSQL.Paneles;
+using NoSQL.Servicios;
 using System.Net.Sockets;
 
 namespace NoSQL
