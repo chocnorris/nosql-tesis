@@ -75,10 +75,16 @@ namespace NoSQL.Servicios
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
-            var commentRows = session.Execute(@"SELECT * FROM ""Comments""");
-                var comments = new List<Comment>();
-                foreach (Row row in commentRows.GetRows())
+            var commentRows = session.Execute(@"SELECT * FROM ""Comments""").GetRows();
+            var commentCount = commentRows.Count();
+            commentRows = session.Execute(@"SELECT * FROM ""Comments""").GetRows();
+            var comments = new List<Comment>();            
+            if (commentCount > 0 && commentCount > skip)
+            {
+                var limit = skip + take;
+                while (skip < commentCount && skip < limit)
                 {
+                    var row = commentRows.ElementAt(skip);
                     var comment = new Comment()
                     {
                         Author = this.GetAuthor(row.GetValue<Guid>("Author")),
@@ -89,10 +95,12 @@ namespace NoSQL.Servicios
                         Thread_id = row.GetValue<Guid>("Thread_id"),
                         Text = row.GetValue<string>("Text"),
                     };
-                    comment.CommentCount = GetChildCommentCounts(comment.Id);                         
+                    comment.CommentCount = GetChildCommentCounts(comment.Id);
                     comments.Add(comment);
+                    skip++;
                 }
-                return comments.ToList().Skip(skip).ToList();            
+            }
+            return comments.ToList();
         }
 
         public List<Comment> GetChildComments(object Parent_id)
