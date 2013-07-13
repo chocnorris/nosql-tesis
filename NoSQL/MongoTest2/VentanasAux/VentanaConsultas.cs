@@ -18,17 +18,32 @@ namespace NoSQL
         {
             this.db = db;
             InitializeComponent();
-            var authors = db.GetAuthors(0, 1);
-            Author auth = new Author();
-            if (authors.Count > 0)
-                auth = authors.First();
-            else
-            {
-                auth = new Author();
-                auth.Name = "dummy author";
-                auth.Photo = new Bitmap(1, 1);     
+            cargarAutores();
+        }
+
+        private void cargarAutores()
+        {
+            comboBoxAutor.Items.Clear();
+            var Autores = db.GetAuthors();
+            foreach (var autor in Autores)
+            {    // sacado if de "identidad", no hace la diferencia                            
+                comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
             }
+            if (Autores.Count > 0)
+            {
+                comboBoxAutor.SelectedIndex = 0;
+            }
+        }
+
+        private void cargarDatosAutor(object id)
+        {
+            Author auth = db.GetAuthor(id);
             pictureBoxFoto.Image = auth.Photo;
+        }
+
+        private void comboBoxAutor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cargarDatosAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
         }
     }
 }
