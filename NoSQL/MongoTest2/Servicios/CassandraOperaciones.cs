@@ -425,7 +425,7 @@ namespace NoSQL.Servicios
         /// </summary>
         protected void createKeyspace()
         {
-            session.CreateKeyspaceIfNotExists(keySpaceName);
+            session.CreateKeyspace(keySpaceName);
         }
 
         /// <summary>
@@ -433,15 +433,25 @@ namespace NoSQL.Servicios
         /// </summary>
         protected void createColumnFamilies()
         {
-            session.Execute("use " + keySpaceName);
             var statements = CassandraCreateStatementsBasedOnModel("NoSQL.Modelo");
-            foreach (string statement in statements)
-                session.Execute(statement);
-
+            foreach (var statement in statements)
+            {
+                session.Execute(statement.Value);
+                while(true)
+                    try
+                    {
+                        session.Cluster.Metadata.GetTable(keySpaceName, statement.Key);
+                        break;
+                    }catch(Exception)
+                    {
+                        session.Execute(statement.Value);
+                    }
+            }
             // Coleccion de tags
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear indexes
+           
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
             // Crear counter column family
@@ -456,13 +466,13 @@ namespace NoSQL.Servicios
         /// </summary>
         /// <param name="modelNamespacePath"></param>
         /// <returns>lista de sentencias ejecutables que crean column family</returns>
-        protected List<string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath)
+        protected Dictionary<string, string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath)
         {
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass && t.Namespace == modelNamespacePath
                     select t;
 
-            List<string> createStatements = new List<string>();
+            Dictionary<string, string> createStatements = new Dictionary<string, string>();
             foreach (Type str in q.ToList())
             {
                 string columnFamilyName = str.Name + "s";
@@ -481,7 +491,7 @@ namespace NoSQL.Servicios
                     else
                         createStatement = createStatement + ");";
                 }
-                createStatements.Add(createStatement);
+                createStatements.Add(columnFamilyName,createStatement);
             }
             return createStatements;
         }
@@ -581,7 +591,7 @@ namespace NoSQL.Servicios
         {
             session.Execute("use system");
             if (dropExistent)
-                session.DeleteKeyspaceIfExists(keySpaceName);
+                session.DeleteKeyspace(keySpaceName);
             if (!existsDatabase())
             {
                 createKeyspace();
