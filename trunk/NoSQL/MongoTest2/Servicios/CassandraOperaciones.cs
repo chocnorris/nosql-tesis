@@ -127,9 +127,7 @@ namespace NoSQL.Servicios
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
-            var threadRows = session.Execute(@"SELECT * FROM ""Threads""");
-            // TODO: no se logran mapear el SET de tag, la consulta de abajo falla
-            // var threadRows = db.ExecuteQuery(@"SELECT * FROM ""Threads""").ToList();                       
+            var threadRows = session.Execute(@"SELECT * FROM ""Threads""");                   
             var threads = new List<Thread>();
             foreach (Row row in threadRows.GetRows())
             {

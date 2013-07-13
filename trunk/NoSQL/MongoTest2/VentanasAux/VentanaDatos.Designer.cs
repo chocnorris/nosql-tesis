@@ -454,7 +454,7 @@
             // 
             // openFileDialogFoto
             // 
-            this.openFileDialogFoto.Filter = "Imagen|*.jpg";
+            this.openFileDialogFoto.Filter = "Imagen|*.jpg;*png";
             this.openFileDialogFoto.Title = "Elegir imagen";
             this.openFileDialogFoto.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialogFoto_FileOk);
             // 
