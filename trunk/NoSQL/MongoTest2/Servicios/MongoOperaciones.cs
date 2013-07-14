@@ -28,7 +28,7 @@ namespace NoSQL.Servicios
         /// <summary>
         /// Inicializar base de datos
         /// </summary>
-        public MongoOperaciones(string dbname, string host)
+        public MongoOperaciones(string dbname, string host, string user = "", string pass = "")
         {
             client = new MongoClient("mongodb://"+host);
             server = client.GetServer();

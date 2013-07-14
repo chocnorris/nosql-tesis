@@ -18,7 +18,7 @@ namespace NoSQL.Servicios
         protected Session session;
         protected string keySpaceName;
 
-        public CassandraOperaciones(string dbname, string host)
+        public CassandraOperaciones(string dbname, string host, string user = "", string pass = "")
         {
             cluster = Cluster.Builder().AddContactPoint(host).Build();
             //session = cluster.Connect(dbname);

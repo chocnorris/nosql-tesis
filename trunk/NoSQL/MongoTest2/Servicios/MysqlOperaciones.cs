@@ -17,9 +17,9 @@ namespace NoSQL.Servicios
 
         MySqlConnection conn;
 
-        public MysqlOperaciones(string dbname, string host)
+        public MysqlOperaciones(string dbname, string host, string user = "forum", string pass = "1234")
         {
-            string connStr = "server="+host+";user=forum;database="+dbname+";password=1234;";
+            string connStr = "server="+host+";user="+user+";database="+dbname+";password="+pass+";";
             conn = new MySqlConnection(connStr);
             conn.Open();
         }
