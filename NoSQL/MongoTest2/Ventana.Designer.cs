@@ -32,10 +32,10 @@
             this.buttonConsultas = new System.Windows.Forms.Button();
             this.buttonDrop = new System.Windows.Forms.Button();
             this.buttonDesconectar = new System.Windows.Forms.Button();
-            this.buttonConectar = new System.Windows.Forms.Button();
             this.buttonRandom = new System.Windows.Forms.Button();
             this.buttonAgregarDatos = new System.Windows.Forms.Button();
             this.panelInfo = new System.Windows.Forms.Panel();
+            this.buttonConectar = new System.Windows.Forms.Button();
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,17 +82,7 @@
             this.buttonDesconectar.TabIndex = 0;
             this.buttonDesconectar.Text = "Desconectar";
             this.buttonDesconectar.UseVisualStyleBackColor = true;
-            this.buttonDesconectar.Click += new System.EventHandler(this.buttonDesconectar_Click_1);
-            // 
-            // buttonConectar
-            // 
-            this.buttonConectar.Location = new System.Drawing.Point(14, 13);
-            this.buttonConectar.Name = "buttonConectar";
-            this.buttonConectar.Size = new System.Drawing.Size(132, 23);
-            this.buttonConectar.TabIndex = 0;
-            this.buttonConectar.Text = "Conectar";
-            this.buttonConectar.UseVisualStyleBackColor = true;
-            this.buttonConectar.Click += new System.EventHandler(this.buttonConectar_Click);
+            this.buttonDesconectar.Click += new System.EventHandler(this.buttonDesconectar_Click);
             // 
             // buttonRandom
             // 
@@ -122,6 +112,16 @@
             this.panelInfo.Size = new System.Drawing.Size(416, 420);
             this.panelInfo.TabIndex = 1;
             // 
+            // buttonConectar
+            // 
+            this.buttonConectar.Location = new System.Drawing.Point(14, 13);
+            this.buttonConectar.Name = "buttonConectar";
+            this.buttonConectar.Size = new System.Drawing.Size(132, 23);
+            this.buttonConectar.TabIndex = 0;
+            this.buttonConectar.Text = "Conectar";
+            this.buttonConectar.UseVisualStyleBackColor = true;
+            this.buttonConectar.Click += new System.EventHandler(this.buttonConectar_Click);
+            // 
             // Ventana
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,11 +141,11 @@
         private System.Windows.Forms.Panel panelAcciones;
         private System.Windows.Forms.Button buttonAgregarDatos;
         private System.Windows.Forms.Button buttonRandom;
-        private System.Windows.Forms.Button buttonConectar;
         private System.Windows.Forms.Panel panelInfo;
         private System.Windows.Forms.Button buttonDesconectar;
         private System.Windows.Forms.Button buttonDrop;
         private System.Windows.Forms.Button buttonConsultas;
+        private System.Windows.Forms.Button buttonConectar;
 
 
     }

@@ -7,7 +7,7 @@ using NoSQL.Servicios;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
-namespace NoSQL
+namespace NoSQL.Servicios
 {
     class MysqlOperaciones: IOperaciones
     {

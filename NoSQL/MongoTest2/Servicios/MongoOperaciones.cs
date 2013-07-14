@@ -9,7 +9,7 @@ using MongoDB.Bson;
 using MongoDB.Driver.Builders;
 using NoSQL.Helpers;
 
-namespace NoSQL
+namespace NoSQL.Servicios
 {
     public class MongoOperaciones : IOperaciones
     {

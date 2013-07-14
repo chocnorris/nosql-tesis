@@ -12,12 +12,15 @@ using NoSQL.Paneles;
 namespace NoSQL
 {
     public partial class Ventana : Form
-    {        
-           
+    {
+        PanelConexion pc;
         IOperaciones db;
         public Ventana()
         {
             InitializeComponent();
+            pc = new PanelConexion(this);
+            panelInfo.Controls.Add(pc);
+            pc.Dock = DockStyle.Fill;
             bloquearBotones(true);
         }       
 
@@ -39,35 +42,42 @@ namespace NoSQL
             }
         }
 
-        
         private void buttonConectar_Click(object sender, EventArgs e)
         {
-            Form vc = new VentanaConexion(this);
-            vc.ShowDialog();
+            pc.Conectar();
         }
 
-        public void SetPanelInfo(UserControl panel)
-        {
-            panelInfo.Controls.Add(panel);
-            panel.Dock = DockStyle.Fill;
-        }
-
-        public void SetDB(IOperaciones db)
-        {
-            this.db = db;
-        }
-
-        public void AfterConnection()
+        public void AfterConnection(UserControl panel = null)
         {
             if (db.IsDatabaseConnected())
                 bloquearBotones(false);
+            if (panel != null)
+            {
+                panelInfo.Controls.Add(panel);
+                panel.Dock = DockStyle.Fill;
+            }
         }
 
-        private void buttonDesconectar_Click_1(object sender, EventArgs e)
+        public void AfterConnection(IOperaciones db, UserControl panel = null)
+        {
+            this.db = db;
+            if (db.IsDatabaseConnected())
+            {
+                bloquearBotones(false);
+                panelInfo.Controls.Clear();
+                if (panel != null)
+                {
+                    panelInfo.Controls.Add(panel);
+                    panel.Dock = DockStyle.Fill;
+                }
+            }
+        }
+        private void buttonDesconectar_Click(object sender, EventArgs e)
         {
             db.Shutdown();
             db = null;
             panelInfo.Controls.Clear();
+            panelInfo.Controls.Add(pc);
             bloquearBotones(true);
         }
 
