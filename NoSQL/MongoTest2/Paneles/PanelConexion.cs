@@ -77,9 +77,20 @@ namespace NoSQL.Paneles
             IOperaciones db = null;
             if (comboBoxDB.SelectedItem.ToString() == "Mongo")
             {
-                if (!testConnection(comboBoxHost.Text, 27017))
-                    return;
-                MongoOperaciones md = new MongoOperaciones("forum", comboBoxHost.Text);
+                string connstr = "";
+                if (checkBoxReplSet.CheckState == CheckState.Checked)
+                    connstr = construirReplSetConn();
+                else
+                {
+                    connstr = comboBoxHost.Text;
+                    if (!testConnection(connstr, 27017))
+                        return;
+                }
+                MongoOperaciones md;
+                if (textBoxUsuario.Text == "")
+                    md = new MongoOperaciones("forum", connstr);
+                else
+                    md = new MongoOperaciones("forum", connstr, textBoxUsuario.Text, textBoxPass.Text);
                 panelAux = new InfoMongo(md);
                 db = md;
             }
@@ -87,16 +98,62 @@ namespace NoSQL.Paneles
             {
                 if (!testConnection(comboBoxHost.Text, 9160))
                     return;
-                db = new CassandraOperaciones("forum", comboBoxHost.Text);
+                if (textBoxUsuario.Text == "")
+                    db = new CassandraOperaciones("forum", comboBoxHost.Text);
+                else
+                    db = new CassandraOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
                 db.Initialize(false);
             }
             if (comboBoxDB.SelectedItem.ToString() == "MySQL")
             {
                 if (!testConnection(comboBoxHost.Text, 3306))
                     return;
-                db = new MysqlOperaciones("forum", comboBoxHost.Text);
+                if (textBoxUsuario.Text == "")
+                    db = new MysqlOperaciones("forum", comboBoxHost.Text);
+                else
+                    db = new MysqlOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
             }
             padre.AfterConnection(db, panelAux);
+        }
+
+        private string construirReplSetConn()
+        {
+            string connstr = "";
+            for (int i = 0; i < dataGridViewReplSet.Rows.Count - 1; i++)
+            {
+                var row = dataGridViewReplSet.Rows[i];
+                if (row.Cells["Port"].Value == null)
+                    connstr += row.Cells["Host"].Value + ":27017";
+                else
+                    connstr += row.Cells["Host"].Value + ":" + row.Cells["Port"].Value;
+                if (i < dataGridViewReplSet.Rows.Count - 2)
+                    connstr += ",";
+            }
+            return connstr + "/?replicaSet="+textBoxNombreReplSet;
+        }
+
+        private void checkBoxReplSet_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxReplSet.CheckState.Equals(CheckState.Checked))
+            {
+                comboBoxHost.Enabled = false;
+                dataGridViewReplSet.Enabled = true;
+                textBoxNombreReplSet.Enabled = true;
+            }
+            else
+            {
+                comboBoxHost.Enabled = true;
+                dataGridViewReplSet.Enabled = false;
+                textBoxNombreReplSet.Enabled = false;
+            }
+        }
+
+        private void comboBoxDB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxDB.SelectedItem.Equals("Mongo"))
+                groupBoxReplSet.Visible = true;
+            else
+                groupBoxReplSet.Visible = false;
         }
     }
 }
