@@ -6,6 +6,9 @@ using NoSQL.Modelo;
 using NoSQL.Servicios;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using System.Reflection;
+using System.IO;
+using System.Drawing;
 
 namespace NoSQL.Servicios
 {
@@ -16,7 +19,7 @@ namespace NoSQL.Servicios
 
         public MysqlOperaciones(string dbname, string host)
         {
-            string connStr = "server="+host+";user=forum;database="+dbname+";password=2010;";
+            string connStr = "server="+host+";user=forum;database="+dbname+";password=1234;";
             conn = new MySqlConnection(connStr);
             conn.Open();
         }
@@ -33,8 +36,39 @@ namespace NoSQL.Servicios
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
-            throw new NotImplementedException();
+            var authors = new List<Author>();
+            string sql="";
+            if (skip == 0 && take == 0)
+                sql = "SELECT * FROM Authors";
+            else
+            {
+                sql = "SELECT * FROM Authors OFFSET " + skip + " LIMIT " + take; // <- ni idea que estoy haciendo
+            }
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();                                    
+            while (rdr.Read())
+            {
+                Author author = new Author();
+                author.Id = rdr.GetInt32(0);
+                author.Name = rdr.GetString(1);
+                author.Photo = new Bitmap(1, 1);
+                
+            }
+            return authors;
         }
+
+        /// <summary>
+        /// Obtener un bitmap en base a un array de bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        protected Bitmap ConvertToBitmap(byte[] bytes)
+        {
+            ImageConverter ic = new ImageConverter();
+            Image img = (Image)ic.ConvertFrom(bytes);
+            return new Bitmap(img);
+        }
+
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
@@ -73,7 +107,19 @@ namespace NoSQL.Servicios
 
         public Author AddAuthor(Author autor)
         {
-            throw new NotImplementedException();
+            ImageConverter converter = new ImageConverter();
+            byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
+
+            string insertstmt = getInsertStatementFor("Author", "NoSQL.Modelo");            
+            string addStmt = string.Format(insertstmt,
+            "null",
+            "'"+autor.Name+"'",
+            "'"+BitConverter.ToString(bytes).Replace("-", ""))+"'";
+            MySqlCommand cmd = new MySqlCommand(addStmt, conn);                                   
+            cmd.ExecuteNonQuery();            
+            long id = cmd.LastInsertedId;
+            autor.Id = id;
+            return autor;
         }
 
         public Thread AddThread(Thread thread)
@@ -92,12 +138,12 @@ namespace NoSQL.Servicios
 
         public long GetThreadsCount()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public long GetCommentsCount()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public bool RemoveAuthor(Author autor)
@@ -135,11 +181,47 @@ namespace NoSQL.Servicios
             return "MySQL";
         }
 
-
         public bool Shutdown()
         {
             conn.Close();
             return true;
         }
+
+       /// <summary>
+        /// Devuelve un statement parametrizado para agregar a un column family
+       /// </summary>
+       /// <param name="entityName"></param>
+       /// <param name="modelNamespacePath"></param>
+       /// <returns></returns>
+        protected string getInsertStatementFor(string entityName, string modelNamespacePath)
+        {
+            var q = from t in Assembly.GetExecutingAssembly().GetTypes()
+                    where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
+                    select t;
+            string stmt = @"INSERT INTO " + entityName + @"s (";
+            var properties = q.First().GetProperties().OrderBy(p => p.Name.ToUpper());
+            int j = 0;
+            foreach (PropertyInfo property in properties)
+            {
+                stmt = stmt + " "+property.Name;
+                j++;
+                if (j < properties.Count())
+                    stmt = stmt + ",";
+                else
+                    stmt = stmt + ")";
+            }
+            stmt = stmt + " VALUES (";
+            for (int i = 1; i <= properties.Count(); i++)
+            {
+                stmt = stmt + "{" + (i - 1) + "}";
+                if (i < properties.Count())
+                    stmt = stmt + ",";
+                else
+                    stmt = stmt + ");";
+            }
+            return stmt;
+        }
+
+
     }
 }
