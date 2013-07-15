@@ -25,6 +25,16 @@ namespace NoSQL.Servicios
             session = cluster.Connect();
             keySpaceName = dbname;
         }
+        public CassandraOperaciones(string dbname, string [] hosts, string user = "", string pass = "")
+        {
+            Builder builder = Cluster.Builder();
+            for (int i = 0; i < hosts.Count(); i++)
+                builder.AddContactPoint(hosts[i]);
+            cluster = builder.Build();
+            //session = cluster.Connect(dbname);
+            session = cluster.Connect();
+            keySpaceName = dbname;
+        }
         #region Implementaciones de interfaz
 
         /*

@@ -27,7 +27,10 @@ namespace NoSQL.Paneles
             comboBoxHost.Items.Add("192.168.56.201");
             comboBoxHost.Items.Add("192.168.56.202");
             comboBoxHost.Items.Add("192.168.56.203");
-            comboBoxHost.Items.Add("mongo201:27017,mongo202:27017,mongo203:27017/?replicaSet=rs0");
+
+            dataGridViewReplSet.Rows.Add("mongo201", "27017");
+            dataGridViewReplSet.Rows.Add("mongo202", "27017");
+            dataGridViewReplSet.Rows.Add("mongo203", "27017");
 
         }
 
@@ -75,22 +78,28 @@ namespace NoSQL.Paneles
         {
             UserControl panelAux = null;
             IOperaciones db = null;
+            MongoOperaciones md;
             if (comboBoxDB.SelectedItem.ToString() == "Mongo")
             {
                 string connstr = "";
                 if (checkBoxReplSet.CheckState == CheckState.Checked)
-                    connstr = construirReplSetConn();
+                {
+                    string [] hosts = getHostsDataGrid();
+                    if (textBoxUsuario.Text == "")
+                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text);
+                    else
+                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text, textBoxUsuario.Text, textBoxPass.Text);
+                }
                 else
                 {
                     connstr = comboBoxHost.Text;
+                    if (textBoxUsuario.Text == "")
+                        md = new MongoOperaciones("forum", connstr);
+                    else
+                        md = new MongoOperaciones("forum", connstr, textBoxUsuario.Text, textBoxPass.Text);
                     if (!testConnection(connstr, 27017))
                         return;
                 }
-                MongoOperaciones md;
-                if (textBoxUsuario.Text == "")
-                    md = new MongoOperaciones("forum", connstr);
-                else
-                    md = new MongoOperaciones("forum", connstr, textBoxUsuario.Text, textBoxPass.Text);
                 panelAux = new InfoMongo(md);
                 db = md;
             }
@@ -99,9 +108,15 @@ namespace NoSQL.Paneles
                 if (!testConnection(comboBoxHost.Text, 9160))
                     return;
                 if (textBoxUsuario.Text == "")
-                    db = new CassandraOperaciones("forum", comboBoxHost.Text);
+                    if (checkBoxReplSet.CheckState == CheckState.Checked)
+                        db = new CassandraOperaciones("forum", getHostsDataGrid());
+                    else
+                        db = new CassandraOperaciones("forum", comboBoxHost.Text);
                 else
-                    db = new CassandraOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
+                    if (checkBoxReplSet.CheckState == CheckState.Checked)
+                        db = new CassandraOperaciones("forum", getHostsDataGrid(), textBoxUsuario.Text, textBoxPass.Text);
+                    else
+                        db = new CassandraOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
                 db.Initialize(false);
             }
             if (comboBoxDB.SelectedItem.ToString() == "MySQL")
@@ -116,20 +131,22 @@ namespace NoSQL.Paneles
             padre.AfterConnection(db, panelAux);
         }
 
-        private string construirReplSetConn()
+        private string[] getHostsDataGrid()
         {
-            string connstr = "";
-            for (int i = 0; i < dataGridViewReplSet.Rows.Count - 1; i++)
+            string [] hosts = new string [dataGridViewReplSet.Rows.Count-1];
+            int i = 0;
+            foreach(DataGridViewRow row in dataGridViewReplSet.Rows)
             {
-                var row = dataGridViewReplSet.Rows[i];
-                if (row.Cells["Port"].Value == null)
-                    connstr += row.Cells["Host"].Value + ":27017";
-                else
-                    connstr += row.Cells["Host"].Value + ":" + row.Cells["Port"].Value;
-                if (i < dataGridViewReplSet.Rows.Count - 2)
-                    connstr += ",";
+                if (row.Cells["Host"].Value != null)
+                {
+                    if (row.Cells["Port"].Value != null && !row.Cells["Port"].Value.Equals(""))
+                        hosts[i] = row.Cells["Host"].Value + ":" + row.Cells["Port"].Value;
+                    else
+                        hosts[i] = row.Cells["Host"].Value + "";
+                    i++;
+                }
             }
-            return connstr + "/?replicaSet="+textBoxNombreReplSet;
+            return hosts;
         }
 
         private void checkBoxReplSet_CheckedChanged(object sender, EventArgs e)
@@ -138,7 +155,8 @@ namespace NoSQL.Paneles
             {
                 comboBoxHost.Enabled = false;
                 dataGridViewReplSet.Enabled = true;
-                textBoxNombreReplSet.Enabled = true;
+                if (comboBoxDB.SelectedItem.Equals("Mongo"))
+                    textBoxNombreReplSet.Enabled = true;
             }
             else
             {
@@ -150,10 +168,18 @@ namespace NoSQL.Paneles
 
         private void comboBoxDB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxDB.SelectedItem.Equals("Mongo"))
+            checkBoxReplSet.CheckState = CheckState.Unchecked;
+            if (comboBoxDB.SelectedItem.Equals("Mongo") || comboBoxDB.SelectedItem.Equals("Cassandra"))
+            {
                 groupBoxReplSet.Visible = true;
+                if (comboBoxDB.SelectedItem.Equals("Cassandra"))
+                    textBoxNombreReplSet.Enabled = false;
+                if (comboBoxDB.SelectedItem.Equals("Mongo"))
+                    textBoxNombreReplSet.Enabled = true;
+            }
             else
                 groupBoxReplSet.Visible = false;
+
         }
     }
 }

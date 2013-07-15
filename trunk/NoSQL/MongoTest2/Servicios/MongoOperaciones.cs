@@ -35,6 +35,13 @@ namespace NoSQL.Servicios
             db = server.GetDatabase(dbname);            
         }
 
+        public MongoOperaciones(string dbname, string[] hosts,string replSetName, string user = "", string pass = "")
+        {
+            client = new MongoClient("mongodb://" + construirReplSetConn(hosts, replSetName));
+            server = client.GetServer();
+            db = server.GetDatabase(dbname);
+        }
+
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
 
@@ -330,6 +337,22 @@ namespace NoSQL.Servicios
         public bool Shutdown()
         {
             return true;
+        }
+
+        private string construirReplSetConn(string [] hosts, string replSetName)
+        {
+            string connstr = "";
+            for (int i = 0; i < hosts.Count(); i++)
+            {
+                var row = hosts[i];
+                if (!hosts[i].Contains(":"))
+                    connstr += hosts[i] + ":27017";
+                else
+                    connstr += hosts[i];
+                if (i < hosts.Count() - 1)
+                    connstr += ",";
+            }
+            return connstr + "/?replicaSet=" + replSetName;
         }
     }
 }

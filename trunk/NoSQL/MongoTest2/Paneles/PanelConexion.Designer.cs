@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.comboBoxHost = new System.Windows.Forms.ComboBox();
             this.labelHost = new System.Windows.Forms.Label();
             this.labelDB = new System.Windows.Forms.Label();
@@ -37,17 +38,17 @@
             this.groupBoxReplSet = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.dataGridViewReplSet = new System.Windows.Forms.DataGridView();
+            this.Host = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Port = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.labelNombreReplSet = new System.Windows.Forms.Label();
+            this.textBoxNombreReplSet = new System.Windows.Forms.TextBox();
             this.checkBoxReplSet = new System.Windows.Forms.CheckBox();
             this.groupBoxExtra = new System.Windows.Forms.GroupBox();
             this.labelPass = new System.Windows.Forms.Label();
             this.labelUsuario = new System.Windows.Forms.Label();
             this.textBoxPass = new System.Windows.Forms.TextBox();
             this.textBoxUsuario = new System.Windows.Forms.TextBox();
-            this.Host = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Port = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.labelNombreReplSet = new System.Windows.Forms.Label();
-            this.textBoxNombreReplSet = new System.Windows.Forms.TextBox();
             this.panelPrincipal.SuspendLayout();
             this.panelExtra.SuspendLayout();
             this.groupBoxReplSet.SuspendLayout();
@@ -126,7 +127,7 @@
             this.groupBoxReplSet.Size = new System.Drawing.Size(399, 298);
             this.groupBoxReplSet.TabIndex = 12;
             this.groupBoxReplSet.TabStop = false;
-            this.groupBoxReplSet.Text = "Replica Set";
+            this.groupBoxReplSet.Text = "Múltiples Hosts";
             // 
             // panel1
             // 
@@ -134,11 +135,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(3, 69);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(314, 226);
+            this.panel1.Size = new System.Drawing.Size(333, 226);
             this.panel1.TabIndex = 2;
             // 
             // dataGridViewReplSet
             // 
+            this.dataGridViewReplSet.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridViewReplSet.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewReplSet.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewReplSet.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Host,
@@ -147,8 +150,23 @@
             this.dataGridViewReplSet.Enabled = false;
             this.dataGridViewReplSet.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewReplSet.Name = "dataGridViewReplSet";
-            this.dataGridViewReplSet.Size = new System.Drawing.Size(314, 226);
+            this.dataGridViewReplSet.Size = new System.Drawing.Size(333, 226);
             this.dataGridViewReplSet.TabIndex = 1;
+            // 
+            // Host
+            // 
+            this.Host.HeaderText = "Host";
+            this.Host.Name = "Host";
+            this.Host.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Host.Width = 170;
+            // 
+            // Port
+            // 
+            dataGridViewCellStyle1.NullValue = null;
+            this.Port.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Port.HeaderText = "Port";
+            this.Port.Name = "Port";
+            this.Port.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // panel2
             // 
@@ -161,14 +179,32 @@
             this.panel2.Size = new System.Drawing.Size(393, 53);
             this.panel2.TabIndex = 3;
             // 
+            // labelNombreReplSet
+            // 
+            this.labelNombreReplSet.AutoSize = true;
+            this.labelNombreReplSet.Location = new System.Drawing.Point(13, 27);
+            this.labelNombreReplSet.Name = "labelNombreReplSet";
+            this.labelNombreReplSet.Size = new System.Drawing.Size(44, 13);
+            this.labelNombreReplSet.TabIndex = 11;
+            this.labelNombreReplSet.Text = "Nombre";
+            // 
+            // textBoxNombreReplSet
+            // 
+            this.textBoxNombreReplSet.Enabled = false;
+            this.textBoxNombreReplSet.Location = new System.Drawing.Point(94, 24);
+            this.textBoxNombreReplSet.Name = "textBoxNombreReplSet";
+            this.textBoxNombreReplSet.Size = new System.Drawing.Size(203, 20);
+            this.textBoxNombreReplSet.TabIndex = 10;
+            this.textBoxNombreReplSet.Text = "rs0";
+            // 
             // checkBoxReplSet
             // 
             this.checkBoxReplSet.AutoSize = true;
             this.checkBoxReplSet.Location = new System.Drawing.Point(3, 4);
             this.checkBoxReplSet.Name = "checkBoxReplSet";
-            this.checkBoxReplSet.Size = new System.Drawing.Size(129, 17);
+            this.checkBoxReplSet.Size = new System.Drawing.Size(149, 17);
             this.checkBoxReplSet.TabIndex = 0;
-            this.checkBoxReplSet.Text = "Conectar a replica set";
+            this.checkBoxReplSet.Text = "Conectar a múltiples hosts";
             this.checkBoxReplSet.UseVisualStyleBackColor = true;
             this.checkBoxReplSet.CheckedChanged += new System.EventHandler(this.checkBoxReplSet_CheckedChanged);
             // 
@@ -219,35 +255,6 @@
             this.textBoxUsuario.TabIndex = 1;
             this.textBoxUsuario.UseSystemPasswordChar = true;
             // 
-            // Host
-            // 
-            this.Host.HeaderText = "Host";
-            this.Host.Name = "Host";
-            this.Host.Width = 170;
-            // 
-            // Port
-            // 
-            this.Port.HeaderText = "Port";
-            this.Port.Name = "Port";
-            // 
-            // labelNombreReplSet
-            // 
-            this.labelNombreReplSet.AutoSize = true;
-            this.labelNombreReplSet.Location = new System.Drawing.Point(13, 27);
-            this.labelNombreReplSet.Name = "labelNombreReplSet";
-            this.labelNombreReplSet.Size = new System.Drawing.Size(44, 13);
-            this.labelNombreReplSet.TabIndex = 11;
-            this.labelNombreReplSet.Text = "Nombre";
-            // 
-            // textBoxNombreReplSet
-            // 
-            this.textBoxNombreReplSet.Enabled = false;
-            this.textBoxNombreReplSet.Location = new System.Drawing.Point(94, 24);
-            this.textBoxNombreReplSet.Name = "textBoxNombreReplSet";
-            this.textBoxNombreReplSet.Size = new System.Drawing.Size(203, 20);
-            this.textBoxNombreReplSet.TabIndex = 10;
-            this.textBoxNombreReplSet.Text = "rs0";
-            // 
             // PanelConexion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -288,9 +295,9 @@
         private System.Windows.Forms.CheckBox checkBoxReplSet;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Host;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Port;
         private System.Windows.Forms.Label labelNombreReplSet;
         private System.Windows.Forms.TextBox textBoxNombreReplSet;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Host;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Port;
     }
 }
