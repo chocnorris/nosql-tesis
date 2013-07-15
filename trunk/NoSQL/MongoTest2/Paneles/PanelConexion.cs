@@ -172,10 +172,6 @@ namespace NoSQL.Paneles
             if (comboBoxDB.SelectedItem.Equals("Mongo") || comboBoxDB.SelectedItem.Equals("Cassandra"))
             {
                 groupBoxReplSet.Visible = true;
-                if (comboBoxDB.SelectedItem.Equals("Cassandra"))
-                    textBoxNombreReplSet.Enabled = false;
-                if (comboBoxDB.SelectedItem.Equals("Mongo"))
-                    textBoxNombreReplSet.Enabled = true;
             }
             else
                 groupBoxReplSet.Visible = false;
