@@ -304,6 +304,12 @@ namespace NoSQL.Servicios
             cmd2.Parameters.AddWithValue("@Parent_id", comentario.Parent_id);
             cmd2.ExecuteNonQuery();
             comentario.Id = id;
+
+            MySqlCommand cmd3 = new MySqlCommand();
+            cmd3.Connection = conn;
+            cmd3.CommandText = "UPDATE Base SET CommentCount = CommentCount + 1 WHERE id = @Id";
+            cmd3.Parameters.AddWithValue("@Id", comentario.Parent_id);
+            cmd3.ExecuteNonQuery();
             return comentario;
         }
 
