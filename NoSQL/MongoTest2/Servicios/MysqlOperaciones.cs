@@ -16,22 +16,47 @@ namespace NoSQL.Servicios
     {
 
         MySqlConnection conn;
+        string dbname;
 
         public MysqlOperaciones(string dbname, string host, string user = "forum", string pass = "1234")
         {
-            string connStr = "server="+host+";user="+user+";database="+dbname+";password="+pass+";";
+            string connStr = "server="+host+";user="+user+";password="+pass+";";
+            this.dbname = dbname;
             conn = new MySqlConnection(connStr);
             conn.Open();
+            try
+            {
+                MySqlScript script = new MySqlScript(conn, "USE " + dbname);
+                script.Execute();
+            }
+            catch (Exception)
+            {
+                Initialize(false);
+            }
         }
 
         public bool Initialize(bool dropExistent)
         {
-            throw new NotImplementedException();
+            if (dropExistent)
+            {
+                MySqlScript scriptDrop = new MySqlScript(conn, "DROP DATABASE " + dbname);
+                try
+                {
+                    scriptDrop.Execute();
+                }
+                catch (Exception)
+                { 
+                }
+            }
+            MySqlScript script = new MySqlScript(conn);
+            script.Query = System.IO.File.ReadAllText(@"..\..\Data\script.sql");
+            int result = script.Execute();
+            return true;
         }
 
         public bool Cleanup()
         {
-            throw new NotImplementedException();
+            return Initialize(true);
         }
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
@@ -48,12 +73,15 @@ namespace NoSQL.Servicios
             MySqlDataReader rdr = cmd.ExecuteReader();                                    
             while (rdr.Read())
             {
-                Author author = new Author();
-                author.Id = rdr.GetInt32(0);
-                author.Name = rdr.GetString(1);
-                author.Photo = new Bitmap(1, 1);
-                
+                Author author = new Author()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Name = rdr.GetString("name"),
+                    Photo = null
+                };
+                authors.Add(author);
             }
+            rdr.Close();
             return authors;
         }
 
@@ -92,7 +120,21 @@ namespace NoSQL.Servicios
 
         public Author GetAuthor(object id)
         {
-            throw new NotImplementedException();
+            string sql = "SELECT * FROM Authors WHERE id = "+id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            var rdr = cmd.ExecuteReader();
+            rdr.Read();
+            int fileSize = (int)rdr.GetBytes(rdr.GetOrdinal("Photo"), 0, null, 0, 0);
+            byte [] rawData = new byte[fileSize];
+            rdr.GetBytes(rdr.GetOrdinal("Photo"), 0, rawData, 0, fileSize);
+            Author author = new Author()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Name = rdr.GetString("name"),
+                    Photo = ConvertToBitmap(rawData)
+                };
+            rdr.Close();
+            return author;
         }
 
         public Comment GetComment(object id)
@@ -109,13 +151,11 @@ namespace NoSQL.Servicios
         {
             ImageConverter converter = new ImageConverter();
             byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
-
-            string insertstmt = getInsertStatementFor("Author", "NoSQL.Modelo");            
-            string addStmt = string.Format(insertstmt,
-            "null",
-            "'"+autor.Name+"'",
-            "'"+BitConverter.ToString(bytes).Replace("-", ""))+"'";
-            MySqlCommand cmd = new MySqlCommand(addStmt, conn);                                   
+            MySqlCommand cmd = new MySqlCommand(); 
+            cmd.Connection = conn;
+            cmd.CommandText = "INSERT INTO authors VALUES(NULL, @Name, @Photo)";
+            cmd.Parameters.AddWithValue("@Name", autor.Name);
+            cmd.Parameters.AddWithValue("@Photo", bytes);                                            
             cmd.ExecuteNonQuery();            
             long id = cmd.LastInsertedId;
             autor.Id = id;
@@ -131,9 +171,8 @@ namespace NoSQL.Servicios
         {
             string sql = "SELECT Count(*) AS cant FROM Authors";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            rdr.Read();
-            return rdr.GetInt64("cant");
+            var resu = cmd.ExecuteScalar();
+            return (Int64)resu;
         }
 
         public long GetThreadsCount()
@@ -186,42 +225,6 @@ namespace NoSQL.Servicios
             conn.Close();
             return true;
         }
-
-       /// <summary>
-        /// Devuelve un statement parametrizado para agregar a un column family
-       /// </summary>
-       /// <param name="entityName"></param>
-       /// <param name="modelNamespacePath"></param>
-       /// <returns></returns>
-        protected string getInsertStatementFor(string entityName, string modelNamespacePath)
-        {
-            var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
-                    select t;
-            string stmt = @"INSERT INTO " + entityName + @"s (";
-            var properties = q.First().GetProperties().OrderBy(p => p.Name.ToUpper());
-            int j = 0;
-            foreach (PropertyInfo property in properties)
-            {
-                stmt = stmt + " "+property.Name;
-                j++;
-                if (j < properties.Count())
-                    stmt = stmt + ",";
-                else
-                    stmt = stmt + ")";
-            }
-            stmt = stmt + " VALUES (";
-            for (int i = 1; i <= properties.Count(); i++)
-            {
-                stmt = stmt + "{" + (i - 1) + "}";
-                if (i < properties.Count())
-                    stmt = stmt + ",";
-                else
-                    stmt = stmt + ");";
-            }
-            return stmt;
-        }
-
 
     }
 }

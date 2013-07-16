@@ -178,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\1mb.txt" />
+    <Content Include="Data\users.sql" />
     <Content Include="Data\nophoto.jpg" />
     <Content Include="Data\script.sql" />
   </ItemGroup>
