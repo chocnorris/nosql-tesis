@@ -140,7 +140,7 @@ namespace NoSQL
         private void cargarComments(int n,bool mb)
         {
             Random rand = new Random();
-            int nTh = (int)db.GetThreads().Count();
+            int nTh = (int)db.GetThreadsCount();
             int nCom = (int)db.GetCommentsCount();
             int cargaNCom = n / 10;
             for (int i = 1; i <= n; i++)

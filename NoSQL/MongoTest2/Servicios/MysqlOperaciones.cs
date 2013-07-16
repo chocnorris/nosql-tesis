@@ -67,7 +67,7 @@ namespace NoSQL.Servicios
                 sql = "SELECT * FROM Authors";
             else
             {
-                sql = "SELECT * FROM Authors OFFSET " + skip + " LIMIT " + take; // <- ni idea que estoy haciendo
+                sql = "SELECT * FROM Authors LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();                                    
@@ -85,37 +85,132 @@ namespace NoSQL.Servicios
             return authors;
         }
 
-        /// <summary>
-        /// Obtener un bitmap en base a un array de bytes
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        protected Bitmap ConvertToBitmap(byte[] bytes)
-        {
-            ImageConverter ic = new ImageConverter();
-            Image img = (Image)ic.ConvertFrom(bytes);
-            return new Bitmap(img);
-        }
-
-
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
-            throw new NotImplementedException();
+            var comments = new List<Comment>();
+            string sql = "";
+            if (skip == 0 && take == 0)
+                sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id";
+            else
+            {
+                sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+            }
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Comment comment = new Comment()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Text = rdr.GetString("Text"),
+                    Date = rdr.GetDateTime("Date"),
+                    Parent_id = rdr.GetInt32("Parent_id"),
+                    Thread_id = rdr.GetInt32("Thread_id"),
+                    CommentCount = rdr.GetInt32("ComentCount"),
+                    Author = new Author()
+                    {
+                        Id = rdr.GetInt32("Author_id"),
+                    }
+                };
+                comments.Add(comment);
+            }
+            rdr.Close();
+            return comments;
         }
 
         public List<Comment> GetChildComments(object Parent_id)
         {
-            throw new NotImplementedException();
+            var comments = new List<Comment>();
+            string sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id WHERE Comments.Parent_id = "+Parent_id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Comment comment = new Comment()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Text = rdr.GetString("Text"),
+                    Date = rdr.GetDateTime("Date"),
+                    Parent_id = rdr.GetInt32("Parent_id"),
+                    Thread_id = rdr.GetInt32("Thread_id"),
+                    CommentCount = rdr.GetInt32("CommentCount"),
+                    Author = new Author()
+                    {
+                        Id = rdr.GetInt32("Author_id"),
+                    }
+                };
+                comments.Add(comment);
+            }
+            rdr.Close();
+            return comments;
         }
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
-            throw new NotImplementedException();
+            var threads = new List<Thread>();
+            string sql = "";
+            if (skip == 0 && take == 0)
+                sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id";
+            else
+            {
+                sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+            }
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Thread thread = new Thread()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Title = rdr.GetString("Title"),
+                    Date = rdr.GetDateTime("Date"),
+                    //Tags = GetTags(rdr.GetInt32("id")),
+                    CommentCount = rdr.GetInt32("CommentCount"),
+                    Author = new Author()
+                    {
+                        Id = rdr.GetInt32("Author_id"),
+                    }
+                };
+                threads.Add(thread);
+            }
+            rdr.Close();
+            return threads;
+        }
+
+        private string[] GetTags(int id)
+        {
+            string sql = "SELECT * FROM Tags WHERE thread_id = " + id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            var rdr = cmd.ExecuteReader();
+            List<string> tags = new List<string>();
+            while (rdr.Read())
+            {
+                tags.Add(rdr.GetString("Tag"));
+            }
+            rdr.Close();
+            return tags.ToArray();
         }
 
         public Thread GetThread(object id)
         {
-            throw new NotImplementedException();
+            string sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id WHERE Threads.Id = " + id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            rdr.Read();
+            Thread thread = new Thread()
+            {
+                Id = rdr.GetInt32("id"),
+                Title = rdr.GetString("Title"),
+                Date = rdr.GetDateTime("Date"),
+                CommentCount = rdr.GetInt32("CommentCount"),
+                Author = new Author()
+                {
+                    Id = rdr.GetInt32("Author_id"),
+                }
+            };
+            rdr.Close();
+            thread.Tags = GetTags((Int32)thread.Id);
+            return thread;
         }
 
         public Author GetAuthor(object id)
@@ -139,12 +234,48 @@ namespace NoSQL.Servicios
 
         public Comment GetComment(object id)
         {
-            throw new NotImplementedException();
+            string sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id WHERE Comments.Id = "+ id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            rdr.Read();
+            Comment comment = new Comment()
+            {
+                Id = rdr.GetInt32("id"),
+                Text = rdr.GetString("Text"),
+                Date = rdr.GetDateTime("Date"),
+                Parent_id = rdr.GetInt32("Parent_id"),
+                Thread_id = rdr.GetInt32("Thread_id"),
+                CommentCount = rdr.GetInt32("CommentCount"),
+                Author = new Author()
+                {
+                    Id = rdr.GetInt32("Author_id"),
+                }
+            };
+            rdr.Close();
+            return comment;
         }
 
         public Comment AddComment(Comment comentario)
         {
-            throw new NotImplementedException();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "INSERT INTO Base VALUES(NULL, @Author_id, @Date, @CommentCount)";
+            cmd.Parameters.AddWithValue("@Author_id", comentario.Author.Id);
+            cmd.Parameters.AddWithValue("@Date", comentario.Date);
+            cmd.Parameters.AddWithValue("@CommentCount", 0);
+            cmd.ExecuteNonQuery();
+
+            long id = cmd.LastInsertedId;
+            MySqlCommand cmd2 = new MySqlCommand();
+            cmd2.Connection = conn;
+            cmd2.CommandText = "INSERT INTO Comments VALUES(@Id, @Text, @Thread_id, @Parent_id)";
+            cmd2.Parameters.AddWithValue("@Id", id);
+            cmd2.Parameters.AddWithValue("@Text", comentario.Text);
+            cmd2.Parameters.AddWithValue("@Thread_id", comentario.Thread_id);
+            cmd2.Parameters.AddWithValue("@Parent_id", comentario.Parent_id);
+            cmd2.ExecuteNonQuery();
+            comentario.Id = id;
+            return comentario;
         }
 
         public Author AddAuthor(Author autor)
@@ -164,7 +295,34 @@ namespace NoSQL.Servicios
 
         public Thread AddThread(Thread thread)
         {
-            throw new NotImplementedException();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "INSERT INTO Base VALUES(NULL, @Author_id, @Date, @CommentCount)";
+            cmd.Parameters.AddWithValue("@Author_id", thread.Author.Id);
+            cmd.Parameters.AddWithValue("@Date", thread.Date);
+            cmd.Parameters.AddWithValue("@CommentCount", 0);
+            cmd.ExecuteNonQuery();
+
+            long id = cmd.LastInsertedId;
+            MySqlCommand cmd2 = new MySqlCommand();
+            cmd2.Connection = conn;
+            cmd2.CommandText = "INSERT INTO Threads VALUES(@Id, @Title)";
+            cmd2.Parameters.AddWithValue("@Id", id);
+            cmd2.Parameters.AddWithValue("@Title", thread.Title);
+            cmd2.ExecuteNonQuery();
+
+            MySqlCommand cmd3;
+            for (int i = 0; i < thread.Tags.Count(); i++)
+            {
+                cmd3 = new MySqlCommand();
+                cmd3.Connection = conn;
+                cmd3.CommandText = "INSERT INTO Tags VALUES(@Thread_id, @Tag)";
+                cmd3.Parameters.AddWithValue("@Thread_id", id);
+                cmd3.Parameters.AddWithValue("@Tag", thread.Tags[i]);
+                cmd3.ExecuteNonQuery();
+            }
+            thread.Id = id;
+            return thread;
         }
 
         public long GetAuthorsCount()
@@ -177,12 +335,18 @@ namespace NoSQL.Servicios
 
         public long GetThreadsCount()
         {
-            return 0;
+            string sql = "SELECT Count(*) AS cant FROM Threads";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            var resu = cmd.ExecuteScalar();
+            return (Int64)resu;
         }
 
         public long GetCommentsCount()
         {
-            return 0;
+            string sql = "SELECT Count(*) AS cant FROM Comments";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            var resu = cmd.ExecuteScalar();
+            return (Int64)resu;
         }
 
         public bool RemoveAuthor(Author autor)
@@ -226,5 +390,17 @@ namespace NoSQL.Servicios
             return true;
         }
 
+
+        /// <summary>
+        /// Obtener un bitmap en base a un array de bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        protected Bitmap ConvertToBitmap(byte[] bytes)
+        {
+            ImageConverter ic = new ImageConverter();
+            Image img = (Image)ic.ConvertFrom(bytes);
+            return new Bitmap(img);
+        }
     }
 }
