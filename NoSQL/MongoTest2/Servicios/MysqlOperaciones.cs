@@ -150,27 +150,54 @@ namespace NoSQL.Servicios
             var threads = new List<Thread>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id";
+                sql = "SELECT "+
+                    "Base.*, Threads.*, Tags.*, Authors.Name AS Name "+
+                    "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
+                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
+                    "LEFT JOIN Tags ON Threads.Id = Tags.thread_id";
             else
             {
-                sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT " +
+                    "Base.*, Threads.*, Tags.*, Authors.Name AS Name " +
+                    "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
+                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
+                    "LEFT JOIN Tags ON Threads.Id = Tags.thread_id "+
+                    "LIMIT " + take + " OFFSET " + skip; 
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
-            while (rdr.Read())
+            List<string> tags = null;
+            bool tieneTags = false;
+            bool seguir = rdr.Read();
+            bool entro = false;
+            while (seguir)
             {
                 Thread thread = new Thread()
                 {
                     Id = rdr.GetInt32("id"),
                     Title = rdr.GetString("Title"),
                     Date = rdr.GetDateTime("Date"),
-                    //Tags = GetTags(rdr.GetInt32("id")),
+                    Tags = null,
                     CommentCount = rdr.GetInt32("CommentCount"),
                     Author = new Author()
                     {
                         Id = rdr.GetInt32("Author_id"),
+                        Name = rdr.GetString("Name")
                     }
                 };
+                tags = new List<string>();
+                entro = false;
+                tieneTags = !rdr.IsDBNull(rdr.GetOrdinal("Tag"));
+                while (seguir && tieneTags)
+                {
+                    tags.Add(rdr.GetString("Tag"));
+                    seguir = rdr.Read();
+                    tieneTags = !rdr.IsDBNull(rdr.GetOrdinal("Tag"));
+                    entro = true;
+                }
+                if (!entro)
+                    seguir = rdr.Read();
+                thread.Tags = tags.ToArray();
                 threads.Add(thread);
             }
             rdr.Close();
