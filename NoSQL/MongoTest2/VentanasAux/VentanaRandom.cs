@@ -131,7 +131,7 @@ namespace NoSQL
                     Title = names[num] + names[num2],
                     Author = auth,
                     Date = DateTime.Now,
-                    Tags = new string [0]
+                    Tags = new string[]{"uno", "dos", "tres" }
                 });
                 worker.ReportProgress((i*100)/n);
             }

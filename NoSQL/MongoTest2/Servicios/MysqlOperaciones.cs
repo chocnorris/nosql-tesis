@@ -152,27 +152,21 @@ namespace NoSQL.Servicios
             var threads = new List<Thread>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT "+
-                    "Base.*, Threads.*, Tags.*, Authors.Name AS Name "+
+                sql = "SELECT " +
+                    "Base.*, Threads.*, Authors.Name AS Name " +
                     "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
-                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
-                    "LEFT JOIN Tags ON Threads.Id = Tags.thread_id";
+                    "LEFT JOIN Threads ON Threads.Id = Base.Id  ";
             else
             {
                 sql = "SELECT " +
-                    "Base.*, Threads.*, Tags.*, Authors.Name AS Name " +
+                    "Base.*, Threads.*, Authors.Name AS Name " +
                     "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
                     "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
-                    "LEFT JOIN Tags ON Threads.Id = Tags.thread_id "+
-                    "LIMIT " + take + " OFFSET " + skip; 
+                    "LIMIT " + take + " OFFSET " + skip;
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
-            List<string> tags = null;
-            bool tieneTags = false;
-            bool seguir = rdr.Read();
-            bool entro = false;
-            while (seguir)
+            while (rdr.Read())
             {
                 Thread thread = new Thread()
                 {
@@ -187,19 +181,6 @@ namespace NoSQL.Servicios
                         Name = rdr.GetString("Name")
                     }
                 };
-                tags = new List<string>();
-                entro = false;
-                tieneTags = !rdr.IsDBNull(rdr.GetOrdinal("Tag"));
-                while (seguir && tieneTags)
-                {
-                    tags.Add(rdr.GetString("Tag"));
-                    seguir = rdr.Read();
-                    tieneTags = !rdr.IsDBNull(rdr.GetOrdinal("Tag"));
-                    entro = true;
-                }
-                if (!entro)
-                    seguir = rdr.Read();
-                thread.Tags = tags.ToArray();
                 threads.Add(thread);
             }
             rdr.Close();
@@ -222,7 +203,7 @@ namespace NoSQL.Servicios
 
         public Thread GetThread(object id)
         {
-            string sql = "SELECT * FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id WHERE Threads.Id = " + id;
+            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Threads ON Threads.Id = Base.Id WHERE Threads.Id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             rdr.Read();
@@ -235,6 +216,7 @@ namespace NoSQL.Servicios
                 Author = new Author()
                 {
                     Id = rdr.GetInt32("Author_id"),
+                    Name = rdr.GetString("Name")
                 }
             };
             rdr.Close();
@@ -263,7 +245,7 @@ namespace NoSQL.Servicios
 
         public Comment GetComment(object id)
         {
-            string sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id WHERE Comments.Id = "+ id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name AS Name FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             rdr.Read();
@@ -278,6 +260,7 @@ namespace NoSQL.Servicios
                 Author = new Author()
                 {
                     Id = rdr.GetInt32("Author_id"),
+                    Name = rdr.GetString("Name")
                 }
             };
             rdr.Close();
