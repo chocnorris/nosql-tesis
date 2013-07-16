@@ -90,10 +90,10 @@ namespace NoSQL.Servicios
             var comments = new List<Comment>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id";
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id";
             else
             {
-                sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -110,6 +110,7 @@ namespace NoSQL.Servicios
                     Author = new Author()
                     {
                         Id = rdr.GetInt32("Author_id"),
+                        Name = rdr.GetString("Name")
                     }
                 };
                 comments.Add(comment);
@@ -121,7 +122,7 @@ namespace NoSQL.Servicios
         public List<Comment> GetChildComments(object Parent_id)
         {
             var comments = new List<Comment>();
-            string sql = "SELECT * FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id WHERE Comments.Parent_id = "+Parent_id;
+            string sql ="SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Parent_id = "+Parent_id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
@@ -137,6 +138,7 @@ namespace NoSQL.Servicios
                     Author = new Author()
                     {
                         Id = rdr.GetInt32("Author_id"),
+                        Name = rdr.GetString("Name")
                     }
                 };
                 comments.Add(comment);
