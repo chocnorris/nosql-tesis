@@ -12,7 +12,7 @@ using System.Drawing;
 
 namespace NoSQL.Servicios
 {
-    class MysqlOperaciones: IOperaciones
+    class MysqlOperaciones : IOperaciones
     {
 
         MySqlConnection conn;
@@ -20,7 +20,7 @@ namespace NoSQL.Servicios
 
         public MysqlOperaciones(string dbname, string host, string user = "forum", string pass = "1234")
         {
-            string connStr = "server="+host+";user="+user+";password="+pass+";";
+            string connStr = "server=" + host + ";user=" + user + ";password=" + pass + ";";
             this.dbname = dbname;
             conn = new MySqlConnection(connStr);
             conn.Open();
@@ -45,7 +45,7 @@ namespace NoSQL.Servicios
                     scriptDrop.Execute();
                 }
                 catch (Exception)
-                { 
+                {
                 }
             }
             MySqlScript script = new MySqlScript(conn);
@@ -62,7 +62,7 @@ namespace NoSQL.Servicios
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
             var authors = new List<Author>();
-            string sql="";
+            string sql = "";
             if (skip == 0 && take == 0)
                 sql = "SELECT * FROM Authors";
             else
@@ -70,7 +70,7 @@ namespace NoSQL.Servicios
                 sql = "SELECT * FROM Authors LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
-            MySqlDataReader rdr = cmd.ExecuteReader();                                    
+            MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
                 Author author = new Author()
@@ -122,7 +122,7 @@ namespace NoSQL.Servicios
         public List<Comment> GetChildComments(object Parent_id)
         {
             var comments = new List<Comment>();
-            string sql ="SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Parent_id = "+Parent_id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Parent_id = " + Parent_id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
@@ -159,9 +159,10 @@ namespace NoSQL.Servicios
             else
             {
                 sql = "SELECT " +
-                    "Base.*, Th.*, Authors.Name AS Name " +
+                    "Base.*, Threads.*, Authors.Name AS Name " +
                     "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
-                    "INNER JOIN ( SELECT * FROM Threads LIMIT " + take + " OFFSET " + skip + ") as Th ON Th.Id = Base.Id  " ;                    
+                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
+                    "LIMIT " + take + " OFFSET " + skip;
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -225,19 +226,19 @@ namespace NoSQL.Servicios
 
         public Author GetAuthor(object id)
         {
-            string sql = "SELECT * FROM Authors WHERE id = "+id;
+            string sql = "SELECT * FROM Authors WHERE id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             var rdr = cmd.ExecuteReader();
             rdr.Read();
             int fileSize = (int)rdr.GetBytes(rdr.GetOrdinal("Photo"), 0, null, 0, 0);
-            byte [] rawData = new byte[fileSize];
+            byte[] rawData = new byte[fileSize];
             rdr.GetBytes(rdr.GetOrdinal("Photo"), 0, rawData, 0, fileSize);
             Author author = new Author()
-                {
-                    Id = rdr.GetInt32("id"),
-                    Name = rdr.GetString("name"),
-                    Photo = ConvertToBitmap(rawData)
-                };
+            {
+                Id = rdr.GetInt32("id"),
+                Name = rdr.GetString("name"),
+                Photo = ConvertToBitmap(rawData)
+            };
             rdr.Close();
             return author;
         }
@@ -299,12 +300,12 @@ namespace NoSQL.Servicios
         {
             ImageConverter converter = new ImageConverter();
             byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
-            MySqlCommand cmd = new MySqlCommand(); 
+            MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
             cmd.CommandText = "INSERT INTO authors VALUES(NULL, @Name, @Photo)";
             cmd.Parameters.AddWithValue("@Name", autor.Name);
-            cmd.Parameters.AddWithValue("@Photo", bytes);                                            
-            cmd.ExecuteNonQuery();            
+            cmd.Parameters.AddWithValue("@Photo", bytes);
+            cmd.ExecuteNonQuery();
             long id = cmd.LastInsertedId;
             autor.Id = id;
             return autor;
@@ -421,3 +422,4 @@ namespace NoSQL.Servicios
         }
     }
 }
+
