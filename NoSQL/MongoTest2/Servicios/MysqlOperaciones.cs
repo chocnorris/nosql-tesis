@@ -159,10 +159,9 @@ namespace NoSQL.Servicios
             else
             {
                 sql = "SELECT " +
-                    "Base.*, Threads.*, Authors.Name AS Name " +
+                    "Base.*, Th.*, Authors.Name AS Name " +
                     "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
-                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
-                    "LIMIT " + take + " OFFSET " + skip;
+                    "INNER JOIN ( SELECT * FROM Threads LIMIT " + take + " OFFSET " + skip + ") as Th ON Th.Id = Base.Id  " ;                    
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
