@@ -366,17 +366,32 @@ namespace NoSQL.Servicios
 
         public bool RemoveAuthor(Author autor)
         {
-            throw new NotImplementedException();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "DELETE FROM Authors WHERE Authors.id = @id";
+            cmd.Parameters.AddWithValue("@id", autor.Id);
+            cmd.ExecuteNonQuery();
+            return true;
         }
 
         public bool RemoveThread(Thread thread)
         {
-            throw new NotImplementedException();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "DELETE FROM Base WHERE Base.id = @id";
+            cmd.Parameters.AddWithValue("@id", thread.Id);
+            cmd.ExecuteNonQuery();
+            return true;
         }
 
         public bool RemoveComment(Comment comentario)
         {
-            throw new NotImplementedException();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "DELETE FROM Base WHERE Base.id = @id";
+            cmd.Parameters.AddWithValue("@id", comentario.Id);
+            cmd.ExecuteNonQuery();
+            return true;
         }
 
         public bool IsDatabaseConnected()
