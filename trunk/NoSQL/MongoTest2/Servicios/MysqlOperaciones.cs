@@ -187,40 +187,37 @@ namespace NoSQL.Servicios
             return threads;
         }
 
-        private string[] GetTags(int id)
-        {
-            string sql = "SELECT * FROM Tags WHERE thread_id = " + id;
-            MySqlCommand cmd = new MySqlCommand(sql, conn);
-            var rdr = cmd.ExecuteReader();
-            List<string> tags = new List<string>();
-            while (rdr.Read())
-            {
-                tags.Add(rdr.GetString("Tag"));
-            }
-            rdr.Close();
-            return tags.ToArray();
-        }
-
         public Thread GetThread(object id)
         {
-            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Threads ON Threads.Id = Base.Id WHERE Threads.Id = " + id;
+            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name, Tags.Tag AS Tag FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Threads ON Threads.Id = Base.Id LEFT JOIN Tags ON Tags.thread_id = Base.id WHERE Threads.Id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
-            rdr.Read();
-            Thread thread = new Thread()
+            List<string> tags = new List<string>();
+            Thread thread = null;
+            bool primero = true;
+            while (rdr.Read())
             {
-                Id = rdr.GetInt32("id"),
-                Title = rdr.GetString("Title"),
-                Date = rdr.GetDateTime("Date"),
-                CommentCount = rdr.GetInt32("CommentCount"),
-                Author = new Author()
+                if (primero)
                 {
-                    Id = rdr.GetInt32("Author_id"),
-                    Name = rdr.GetString("Name")
+                     thread = new Thread()
+                    {
+                        Id = rdr.GetInt32("id"),
+                        Title = rdr.GetString("Title"),
+                        Date = rdr.GetDateTime("Date"),
+                        CommentCount = rdr.GetInt32("CommentCount"),
+                        Author = new Author()
+                        {
+                            Id = rdr.GetInt32("Author_id"),
+                            Name = rdr.GetString("Name")
+                        }
+                    };
+                    primero = false;
                 }
-            };
+                if(!rdr.IsDBNull(rdr.GetOrdinal("Tag")))
+                    tags.Add(rdr.GetString("Tag"));
+            }
             rdr.Close();
-            thread.Tags = GetTags((Int32)thread.Id);
+            thread.Tags = tags.ToArray();
             return thread;
         }
 
