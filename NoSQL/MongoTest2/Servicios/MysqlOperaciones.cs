@@ -90,10 +90,10 @@ namespace NoSQL.Servicios
             var comments = new List<Comment>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id";
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id";
             else
             {
-                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -106,7 +106,7 @@ namespace NoSQL.Servicios
                     Date = rdr.GetDateTime("Date"),
                     Parent_id = rdr.GetInt32("Parent_id"),
                     Thread_id = rdr.GetInt32("Thread_id"),
-                    CommentCount = rdr.GetInt32("ComentCount"),
+                    CommentCount = rdr.GetInt32("CommentCount"),
                     Author = new Author()
                     {
                         Id = rdr.GetInt32("Author_id"),
@@ -154,14 +154,14 @@ namespace NoSQL.Servicios
             if (skip == 0 && take == 0)
                 sql = "SELECT " +
                     "Base.*, Threads.*, Authors.Name AS Name " +
-                    "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
-                    "LEFT JOIN Threads ON Threads.Id = Base.Id  ";
+                    "FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id " +
+                    "LEFT JOIN Authors ON Authors.id = Base.author_id  ";
             else
             {
                 sql = "SELECT " +
                     "Base.*, Threads.*, Authors.Name AS Name " +
-                    "FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id " +
-                    "LEFT JOIN Threads ON Threads.Id = Base.Id  " +
+                    "FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id " +
+                    "LEFT JOIN Authors ON Authors.id = Base.author_id  " +
                     "LIMIT " + take + " OFFSET " + skip;
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
