@@ -461,7 +461,8 @@ namespace NoSQL.Servicios
         /// </summary>
         protected void createKeyspace()
         {
-            session.CreateKeyspace(keySpaceName);
+            //session.CreateKeyspace(keySpaceName);
+            session.Execute(@"create keyspace "+keySpaceName+@" with REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 2 }");
         }
 
         /// <summary>
@@ -487,7 +488,7 @@ namespace NoSQL.Servicios
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear indexes
-           
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(4));
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
             // Crear counter column family
@@ -526,7 +527,7 @@ namespace NoSQL.Servicios
                         createStatement = createStatement + ",";
                     else
                         createStatement = createStatement + ");";
-                }
+                } 
                 createStatements.Add(columnFamilyName,createStatement);
             }
             return createStatements;
