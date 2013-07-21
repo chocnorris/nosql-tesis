@@ -157,7 +157,12 @@ namespace NoSQL
                 if (num4 <= 3 || nCom == 0)
                 {
                     num5 = rand.Next(nTh);
-                    Thread thread = db.GetThreads(num5,1).First();
+
+                    List<Thread> threads = db.GetThreads(num5, 1);
+                    Thread thread = new Thread();
+                    if (threads.Count == 0)
+                        continue;
+                    thread = threads.First();
                     parentId = thread.Id.ToString();
                     threadId = parentId;
                 }
@@ -170,6 +175,8 @@ namespace NoSQL
                         cargaNCom += n / 10;
                     }
                     num5 = rand.Next(nCom);
+                    if (num5 > nCom)
+                        continue;
                     Comment com = db.GetComments(num5,1).First();
                     parentId = com.Id.ToString();
                     threadId = com.Thread_id.ToString();
