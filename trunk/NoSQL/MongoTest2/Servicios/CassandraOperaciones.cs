@@ -470,7 +470,11 @@ namespace NoSQL.Servicios
         /// </summary>
         protected void createColumnFamilies()
         {
-            var statements = CassandraCreateStatementsBasedOnModel("NoSQL.Modelo");
+            var exceptionList = new List<string>();
+            exceptionList.Add("Comments");
+            exceptionList.Add("Threads");
+
+            var statements = CassandraCreateStatementsBasedOnModel("NoSQL.Modelo", exceptionList);
             foreach (var statement in statements)
             {
                 session.Execute(statement.Value);
@@ -484,6 +488,29 @@ namespace NoSQL.Servicios
                         session.Execute(statement.Value);
                     }
             }
+
+            // Crear tablas exceptuadas de la creacion programatica            
+            session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid, ""AuthorId"" uuid, ""Text"" text, ""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp,  ;
+
+                        public object Id { get; set; }
+        public Author Author { get; set; }
+        public string Text { get; set; }
+        public object Parent_id { get; set; }
+        public object Thread_id { get; set; }
+        public DateTime Date { get; set; }
+        public long CommentCount { get; set; }
+
+            while (true)
+                try
+                {
+                    session.Cluster.Metadata.GetTable(keySpaceName, statement.Key);
+                    break;
+                }
+                catch (Exception)
+                {
+                    session.Execute(statement.Value);
+                }
+
             // Coleccion de tags
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
@@ -491,8 +518,10 @@ namespace NoSQL.Servicios
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(4));
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
-            // Crear counter column family
+            // Crear counter column family            
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
             session.Execute(@"create columnfamily ""Counters""(""name"" text primary key, ""count"" counter)");
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
 
             session.Execute(@"create columnfamily ""CommentCounts""(""Id"" uuid primary key, ""count"" counter)");            
         }
@@ -502,8 +531,9 @@ namespace NoSQL.Servicios
         /// tomando el modelo de clases como referencia 
         /// </summary>
         /// <param name="modelNamespacePath"></param>
+        /// <param name="exceptions"></param>
         /// <returns>lista de sentencias ejecutables que crean column family</returns>
-        protected Dictionary<string, string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath)
+        protected Dictionary<string, string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath, List<string> exceptions)
         {
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass && t.Namespace == modelNamespacePath
@@ -512,6 +542,8 @@ namespace NoSQL.Servicios
             Dictionary<string, string> createStatements = new Dictionary<string, string>();
             foreach (Type str in q.ToList())
             {
+                if (!exceptions.Contains(str.Name + "s"))
+                {                
                 string columnFamilyName = str.Name + "s";
                 string createStatement = @"create columnfamily """ + columnFamilyName + @""" (";
                 int i = 0;
@@ -529,6 +561,7 @@ namespace NoSQL.Servicios
                         createStatement = createStatement + ");";
                 } 
                 createStatements.Add(columnFamilyName,createStatement);
+                }
             }
             return createStatements;
         }
