@@ -97,7 +97,7 @@ namespace NoSQL.Servicios
                     var row = commentRows.ElementAt(skip);
                     var comment = new Comment()
                     {
-                        Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                        Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
                         CommentCount = 0,
                         Date = row.GetValue<DateTime>("Date"),
                         Id = row.GetValue<Guid>(0),
@@ -122,7 +122,7 @@ namespace NoSQL.Servicios
                 {
                     var comment = new Comment()
                     {
-                        Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                        Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
                         CommentCount = 0,
                         Date = row.GetValue<DateTime>("Date"),
                         Id = row.GetValue<Guid>(0),
@@ -130,6 +130,7 @@ namespace NoSQL.Servicios
                         Thread_id = row.GetValue<Guid>("Thread_id"),
                         Text = row.GetValue<string>("Text")
                     };
+                    comment.CommentCount = GetChildCommentCounts(comment.Id);
                     comments.Add(comment);
                 }
                 return comments.ToList();            
@@ -169,8 +170,9 @@ namespace NoSQL.Servicios
             {
                 var thread = new Thread()
                 {
-                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
-                    CommentCount = 0,
+                    Author = new Author ()
+                    { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
+                    CommentCount = row.GetValue<long>("CommentCount"),
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
                     Title = row.GetValue<string>("Title"),                    
@@ -188,11 +190,11 @@ namespace NoSQL.Servicios
                 Row row = threadRows.First();
                 var thread = new Thread()
                 {
-                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
-                    CommentCount = 0,
+                    Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
+                    CommentCount = row.GetValue<long>("CommentCount"),
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
-                    Title = row.GetValue<string>("Title"),                    
+                    Title = row.GetValue<string>("Title"),
                 };
                 if (row.GetValue<List<string>>("Tags") != null)
                     thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
@@ -224,7 +226,7 @@ namespace NoSQL.Servicios
             Row row = commentRows.First();
             var comment = new Comment()
                 {
-                    Author = this.GetAuthor(row.GetValue<Guid>("Author")),
+                    Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
                     CommentCount = 0,
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
@@ -242,19 +244,12 @@ namespace NoSQL.Servicios
             Guid id = Guid.NewGuid();
 
             // Resolver Author Id            
-            string AuthorId = comentario.Author.Id.ToString();
-
-            string addStmt = string.Format(getInsertStatementFor("Comment", "NoSQL.Modelo"),
-                AuthorId,
-                0,
-                getDateInMilliseconds(),
-                id,
-                comentario.Parent_id,
-                asCassandraString(comentario.Text),
-                comentario.Thread_id
-                );
-            session.Execute(addStmt);
-            //TODO: Actualizar el contador de comentarios del padre!!
+                PreparedStatement statement = session.Prepare(@"insert into ""Comments""(""Id"", ""AuthorId"", ""AuthorName"", ""Text"", ""Parent_id"", ""Thread_id"", ""Date"")
+                    values (?,?,?,?,?,?,?)");
+                BoundStatement boundStatement = new BoundStatement(statement);
+                Guid parentid = new Guid((string)comentario.Parent_id);
+                Guid threadid = new Guid((string)comentario.Thread_id);
+                session.Execute(boundStatement.Bind(id, comentario.Author.Id, comentario.Author.Name, comentario.Text, parentid, threadid, DateTime.Now));
             comentario.Id = id;
             IncrCounter("Comment");
             IncrCounterParent(comentario.Parent_id);
@@ -288,16 +283,14 @@ namespace NoSQL.Servicios
             if (thread.Tags.Count() > 0)
                 tags = tags.Remove(tags.Length - 1);
             tags = "[" + tags + "]";
-            string addStmt = string.Format(getInsertStatementFor("Thread", "NoSQL.Modelo"),
-                AuthorId,
-                thread.CommentCount,
-                getDateInMilliseconds(),
-                id,
-                tags,
-                asCassandraString(thread.Title)
-                );                 
-            session.Execute(addStmt);            
+
             thread.CommentCount = GetChildCommentCounts(id);
+          
+            PreparedStatement statement = session.Prepare(@"insert into ""Threads"" (""Id"", ""Title"", ""AuthorId"", ""AuthorName"", ""Date"", ""CommentCount"", ""Tags"")
+                values (?,?,?,?,?,?,?)");            
+            BoundStatement boundStatement = new BoundStatement(statement);
+            string stmt = boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, getDateInMilliseconds(), 0, tags).ToString();
+            session.Execute(boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, DateTime.Now, thread.CommentCount, thread.Tags));
             IncrCounter("Thread");            
             thread.Id = id;
             return thread;
@@ -483,33 +476,22 @@ namespace NoSQL.Servicios
                     {
                         session.Cluster.Metadata.GetTable(keySpaceName, statement.Key);
                         break;
-                    }catch(Exception)
+                    }
+                    catch(Exception)
                     {
                         session.Execute(statement.Value);
                     }
             }
 
             // Crear tablas exceptuadas de la creacion programatica            
-            session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid, ""AuthorId"" uuid, ""Text"" text, ""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp,  ;
 
-                        public object Id { get; set; }
-        public Author Author { get; set; }
-        public string Text { get; set; }
-        public object Parent_id { get; set; }
-        public object Thread_id { get; set; }
-        public DateTime Date { get; set; }
-        public long CommentCount { get; set; }
+            session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid primary key, ""AuthorId"" uuid, ""AuthorName"" text,
+                    ""Text"" text,""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp, ""CommentCount"" bigint)");
 
-            while (true)
-                try
-                {
-                    session.Cluster.Metadata.GetTable(keySpaceName, statement.Key);
-                    break;
-                }
-                catch (Exception)
-                {
-                    session.Execute(statement.Value);
-                }
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+
+            session.Execute(@"create columnfamily ""Threads"" (""Id"" uuid primary key, ""Title"" text, ""AuthorId"" uuid, ""AuthorName"" text, 
+                    ""Date"" timestamp, ""CommentCount"" bigint, ""Tags"" list<text>)");
 
             // Coleccion de tags
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
