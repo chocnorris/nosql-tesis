@@ -22,6 +22,8 @@ namespace NoSQL
         {
             this.db = db;
             InitializeComponent();
+            if (db.Identidad() == "Cassandra")
+                numericUpDownPag.Enabled = false;
         }
 
         private void VentanaDatos_Load(object sender, EventArgs e)
