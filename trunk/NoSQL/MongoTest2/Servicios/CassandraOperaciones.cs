@@ -164,7 +164,7 @@ namespace NoSQL.Servicios
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
-            var threadRows = session.Execute(@"SELECT * FROM ""Threads""");                   
+            var threadRows = session.Execute(@"SELECT * FROM ""Threads"" LIMIT "+take);                   
             var threads = new List<Thread>();
             foreach (Row row in threadRows.GetRows())
             {
