@@ -32,7 +32,8 @@ namespace NoSQL.Servicios
         {
             client = new MongoClient("mongodb://"+host);
             server = client.GetServer();
-            db = server.GetDatabase(dbname);            
+            db = server.GetDatabase(dbname);
+            server.Connect();
         }
 
         public MongoOperaciones(string dbname, string[] hosts,string replSetName, string user = "", string pass = "")
@@ -40,6 +41,7 @@ namespace NoSQL.Servicios
             client = new MongoClient("mongodb://" + construirReplSetConn(hosts, replSetName));
             server = client.GetServer();
             db = server.GetDatabase(dbname);
+            server.Connect();
         }
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
@@ -137,7 +139,7 @@ namespace NoSQL.Servicios
 
         public bool IsDatabaseConnected()
         {
-            return server.State == MongoServerState.Connected || server.State == MongoServerState.ConnectedToSubset; 
+            return server.State == MongoServerState.Connected; 
         }
 
         public string ConnectionState()
@@ -213,7 +215,7 @@ namespace NoSQL.Servicios
                     return { count : total };
                 }";
 
-            var mr = db.GetCollection("threads").MapReduce(map, reduce,MapReduceOptions.SetOutput(new MapReduceOutput("salida")));
+            var mr = db.GetCollection("threads").MapReduce(map, reduce, MapReduceOptions.SetOutput(new MapReduceOutput("salida")));
             return JsonHelper.FormatJson(db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString()))).ToString());
         }
 

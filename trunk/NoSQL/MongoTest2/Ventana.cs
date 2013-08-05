@@ -61,7 +61,7 @@ namespace NoSQL
         public void AfterConnection(IOperaciones db, UserControl panel = null)
         {
             this.db = db;
-            if (true || db.IsDatabaseConnected())
+            if (db.IsDatabaseConnected())
             {
                 bloquearBotones(false);
                 panelInfo.Controls.Clear();
@@ -112,6 +112,11 @@ namespace NoSQL
         private void VentanaRandom_FormClosing(object sender, FormClosingEventArgs e)
         {
             db.Shutdown();
+        }
+
+        private void panelAcciones_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
