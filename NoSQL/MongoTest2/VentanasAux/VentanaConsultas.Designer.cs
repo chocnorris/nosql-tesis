@@ -32,6 +32,7 @@
             this.panelFoto = new System.Windows.Forms.Panel();
             this.comboBoxAutor = new System.Windows.Forms.ComboBox();
             this.labelAutor = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFoto)).BeginInit();
             this.panelFoto.SuspendLayout();
             this.SuspendLayout();
@@ -73,11 +74,21 @@
             this.labelAutor.TabIndex = 3;
             this.labelAutor.Text = "Autor";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(15, 159);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox1.Size = new System.Drawing.Size(520, 260);
+            this.textBox1.TabIndex = 5;
+            // 
             // VentanaConsultas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(323, 353);
+            this.ClientSize = new System.Drawing.Size(585, 455);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.labelAutor);
             this.Controls.Add(this.comboBoxAutor);
             this.Controls.Add(this.panelFoto);
@@ -96,5 +107,6 @@
         private System.Windows.Forms.Panel panelFoto;
         private System.Windows.Forms.ComboBox comboBoxAutor;
         private System.Windows.Forms.Label labelAutor;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

@@ -61,7 +61,7 @@ namespace NoSQL
         public void AfterConnection(IOperaciones db, UserControl panel = null)
         {
             this.db = db;
-            if (db.IsDatabaseConnected())
+            if (true || db.IsDatabaseConnected())
             {
                 bloquearBotones(false);
                 panelInfo.Controls.Clear();

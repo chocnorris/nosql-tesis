@@ -399,11 +399,6 @@ namespace NoSQL.Servicios
             return conn.State.Equals(System.Data.ConnectionState.Open);
         }
 
-        public Dictionary<string, string> GetShards()
-        {
-            throw new NotImplementedException();
-        }
-
         public string ConnectionState()
         {
             return conn.State.ToString();

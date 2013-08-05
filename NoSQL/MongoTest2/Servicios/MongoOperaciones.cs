@@ -140,18 +140,6 @@ namespace NoSQL.Servicios
             return server.State == MongoServerState.Connected || server.State == MongoServerState.ConnectedToSubset; 
         }
 
-
-        public Dictionary<string, string> GetShards()
-        {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            foreach (var sh in server.GetDatabase("config").GetCollection("shards").FindAll())
-            {                
-                dictionary.Add(sh["_id"].AsString, sh["host"].AsString);
-
-            }
-            return dictionary;
-        }
-
         public string ConnectionState()
         {
             return server.State.ToString();
@@ -209,6 +197,25 @@ namespace NoSQL.Servicios
             return true;
         }
 
+        public string ThreadsPorAutor(object id)
+        {
+            var map =
+                @"function() {
+                   emit(this.Author, { count : 1 });
+                }";
+
+            var reduce =
+                @"function(key, emits) {
+                    total = 0;
+                    for (var i in emits) {
+                        total += emits[i].count
+                    }
+                    return { count : total };
+                }";
+
+            var mr = db.GetCollection("threads").MapReduce(map, reduce,MapReduceOptions.SetOutput(new MapReduceOutput("salida")));
+            return JsonHelper.FormatJson(db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString()))).ToString());
+        }
 
         public bool Initialize(bool drop)
         {

@@ -137,13 +137,6 @@ namespace NoSQL.Servicios
         bool IsDatabaseConnected();
 
         /// <summary>
-        /// Obtener un diccionario conteniendo todos los shards (REVISAR PUEDE HACERSE UNA ENTIDAD PARA SHARd)
-        /// Creo que deberíamos sacar esta operación, es específica de Mongo
-        /// </summary>
-        /// <returns></returns>
-        Dictionary<string, string> GetShards();
-
-        /// <summary>
         /// Retorna el estado de la conexión 
         /// </summary>
         /// <returns></returns>

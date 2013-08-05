@@ -353,13 +353,6 @@ namespace NoSQL.Servicios
             }
         }
 
-        public Dictionary<string, string> GetShards()
-        {
-            var dc = new Dictionary<string, string>();
-            dc.Add("1", "localhost");
-            return dc;
-        }
-
         public string ConnectionState()
         {
             if (this.IsDatabaseConnected())
