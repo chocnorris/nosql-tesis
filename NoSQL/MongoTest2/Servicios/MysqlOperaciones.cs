@@ -122,7 +122,7 @@ namespace NoSQL.Servicios
         public List<Comment> GetChildComments(object Parent_id)
         {
             var comments = new List<Comment>();
-            string sql = "SELECT Base.*, Comments.*, Authors.Name FROM Base LEFT JOIN Authors ON Authors.id = Base.author_id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Parent_id = " + Parent_id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id WHERE Comments.Parent_id = " + Parent_id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
@@ -189,7 +189,7 @@ namespace NoSQL.Servicios
 
         public Thread GetThread(object id)
         {
-            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name, Tags.Tag AS Tag FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Threads ON Threads.Id = Base.Id LEFT JOIN Tags ON Tags.thread_id = Base.id WHERE Threads.Id = " + id;
+            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name, Tags.Tag AS Tag FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Tags ON Tags.thread_id = Base.id WHERE Threads.Id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             List<string> tags = new List<string>();
@@ -242,7 +242,7 @@ namespace NoSQL.Servicios
 
         public Comment GetComment(object id)
         {
-            string sql = "SELECT Base.*, Comments.*, Authors.Name AS Name FROM Base LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Comments ON Comments.Id = Base.Id WHERE Comments.Id = " + id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name AS Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id  LEFT JOIN Authors ON Base.author_id = Authors.id WHERE Comments.Id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             rdr.Read();

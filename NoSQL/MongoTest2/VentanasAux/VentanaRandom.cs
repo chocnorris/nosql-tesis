@@ -168,12 +168,6 @@ namespace NoSQL
                 }
                 else
                 {
-                    //Calucla el núemero de comentarios a lo sumo 10 veces
-                    if (i > cargaNCom)
-                    {
-                        nCom = (int)db.GetCommentsCount();
-                        cargaNCom += n / 10;
-                    }
                     num5 = rand.Next(nCom);
                     if (num5 > nCom)
                         continue;
@@ -199,7 +193,7 @@ namespace NoSQL
                         Date = DateTime.Now,
                         Parent_id = parentId
                     });
-
+                nCom++;
                 worker.ReportProgress((i * 100) / n);
             }
 

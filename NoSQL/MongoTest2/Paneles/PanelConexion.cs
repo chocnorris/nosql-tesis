@@ -100,7 +100,6 @@ namespace NoSQL.Paneles
                     if (!testConnection(connstr, 27017))
                         return;
                 }
-                panelAux = new InfoMongo(md);
                 db = md;
             }
             if (comboBoxDB.SelectedItem.ToString() == "Cassandra")
