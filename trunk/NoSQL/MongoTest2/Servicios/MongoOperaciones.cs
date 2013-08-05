@@ -209,68 +209,6 @@ namespace NoSQL.Servicios
             return true;
         }
 
-        public string ServerInfo(string key, string value)
-        {
-            CommandDocument comandoStats = new CommandDocument();
-            comandoStats.Add("dbstats", 1);
-            comandoStats.Add("scale", 1024); //Kb!!
-            CommandResult stats = db.RunCommand(comandoStats);
-
-            MongoCollection<BsonDocument> chunks = server.GetDatabase("config").GetCollection("chunks");
-            string res = "";
-            if (key == "Global")
-            {
-                res += "Chunks: " +chunks.Count();
-                res += Environment.NewLine;
-                res += "Tamaño: " + stats.Response["dataSize"] + " Kb";
-                res += Environment.NewLine;
-                res += Environment.NewLine;
-                res += "Autores: " + GetAuthorsCount();
-                res += Environment.NewLine;
-                res += "Threads: " + GetThreadsCount();
-                res += Environment.NewLine;
-                res += "Comentarios: " + GetCommentsCount();
-                /*
-                res += Environment.NewLine;
-                res += Environment.NewLine;
-                res += stats.Response.ToString();
-                 * */
-            }
-            else
-            {
-                res += "Chunks: " +
-                    chunks.Find(new QueryDocument("shard", key)).Count();
-                res += Environment.NewLine;
-                //Uno de los shards esta vacio
-                try
-                {
-                    res += "Tamaño: " +
-                        stats.Response["raw"][value]["dataSize"] + " Kb";
-                }catch
-                {
-                }
-            }
-            CommandDocument comandoStatus = new CommandDocument();
-            comandoStatus.Add("serverStatus", 1);
-            CommandResult status = db.RunCommand(comandoStatus);
-            res += Environment.NewLine;
-            res += Environment.NewLine;
-            res += "Uptime: " + (int)(status.Response["uptime"].AsDouble/60) + " minutos";
-            res += Environment.NewLine;
-            res += "Metrics: " + JsonHelper.FormatJson(status.Response["mem"].ToString());
-            return res;
-        }
-        /// <summary>
-        /// Retorna el uso de memoria por parte del servidor
-        /// </summary>
-        /// <returns></returns>
-        public List<int> MemUse()
-        {
-            List<int> lista = new List<int>();
-            CommandDocument comandoStatus = new CommandDocument();
-            comandoStatus.Add("serverStatus", 1);
-            return lista;
-        }
 
         public bool Initialize(bool drop)
         {

@@ -93,12 +93,6 @@
     <Compile Include="Modelo\Comment.cs" />
     <Compile Include="Modelo\Thread.cs" />
     <Compile Include="Servicios\MongoOperaciones.cs" />
-    <Compile Include="Paneles\InfoMongo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Paneles\InfoMongo.Designer.cs">
-      <DependentUpon>InfoMongo.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\IOperaciones.cs" />
@@ -133,9 +127,6 @@
     <Compile Include="VentanasAux\VentanaRandom.Designer.cs">
       <DependentUpon>VentanaRandom.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Paneles\InfoMongo.resx">
-      <DependentUpon>InfoMongo.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Paneles\PanelConexion.resx">
       <DependentUpon>PanelConexion.cs</DependentUpon>
     </EmbeddedResource>
