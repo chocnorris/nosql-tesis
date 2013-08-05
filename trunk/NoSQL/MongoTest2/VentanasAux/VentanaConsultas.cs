@@ -44,6 +44,8 @@ namespace NoSQL
         private void comboBoxAutor_SelectedIndexChanged(object sender, EventArgs e)
         {
             cargarDatosAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
+            textBox1.Text = ((MongoOperaciones)db).ThreadsPorAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
         }
+
     }
 }
