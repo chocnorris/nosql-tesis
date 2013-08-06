@@ -340,6 +340,11 @@ namespace NoSQL.Servicios
                 return true;            
         }
 
+        public string ThreadsPorAutor(object id)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsDatabaseConnected()
         {
             try
