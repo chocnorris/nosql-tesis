@@ -394,6 +394,14 @@ namespace NoSQL.Servicios
             return true;
         }
 
+        public string ThreadsPorAutor(object id)
+        {
+            string sql = "SELECT Count(*) AS cant FROM Threads LEFT JOIN Base ON Threads.id = Base.id WHERE Author_id = "+id;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            var resu = cmd.ExecuteScalar();
+            return "" + resu;
+        }
+
         public bool IsDatabaseConnected()
         {
             return conn.State.Equals(System.Data.ConnectionState.Open);

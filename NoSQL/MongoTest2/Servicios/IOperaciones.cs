@@ -131,6 +131,13 @@ namespace NoSQL.Servicios
 
         #region Otras
         /// <summary>
+        /// Obtiene el número de threads de un determinado autor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        
+        string ThreadsPorAutor(object id);
+        /// <summary>
         /// Determinar el si se está conectado a la base de datos
         /// </summary>
         /// <returns></returns>
