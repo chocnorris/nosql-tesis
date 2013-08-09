@@ -38,7 +38,8 @@ namespace NoSQL.Servicios
 
         public MongoOperaciones(string dbname, string[] hosts,string replSetName, string user = "", string pass = "")
         {
-            client = new MongoClient("mongodb://" + construirReplSetConn(hosts, replSetName));
+            string connstr = "mongodb://" + construirReplSetConn(hosts, replSetName);
+            client = new MongoClient(connstr);
             server = client.GetServer();
             db = server.GetDatabase(dbname);
             server.Connect();
@@ -299,7 +300,7 @@ namespace NoSQL.Servicios
                 if (i < hosts.Count() - 1)
                     connstr += ",";
             }
-            return connstr + "/?replicaSet=" + replSetName;
+            return connstr + "/?replicaSet=" + replSetName+"&readPreference=nearest";
         }
     }
 }

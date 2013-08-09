@@ -28,9 +28,9 @@ namespace NoSQL.Paneles
             comboBoxHost.Items.Add("192.168.56.202");
             comboBoxHost.Items.Add("192.168.56.203");
 
-            dataGridViewReplSet.Rows.Add("mongo201", "27017");
-            dataGridViewReplSet.Rows.Add("mongo202", "27017");
-            dataGridViewReplSet.Rows.Add("mongo203", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb0.test", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb1.test", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb2.test", "27017");
 
         }
 
