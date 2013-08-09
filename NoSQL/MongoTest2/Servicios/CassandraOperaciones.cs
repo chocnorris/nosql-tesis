@@ -387,7 +387,7 @@ namespace NoSQL.Servicios
 
         public string ThreadsPorAutor(object id)
         {
-            throw new NotImplementedException();
+            return "hola";
         }
 
         public bool IsDatabaseConnected()
