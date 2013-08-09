@@ -51,7 +51,7 @@ namespace NoSQL.Servicios
 
         public void WriteLog(string text)
         {
-          logwriter = new StreamWriter("C:\\Users\\Luciano\\cassandra_app.log",true);
+          logwriter = new StreamWriter("..\\..\\Data\\cassandra_app.log",true);
             logwriter.WriteLine(text,true);
             logwriter.Close();
         }
