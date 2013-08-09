@@ -30,7 +30,7 @@ namespace NoSQL.Servicios
 
         public CassandraOperaciones(string dbname, string host, string user = "", string pass = "")
         {
-                cluster = Cluster.Builder().AddContactPoint(host).Build();
+            cluster = Cluster.Builder().AddContactPoint(host).Build();
             //session = cluster.Connect(dbname);
             session = cluster.Connect();
             keySpaceName = dbname;
@@ -98,7 +98,7 @@ namespace NoSQL.Servicios
             {
                 var author = new Author();
                 author.Id = rows[skip].GetValue<Guid>(0);
-                author = this.GetAuthor(author.Id);
+                author = this.GetAuthorLight(author.Id);
                 authors.Add(author);
                 skip++;
             }
@@ -259,6 +259,24 @@ namespace NoSQL.Servicios
             return author;
         }
 
+        public Author GetAuthorLight(object id)
+        {
+            Start();
+            var result = session.Execute(@"SELECT ""Id"", ""Name"" FROM ""Authors"" WHERE ""Id""=" + id).GetRows();
+            End();
+            WriteLog("Query to Author took " + Seconds());
+
+            var author = new Author();
+            Row row = result.First();
+            author = new Author();
+            Start();
+            author.Id = row.GetValue<Guid>(0);
+            author.Name = row.GetValue<string>("Name");
+            End();
+            WriteLog("Author data serialization took " + Seconds());
+            return author;
+        }
+
         public Comment GetComment(object id)
         {
             Start();
@@ -286,12 +304,12 @@ namespace NoSQL.Servicios
             Guid id = Guid.NewGuid();
 
             // Resolver Author Id            
-                PreparedStatement statement = session.Prepare(@"insert into ""Comments""(""Id"", ""AuthorId"", ""AuthorName"", ""Text"", ""Parent_id"", ""Thread_id"", ""Date"")
-                    values (?,?,?,?,?,?,?)");
-                BoundStatement boundStatement = new BoundStatement(statement);
-                Guid parentid = new Guid((string)comentario.Parent_id);
-                Guid threadid = new Guid((string)comentario.Thread_id);
-                session.Execute(boundStatement.Bind(id, comentario.Author.Id, comentario.Author.Name, comentario.Text, parentid, threadid, DateTime.Now));
+            PreparedStatement statement = session.Prepare(@"insert into ""Comments""(""Id"", ""AuthorId"", ""AuthorName"", ""Text"", ""Parent_id"", ""Thread_id"", ""Date"")
+                values (?,?,?,?,?,?,?)");
+            BoundStatement boundStatement = new BoundStatement(statement);
+            Guid parentid = new Guid((string)comentario.Parent_id);
+            Guid threadid = new Guid((string)comentario.Thread_id);
+            session.Execute(boundStatement.Bind(id, comentario.Author.Id, comentario.Author.Name, comentario.Text, parentid, threadid, DateTime.Now));
             comentario.Id = id;
             IncrCounter("Comment");
             IncrCounterParent(comentario.Parent_id);
@@ -303,11 +321,11 @@ namespace NoSQL.Servicios
             ImageConverter converter = new ImageConverter();
             byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
             Guid id = Guid.NewGuid();
-            string addStmt = string.Format(getInsertStatementFor("Author", "NoSQL.Modelo"),
-                id,
-                asCassandraString(autor.Name),
-                asCassandraString(BitConverter.ToString(bytes).Replace("-", "")));
-            session.Execute(addStmt);
+            PreparedStatement statement = session.Prepare(@"insert into ""Authors""(""Id"", ""Name"", ""Photo"")
+                values (?,?,?)");
+            BoundStatement boundStatement = new BoundStatement(statement);
+            session.Execute(boundStatement.Bind(id, autor.Name, bytes));
+
             autor.Id = id;
             IncrCounter("Author");
             return autor;
@@ -472,20 +490,6 @@ namespace NoSQL.Servicios
         }
 
         /// <summary>
-        /// Convertir String hexadecimal a byte
-        /// </summary>
-        /// <param name="hex"></param>
-        /// <returns></returns>
-        protected static byte[] StringToByteArray(String hex)
-        {
-            int NumberChars = hex.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
-                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-            return bytes;
-        }
-
-        /// <summary>
         /// Obtener la fecha actual en milisegundos
         /// </summary>
         /// <returns></returns>
@@ -534,7 +538,6 @@ namespace NoSQL.Servicios
             session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid primary key, ""AuthorId"" uuid, ""AuthorName"" text,
                     ""Text"" text,""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp, ""CommentCount"" bigint)");
 
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
 
             session.Execute(@"create columnfamily ""Threads"" (""Id"" uuid primary key, ""Title"" text, ""AuthorId"" uuid, ""AuthorName"" text, 
                     ""Date"" timestamp, ""CommentCount"" bigint, ""Tags"" list<text>)");
@@ -543,13 +546,10 @@ namespace NoSQL.Servicios
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");
 
             // Crear indexes
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(4));
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
 
             // Crear counter column family            
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
             session.Execute(@"create columnfamily ""Counters""(""name"" text primary key, ""count"" counter)");
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
 
             session.Execute(@"create columnfamily ""CommentCounts""(""Id"" uuid primary key, ""count"" counter)");            
         }
@@ -624,51 +624,6 @@ namespace NoSQL.Servicios
 
             // por defecto:
             return "text";
-        }
-
-        /// <summary>
-        /// Devuelve un statement parametrizado para agregar a un column family
-        /// </summary>
-        /// <param name="columnFamilyName"></param>
-        /// <param name="modelNamespacePath"></param>
-        /// <returns></returns>
-        protected string getInsertStatementFor(string entityName, string modelNamespacePath)
-        {
-            var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace == modelNamespacePath && t.Name == entityName
-                    select t;
-            string stmt = @"INSERT INTO """ + entityName + @"s"" (";
-            var properties = q.First().GetProperties().OrderBy(p => p.Name.ToUpper());
-            int j = 0;
-            foreach (PropertyInfo property in properties)
-            {
-                stmt = stmt + @"""" + property.Name + @"""";
-                j++;
-                if (j < properties.Count())
-                    stmt = stmt + ",";
-                else
-                    stmt = stmt + ")";
-            }
-            stmt = stmt + " VALUES (";
-            for (int i = 1; i <= properties.Count(); i++)
-            {
-                stmt = stmt + "{" + (i - 1) + "}";
-                if (i < properties.Count())
-                    stmt = stmt + ",";
-                else
-                    stmt = stmt + ");";
-            }
-            return stmt;
-        }
-
-        /// <summary>
-        /// Dado un string, devolver entre ''
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        protected string asCassandraString(string str)
-        {
-            return "'" + str + "'";
         }
         #endregion
 
