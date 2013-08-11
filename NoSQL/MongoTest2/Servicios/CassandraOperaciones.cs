@@ -403,11 +403,14 @@ namespace NoSQL.Servicios
                 return true;            
         }
 
-        public string ThreadsPorAutor(object id)
+        public int ThradsByAuthor(object id)
         {
-            return "hola";
+            return 0;
         }
-
+        public List<Author> AuthorsByName(string name, int max)
+        {
+            return new List<Author>();
+        }
         public bool IsDatabaseConnected()
         {
             try
