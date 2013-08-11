@@ -136,7 +136,14 @@ namespace NoSQL.Servicios
         /// <param name="id"></param>
         /// <returns></returns>
         
-        string ThreadsPorAutor(object id);
+        int ThradsByAuthor(object id);
+        /// <summary>
+        /// Busca autores que comienzan con "name"
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        List<Author> AuthorsByName(string name, int max);
         /// <summary>
         /// Determinar el si se está conectado a la base de datos
         /// </summary>

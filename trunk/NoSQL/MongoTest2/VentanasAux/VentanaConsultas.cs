@@ -18,22 +18,8 @@ namespace NoSQL
         {
             this.db = db;
             InitializeComponent();
-            cargarAutores();
         }
 
-        private void cargarAutores()
-        {
-            comboBoxAutor.Items.Clear();
-            var Autores = db.GetAuthors();
-            foreach (var autor in Autores)
-            {    // sacado if de "identidad", no hace la diferencia                            
-                comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
-            }
-            if (Autores.Count > 0)
-            {
-                comboBoxAutor.SelectedIndex = 0;
-            }
-        }
 
         private void cargarDatosAutor(object id)
         {
@@ -44,7 +30,35 @@ namespace NoSQL
         private void comboBoxAutor_SelectedIndexChanged(object sender, EventArgs e)
         {
             cargarDatosAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
-            textBox1.Text = db.ThreadsPorAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
+            textBoxThreads.Text = db.ThradsByAuthor(((ComboItem)comboBoxAutor.SelectedItem).Value) + "";
+        }
+
+        private void buttonAutor_Click(object sender, EventArgs e)
+        {
+            comboBoxAutor.Items.Clear();
+            var Autores = ((MongoOperaciones)db).AuthorsByName(textBoxAutor.Text, 30);
+            foreach (var autor in Autores)
+            {    // sacado if de "identidad", no hace la diferencia                            
+                comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
+            }
+            if (Autores.Count > 0)
+            {
+                comboBoxAutor.SelectedIndex = 0;
+            }
+        }
+
+        private void textBoxAutor_TextChanged(object sender, EventArgs e)
+        {
+            comboBoxAutor.Items.Clear();
+            var Autores = ((MongoOperaciones)db).AuthorsByName(textBoxAutor.Text, 5);
+            foreach (var autor in Autores)
+            {    // sacado if de "identidad", no hace la diferencia                            
+                comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
+            }
+            if (Autores.Count > 0)
+            {
+                comboBoxAutor.SelectedIndex = 0;
+            }
         }
 
     }

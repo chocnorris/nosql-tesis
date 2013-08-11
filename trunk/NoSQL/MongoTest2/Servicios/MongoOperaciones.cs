@@ -33,7 +33,13 @@ namespace NoSQL.Servicios
             client = new MongoClient("mongodb://"+host);
             server = client.GetServer();
             db = server.GetDatabase(dbname);
-            server.Connect();
+            try
+            {
+                server.Connect();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public MongoOperaciones(string dbname, string[] hosts,string replSetName, string user = "", string pass = "")
@@ -42,7 +48,13 @@ namespace NoSQL.Servicios
             client = new MongoClient(connstr);
             server = client.GetServer();
             db = server.GetDatabase(dbname);
-            server.Connect();
+            try
+            {
+                server.Connect();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public List<Author> GetAuthors(int skip = 0, int take = 0)
@@ -200,7 +212,7 @@ namespace NoSQL.Servicios
             return true;
         }
 
-        public string ThreadsPorAutor(object id)
+        public int ThradsByAuthor(object id)
         {
             var map =
                 @"function() {
@@ -217,7 +229,22 @@ namespace NoSQL.Servicios
                 }";
 
             var mr = db.GetCollection("threads").MapReduce(map, reduce, MapReduceOptions.SetOutput(new MapReduceOutput("salida")));
-            return JsonHelper.FormatJson(db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString()))).ToString());
+            return (int)db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString())))["value"]["count"].AsDouble;
+        }
+
+        public List<Author> AuthorsByName(string name, int max)
+        {
+            //TODO: caso raro, cuando un nombre es muy corto
+            string regex = "/^" + name + "/i";
+            MongoCollection<Author> col = db.GetCollection<Author>("authors");
+            MongoCursor<Author> autores = col.Find(Query.Matches("Name", regex));
+            autores.SetFields("_id", "Name");
+            autores.SetSortOrder("Name");
+            if (autores.Count() < max)
+            {
+                return autores.ToList();
+            }
+            return new List<Author>();
         }
 
         public bool Initialize(bool drop)
