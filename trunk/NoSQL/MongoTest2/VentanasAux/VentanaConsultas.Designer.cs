@@ -34,7 +34,6 @@
             this.labelAutor = new System.Windows.Forms.Label();
             this.textBoxThreads = new System.Windows.Forms.TextBox();
             this.textBoxAutor = new System.Windows.Forms.TextBox();
-            this.buttonAutor = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFoto)).BeginInit();
             this.panelFoto.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +51,7 @@
             // panelFoto
             // 
             this.panelFoto.Controls.Add(this.pictureBoxFoto);
-            this.panelFoto.Location = new System.Drawing.Point(453, 12);
+            this.panelFoto.Location = new System.Drawing.Point(212, 12);
             this.panelFoto.Name = "panelFoto";
             this.panelFoto.Size = new System.Drawing.Size(120, 117);
             this.panelFoto.TabIndex = 1;
@@ -78,10 +77,10 @@
             // 
             // textBoxThreads
             // 
-            this.textBoxThreads.Location = new System.Drawing.Point(15, 127);
+            this.textBoxThreads.Location = new System.Drawing.Point(12, 109);
             this.textBoxThreads.Name = "textBoxThreads";
-            this.textBoxThreads.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxThreads.Size = new System.Drawing.Size(161, 20);
+            this.textBoxThreads.ReadOnly = true;
+            this.textBoxThreads.Size = new System.Drawing.Size(152, 20);
             this.textBoxThreads.TabIndex = 5;
             // 
             // textBoxAutor
@@ -92,22 +91,11 @@
             this.textBoxAutor.TabIndex = 6;
             this.textBoxAutor.TextChanged += new System.EventHandler(this.textBoxAutor_TextChanged);
             // 
-            // buttonAutor
-            // 
-            this.buttonAutor.Location = new System.Drawing.Point(170, 33);
-            this.buttonAutor.Name = "buttonAutor";
-            this.buttonAutor.Size = new System.Drawing.Size(75, 23);
-            this.buttonAutor.TabIndex = 7;
-            this.buttonAutor.Text = "Buscar";
-            this.buttonAutor.UseVisualStyleBackColor = true;
-            this.buttonAutor.Click += new System.EventHandler(this.buttonAutor_Click);
-            // 
             // VentanaConsultas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(585, 455);
-            this.Controls.Add(this.buttonAutor);
+            this.ClientSize = new System.Drawing.Size(344, 328);
             this.Controls.Add(this.textBoxAutor);
             this.Controls.Add(this.textBoxThreads);
             this.Controls.Add(this.labelAutor);
@@ -130,6 +118,5 @@
         private System.Windows.Forms.Label labelAutor;
         private System.Windows.Forms.TextBox textBoxThreads;
         private System.Windows.Forms.TextBox textBoxAutor;
-        private System.Windows.Forms.Button buttonAutor;
     }
 }

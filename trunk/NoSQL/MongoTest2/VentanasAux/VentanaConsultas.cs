@@ -30,29 +30,15 @@ namespace NoSQL
         private void comboBoxAutor_SelectedIndexChanged(object sender, EventArgs e)
         {
             cargarDatosAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
-            textBoxThreads.Text = db.ThradsByAuthor(((ComboItem)comboBoxAutor.SelectedItem).Value) + "";
-        }
-
-        private void buttonAutor_Click(object sender, EventArgs e)
-        {
-            comboBoxAutor.Items.Clear();
-            var Autores = ((MongoOperaciones)db).AuthorsByName(textBoxAutor.Text, 30);
-            foreach (var autor in Autores)
-            {    // sacado if de "identidad", no hace la diferencia                            
-                comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
-            }
-            if (Autores.Count > 0)
-            {
-                comboBoxAutor.SelectedIndex = 0;
-            }
+            textBoxThreads.Text = "Número de threads: " + db.ThradsByAuthor(((ComboItem) comboBoxAutor.SelectedItem).Value);
         }
 
         private void textBoxAutor_TextChanged(object sender, EventArgs e)
         {
             comboBoxAutor.Items.Clear();
-            var Autores = ((MongoOperaciones)db).AuthorsByName(textBoxAutor.Text, 5);
+            var Autores = db.AuthorsByName(textBoxAutor.Text, 30);
             foreach (var autor in Autores)
-            {    // sacado if de "identidad", no hace la diferencia                            
+            {
                 comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
             }
             if (Autores.Count > 0)

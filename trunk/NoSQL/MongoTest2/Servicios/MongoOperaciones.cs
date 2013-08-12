@@ -229,7 +229,11 @@ namespace NoSQL.Servicios
                 }";
 
             var mr = db.GetCollection("threads").MapReduce(map, reduce, MapReduceOptions.SetOutput(new MapReduceOutput("salida")));
-            return (int)db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString())))["value"]["count"].AsDouble;
+            var data = db.GetCollection("salida").FindOne(Query.EQ("_id._id", new ObjectId(id.ToString())));
+            if(data == null)
+                return 0;
+            else
+                return (int)data["value"]["count"].AsDouble;
         }
 
         public List<Author> AuthorsByName(string name, int max)
