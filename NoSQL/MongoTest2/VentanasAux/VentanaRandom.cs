@@ -15,9 +15,7 @@ namespace NoSQL
     public partial class VentanaRandom : Form
     {
         IOperaciones db;
-        Dictionary<int, int> operationStatistic = new Dictionary<int,int>();
-        int[] chartX;
-        int[] chartY;
+        Dictionary<int, double> operationStatistic = new Dictionary<int,double>();
 
         string[] names = new string[50]
         {
@@ -67,7 +65,6 @@ namespace NoSQL
             progressBar.Visible = true;
             operationStatistic.Clear();
             worker.RunWorkerAsync(CO);
-            updateChart((int)numericUpDownCom.Value);
         }
 
         private void buttonCom1MB_Click(object sender, EventArgs e)
@@ -114,18 +111,18 @@ namespace NoSQL
         {
             int x = operationStatistic.Values.Count();
             chart1.Series.Clear();
-
-            this.chart1.Palette = ChartColorPalette.SeaGreen;
-            for (int i = 1; i <= x; i++)
-            {
-                // Add series.
-                Series series = this.chart1.Series.Add(i.ToString());
-                series.Color = Color.Green;
-
-                // Add point.
-                series.Points.Add(operationStatistic[i]);
-            }
-            //chart1.UpdateCursor();
+            chart1.ChartAreas[0].BackColor = Color.Gray;
+            chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.DarkGreen;
+            chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.DarkGreen;
+            chart1.ChartAreas[0].AxisX.LineColor = Color.DarkGreen;
+            chart1.ChartAreas[0].AxisY.LineColor = Color.DarkGreen;
+            chart1.ChartAreas[0].AxisY.Maximum = operationStatistic.Values.Max();
+            Series series = new Series();
+            series.ChartType = SeriesChartType.Area;
+            series.Points.DataBindXY(operationStatistic.Keys, operationStatistic.Values);
+            series.Color = Color.DarkGreen;
+            //series.IsValueShownAsLabel = true;
+            chart1.Series.Add(series);
         }
 
         private void cargarAutores(int n)
@@ -212,7 +209,7 @@ namespace NoSQL
                         Parent_id = parentId
                     });
                     var addEnd = DateTime.Now;
-                    operationStatistic.Add(i, (addEnd - addStart).Milliseconds);
+                    operationStatistic.Add(i, (addEnd - addStart).TotalMilliseconds);
                 }
                 else
                 {
@@ -226,7 +223,7 @@ namespace NoSQL
                         Parent_id = parentId
                     });
                     var addEnd = DateTime.Now;
-                    operationStatistic.Add(i, (addEnd - addStart).Milliseconds);
+                    operationStatistic.Add(i, (addEnd - addStart).TotalMilliseconds);
                 }
                 nCom++;
                 worker.ReportProgress((i * 100) / n);
