@@ -8,12 +8,16 @@ using System.Text;
 using System.Windows.Forms;
 using NoSQL.Servicios;
 using NoSQL.Modelo;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace NoSQL
 {
     public partial class VentanaRandom : Form
     {
         IOperaciones db;
+        Dictionary<int, int> operationStatistic = new Dictionary<int,int>();
+        int[] chartX;
+        int[] chartY;
 
         string[] names = new string[50]
         {
@@ -61,7 +65,9 @@ namespace NoSQL
                 return;
             labelEstado.Text = "";
             progressBar.Visible = true;
+            operationStatistic.Clear();
             worker.RunWorkerAsync(CO);
+            updateChart((int)numericUpDownCom.Value);
         }
 
         private void buttonCom1MB_Click(object sender, EventArgs e)
@@ -100,7 +106,26 @@ namespace NoSQL
                     break;
             }
             var finish = DateTime.Now;
+
             elapsed = (int)finish.Subtract(start).TotalSeconds;
+        }
+
+        private void updateChart(int operationCount)
+        {
+            int x = operationStatistic.Values.Count();
+            chart1.Series.Clear();
+
+            this.chart1.Palette = ChartColorPalette.SeaGreen;
+            for (int i = 1; i <= x; i++)
+            {
+                // Add series.
+                Series series = this.chart1.Series.Add(i.ToString());
+                series.Color = Color.Green;
+
+                // Add point.
+                series.Points.Add(operationStatistic[i]);
+            }
+            //chart1.UpdateCursor();
         }
 
         private void cargarAutores(int n)
@@ -176,6 +201,8 @@ namespace NoSQL
                     threadId = com.Thread_id.ToString();
                 }
                 if (!mb)
+                {
+                    var addStart = DateTime.Now;
                     db.AddComment(new Comment()
                     {
                         Text = lorem,
@@ -184,7 +211,12 @@ namespace NoSQL
                         Date = DateTime.Now,
                         Parent_id = parentId
                     });
+                    var addEnd = DateTime.Now;
+                    operationStatistic.Add(i, (addEnd - addStart).Milliseconds);
+                }
                 else
+                {
+                    var addStart = DateTime.Now;
                     db.AddComment(new Comment()
                     {
                         Text = System.IO.File.ReadAllText(@"..\..\Data\1mb.txt"),
@@ -193,6 +225,9 @@ namespace NoSQL
                         Date = DateTime.Now,
                         Parent_id = parentId
                     });
+                    var addEnd = DateTime.Now;
+                    operationStatistic.Add(i, (addEnd - addStart).Milliseconds);
+                }
                 nCom++;
                 worker.ReportProgress((i * 100) / n);
             }
@@ -216,6 +251,17 @@ namespace NoSQL
         {
             if (worker.IsBusy)
                 e.Cancel = true;
+        }
+
+        private void chart1_Click(object sender, EventArgs e)
+        {
+            updateChart((int)numericUpDownCom.Value);
+
+        }
+
+        private void VentanaRandom_Load(object sender, EventArgs e)
+        {
+
         }
 
     }
