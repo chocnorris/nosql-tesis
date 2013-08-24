@@ -311,7 +311,6 @@ namespace NoSQL.Servicios
             Guid threadid = new Guid((string)comentario.Thread_id);
             session.Execute(boundStatement.Bind(id, comentario.Author.Id, comentario.Author.Name, comentario.Text, parentid, threadid, DateTime.Now));
             comentario.Id = id;
-            IncrCounter("Comment");
             IncrCounterParent(comentario.Parent_id);
             return comentario;
         }
@@ -327,7 +326,6 @@ namespace NoSQL.Servicios
             session.Execute(boundStatement.Bind(id, autor.Name, bytes));
 
             autor.Id = id;
-            IncrCounter("Author");
             return autor;
         }
 
@@ -350,8 +348,7 @@ namespace NoSQL.Servicios
                 values (?,?,?,?,?,?,?)");            
             BoundStatement boundStatement = new BoundStatement(statement);
             string stmt = boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, getDateInMilliseconds(), 0, tags).ToString();
-            session.Execute(boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, DateTime.Now, thread.CommentCount, thread.Tags));
-            IncrCounter("Thread");            
+            session.Execute(boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, DateTime.Now, thread.CommentCount, thread.Tags));           
             thread.Id = id;
             return thread;
         }
@@ -383,7 +380,6 @@ namespace NoSQL.Servicios
         public bool RemoveAuthor(Author autor)
         {            
                 session.Execute(@"DELETE FROM ""Authors"" WHERE Id = " + autor.Id);
-                DecrCounter("Author");
                 return true;
         }                    
 
@@ -391,7 +387,6 @@ namespace NoSQL.Servicios
         {
            
                 session.Execute(@"DELETE FROM ""Threads"" WHERE ""Id"" = " + thread.Id);
-                DecrCounter("Thread");
                 return true;            
         }
 
@@ -399,7 +394,6 @@ namespace NoSQL.Servicios
         {            
                 session.Execute(@"DELETE FROM ""Comments"" WHERE ""Id"" = " + comentario.Id);
                 //TODO: Actualizar el contador de comentarios del padre hmm
-                DecrCounter("Comment");
                 return true;            
         }
 
@@ -455,24 +449,6 @@ namespace NoSQL.Servicios
             if (results.Count() > 0)
                 return results.First().GetValue<long>("count");
             return 0;
-        }
-
-        /// <summary>
-        /// Incrementar el contador para una entidad
-        /// </summary>
-        /// <param name="EntityName"></param>
-        protected void IncrCounter(string EntityName)
-        {
-            session.Execute(@"update ""Counters"" set ""count""=""count""+1 where ""name""='" + EntityName + "'");
-        }
-
-        /// <summary>
-        /// Decrementar el contador para una entidad
-        /// </summary>
-        /// <param name="EntityName"></param>
-        protected void DecrCounter(string EntityName)
-        {
-            session.Execute(@"update ""Counters"" set ""count""=""count""-1 where ""name""='" + EntityName + "'");
         }
 
         protected void IncrCounterParent(object parentId)
@@ -550,9 +526,6 @@ namespace NoSQL.Servicios
 
             // Crear indexes
             session.Execute(@"create index comments_parent_id on ""Comments"" (""Parent_id"")");
-
-            // Crear counter column family            
-            session.Execute(@"create columnfamily ""Counters""(""name"" text primary key, ""count"" counter)");
 
             session.Execute(@"create columnfamily ""CommentCounts""(""Id"" uuid primary key, ""count"" counter)");            
         }
