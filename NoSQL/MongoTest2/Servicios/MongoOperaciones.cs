@@ -212,7 +212,7 @@ namespace NoSQL.Servicios
             return true;
         }
 
-        public int ThradsByAuthor(object id)
+        public int ThreadsByAuthor(object id)
         {
             var map =
                 @"function() {
@@ -236,6 +236,46 @@ namespace NoSQL.Servicios
                 return (int)data["value"]["count"].AsDouble;
         }
 
+        public List<Author> AuthorsPopular(int cant)
+        {
+            var map =
+                @"function() {
+                   emit(this.Author, { count : this.CommentCount });
+                }";
+
+            var reduce =
+                @"function(key, emits) {
+                    total = 0;
+                    for (var i in emits) {
+                        total += emits[i].count
+                    }
+                    return total;
+                }";
+
+            MapReduceOutput salida = new MapReduceOutput("popular");
+            salida.Mode = MapReduceOutputMode.Merge;
+
+            var mr = db.GetCollection("threads").MapReduce(
+                map, 
+                reduce, 
+                MapReduceOptions.SetOutput(salida)
+                );
+            MongoCollection col = db.GetCollection("popular");
+            MongoCursor cursor = col.FindAllAs<BsonDocument>();
+            var sortBy = SortBy.Descending("value");
+            cursor.SetSortOrder(sortBy);
+            cursor.SetLimit(cant);
+            List<Author> lista = new List<Author>();
+            foreach (BsonDocument doc in cursor)
+            {
+                lista.Add(new Author (){
+                    Id = doc["_id"]["_id"],
+                    Name = doc["_id"]["Name"].AsString
+                });
+            }
+            return lista;
+
+        }
         public List<Author> AuthorsByName(string name, int max)
         {
             //TODO: caso raro, cuando un nombre es muy corto

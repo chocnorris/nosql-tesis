@@ -394,7 +394,7 @@ namespace NoSQL.Servicios
             return true;
         }
 
-        public int ThradsByAuthor(object id)
+        public int ThreadsByAuthor(object id)
         {
             string sql = "SELECT Count(*) AS cant FROM Threads LEFT JOIN Base ON Threads.id = Base.id WHERE Author_id = "+id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
@@ -426,7 +426,6 @@ namespace NoSQL.Servicios
             return true;
         }
 
-
         /// <summary>
         /// Obtener un bitmap en base a un array de bytes
         /// </summary>
@@ -437,6 +436,11 @@ namespace NoSQL.Servicios
             ImageConverter ic = new ImageConverter();
             Image img = (Image)ic.ConvertFrom(bytes);
             return new Bitmap(img);
+        }
+
+        public List<Author> AuthorsPopular(int cant)
+        {
+            return new List<Author>();
         }
     }
 }

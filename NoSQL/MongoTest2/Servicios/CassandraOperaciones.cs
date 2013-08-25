@@ -397,11 +397,15 @@ namespace NoSQL.Servicios
                 return true;            
         }
 
-        public int ThradsByAuthor(object id)
+        public int ThreadsByAuthor(object id)
         {
             return 0;
         }
         public List<Author> AuthorsByName(string name, int max)
+        {
+            return new List<Author>();
+        }
+        public List<Author> AuthorsPopular(int cant)
         {
             return new List<Author>();
         }
@@ -492,28 +496,10 @@ namespace NoSQL.Servicios
         /// </summary>
         protected void createColumnFamilies()
         {
-            var exceptionList = new List<string>();
-            exceptionList.Add("Comments");
-            exceptionList.Add("Threads");
 
-            var statements = CassandraCreateStatementsBasedOnModel("NoSQL.Modelo", exceptionList);
-            foreach (var statement in statements)
-            {
-                session.Execute(statement.Value);
-                while(true)
-                    try
-                    {
-                        session.Cluster.Metadata.GetTable(keySpaceName, statement.Key);
-                        break;
-                    }
-                    catch(Exception)
-                    {
-                        session.Execute(statement.Value);
-                    }
-            }
-
-            // Crear tablas exceptuadas de la creacion programatica            
-
+            // Crear cf exceptuadas de la creacion programatica            
+            session.Execute(@"create columnfamily ""Authors"" (""Id"" uuid PRIMARY KEY,""Name"" text,""Photo"" blob);");
+            
             session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid primary key, ""AuthorId"" uuid, ""AuthorName"" text,
                     ""Text"" text,""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp, ""CommentCount"" bigint)");
 
@@ -530,77 +516,6 @@ namespace NoSQL.Servicios
             session.Execute(@"create columnfamily ""CommentCounts""(""Id"" uuid primary key, ""count"" counter)");            
         }
 
-        /// <summary>
-        /// Devolver una lista de sentencias para ejecutar sobre Cassandra donde cada una crea un column family (tabla)
-        /// tomando el modelo de clases como referencia 
-        /// </summary>
-        /// <param name="modelNamespacePath"></param>
-        /// <param name="exceptions"></param>
-        /// <returns>lista de sentencias ejecutables que crean column family</returns>
-        protected Dictionary<string, string> CassandraCreateStatementsBasedOnModel(string modelNamespacePath, List<string> exceptions)
-        {
-            var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace == modelNamespacePath
-                    select t;
-
-            Dictionary<string, string> createStatements = new Dictionary<string, string>();
-            foreach (Type str in q.ToList())
-            {
-                if (!exceptions.Contains(str.Name + "s"))
-                {                
-                string columnFamilyName = str.Name + "s";
-                string createStatement = @"create columnfamily """ + columnFamilyName + @""" (";
-                int i = 0;
-                var properties = str.GetProperties();
-                var propertyTypes = new List<string>();
-                foreach (PropertyInfo pi in properties)
-                {
-                    createStatement = createStatement + @"""" + pi.Name + @""" " + typeMapping(pi.PropertyType);
-                    if (pi.Name.ToLower() == "id")
-                        createStatement = createStatement + " PRIMARY KEY";
-                    i++;
-                    if (i < properties.Count())
-                        createStatement = createStatement + ",";
-                    else
-                        createStatement = createStatement + ");";
-                } 
-                createStatements.Add(columnFamilyName,createStatement);
-                }
-            }
-            return createStatements;
-        }
-
-        /// <summary>
-        /// Resolver el tipo correspodiente a Cassandra dado un tipo de C#
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns>un tipo cassandra</returns>
-        protected string typeMapping(Type type)
-        {
-            if (type == typeof(Bitmap))
-                return "blob";
-            if (type == typeof(char) || type == typeof(string))
-                return "text";
-            if (type == typeof(Int64) || type == typeof(long))
-                return "bigint";
-            if (type == typeof(int))
-                return "int";
-            if (type == typeof(float))
-                return "float";
-            if (type == typeof(double))
-                return "double";
-            if (type == typeof(bool))
-                return "boolean";
-            if (type == typeof(DateTime))
-                return "timestamp";
-            if (type == typeof(string[]))
-                return "list<text>";
-            if (type == typeof(object) || !(type == typeof(ValueType)))
-                return "uuid";
-
-            // por defecto:
-            return "text";
-        }
         #endregion
 
         protected bool existsDatabase()
@@ -643,5 +558,6 @@ namespace NoSQL.Servicios
                 cluster.Shutdown();
                 return true;                        
         }
+
     }
 }

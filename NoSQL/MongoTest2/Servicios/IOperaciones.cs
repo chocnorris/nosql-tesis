@@ -136,7 +136,7 @@ namespace NoSQL.Servicios
         /// <param name="id"></param>
         /// <returns></returns>
         
-        int ThradsByAuthor(object id);
+        int ThreadsByAuthor(object id);
         /// <summary>
         /// Busca autores que comienzan con "name"
         /// </summary>
@@ -144,6 +144,15 @@ namespace NoSQL.Servicios
         /// <param name="max"></param>
         /// <returns></returns>
         List<Author> AuthorsByName(string name, int max);
+
+        /// <summary>
+        /// Retorna los "cant" autores más populares.
+        /// Mide la populardidad de acuerdo al número de comentarios en sus threads.
+        /// </summary>
+        /// <param name="cant"></param>
+        /// <returns></returns>
+        List<Author> AuthorsPopular(int cant);
+
         /// <summary>
         /// Determinar el si se está conectado a la base de datos
         /// </summary>
