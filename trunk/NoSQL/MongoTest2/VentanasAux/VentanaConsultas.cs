@@ -18,6 +18,8 @@ namespace NoSQL
         {
             this.db = db;
             InitializeComponent();
+            foreach(Author a in db.AuthorsPopular(10))
+                listBoxPop.Items.Add(a.Name);
         }
 
 
@@ -30,7 +32,7 @@ namespace NoSQL
         private void comboBoxAutor_SelectedIndexChanged(object sender, EventArgs e)
         {
             cargarDatosAutor(((ComboItem)comboBoxAutor.SelectedItem).Value);
-            textBoxThreads.Text = "Número de threads: " + db.ThradsByAuthor(((ComboItem) comboBoxAutor.SelectedItem).Value);
+            textBoxThreads.Text = "Número de threads: " + db.ThreadsByAuthor(((ComboItem) comboBoxAutor.SelectedItem).Value);
         }
 
         private void textBoxAutor_TextChanged(object sender, EventArgs e)

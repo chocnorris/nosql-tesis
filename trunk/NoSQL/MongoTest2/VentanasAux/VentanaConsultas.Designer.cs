@@ -34,6 +34,8 @@
             this.labelAutor = new System.Windows.Forms.Label();
             this.textBoxThreads = new System.Windows.Forms.TextBox();
             this.textBoxAutor = new System.Windows.Forms.TextBox();
+            this.listBoxPop = new System.Windows.Forms.ListBox();
+            this.labelPop = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFoto)).BeginInit();
             this.panelFoto.SuspendLayout();
             this.SuspendLayout();
@@ -91,11 +93,30 @@
             this.textBoxAutor.TabIndex = 6;
             this.textBoxAutor.TextChanged += new System.EventHandler(this.textBoxAutor_TextChanged);
             // 
+            // listBoxPop
+            // 
+            this.listBoxPop.FormattingEnabled = true;
+            this.listBoxPop.Location = new System.Drawing.Point(12, 186);
+            this.listBoxPop.Name = "listBoxPop";
+            this.listBoxPop.Size = new System.Drawing.Size(152, 134);
+            this.listBoxPop.TabIndex = 7;
+            // 
+            // labelPop
+            // 
+            this.labelPop.AutoSize = true;
+            this.labelPop.Location = new System.Drawing.Point(13, 167);
+            this.labelPop.Name = "labelPop";
+            this.labelPop.Size = new System.Drawing.Size(136, 13);
+            this.labelPop.TabIndex = 8;
+            this.labelPop.Text = "Top 10 - Autores Populares";
+            // 
             // VentanaConsultas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 328);
+            this.ClientSize = new System.Drawing.Size(373, 428);
+            this.Controls.Add(this.labelPop);
+            this.Controls.Add(this.listBoxPop);
             this.Controls.Add(this.textBoxAutor);
             this.Controls.Add(this.textBoxThreads);
             this.Controls.Add(this.labelAutor);
@@ -118,5 +139,7 @@
         private System.Windows.Forms.Label labelAutor;
         private System.Windows.Forms.TextBox textBoxThreads;
         private System.Windows.Forms.TextBox textBoxAutor;
+        private System.Windows.Forms.ListBox listBoxPop;
+        private System.Windows.Forms.Label labelPop;
     }
 }
