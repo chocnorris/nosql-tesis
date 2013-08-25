@@ -18,15 +18,6 @@ namespace NoSQL.Servicios
         protected Cluster cluster;
         protected Session session;
         protected string keySpaceName;
-        protected StreamWriter logwriter;
-
-
-        protected DateTime start { get; set; }
-        protected DateTime end { get; set; }
-        protected void Start () { start = DateTime.Now; }
-        protected void End() { end = DateTime.Now; }
-        protected double Seconds() { return (end-start).TotalSeconds;}
-
 
         public CassandraOperaciones(string dbname, string host, string user = "", string pass = "")
         {
@@ -34,8 +25,6 @@ namespace NoSQL.Servicios
             //session = cluster.Connect(dbname);
             session = cluster.Connect();
             keySpaceName = dbname;
-            
-            WriteLog(" - Cassandra log start at " + DateTime.Now+" -");
         }
         public CassandraOperaciones(string dbname, string [] hosts, string user = "", string pass = "")
         {
@@ -46,42 +35,11 @@ namespace NoSQL.Servicios
             //session = cluster.Connect(dbname);
             session = cluster.Connect();
             keySpaceName = dbname;
-            WriteLog(" - Cassandra log start at " + DateTime.Now+" -");
-        }
-
-        public void WriteLog(string text)
-        {
-          logwriter = new StreamWriter("..\\..\\Data\\cassandra_app.log",true);
-            logwriter.WriteLine(text,true);
-            logwriter.Close();
         }
         #region Implementaciones de interfaz
 
-        /*
-        public List<Author> GetAuthors(int skip = 0, int take = 0)
-        {            
-                var authorRows = session.Execute(@"SELECT ""Id"" FROM ""Authors"""); 
-                var authors = new List<Author>();
-                foreach (Row row in authorRows.GetRows())
-                {
-                    ConvertToBitmap(row.GetValue<byte[]>("Photo"));
-                    var author = new Author();                    
-                    author.Id = row.GetValue<Guid>(0);
-                    author.Name = row.GetValue<string>("Name");
-                    //author.Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"));
-                    author.Photo = new Bitmap(1,1);
-                    
-                    authors.Add(author);
-                }
-                return authors.ToList().Skip(skip).ToList();                        
-        }
-         */
-
-        // Implementación alternativa de GetAuthors
         public List<Author> GetAuthors(int skip = 0, int take = 0)
         {
-            WriteLog("Getting list of authors");
-            DateTime time1 = DateTime.Now;
             var authors = new List<Author>();
             var authorRows = session.Execute(@"SELECT ""Id"" FROM ""Authors""");                        
             var rows = authorRows.GetRows().ToArray();                                       
@@ -102,24 +60,16 @@ namespace NoSQL.Servicios
                 authors.Add(author);
                 skip++;
             }
-            DateTime time2 = DateTime.Now;
-            WriteLog("GetAuthors took "+(time2-time1).TotalSeconds);
-            WriteLog("End getting list of authors");
             return authors;                        
         }
 
         public List<Comment> GetComments(int skip = 0, int take = 0)
         {
-            Start();
             var commentRows = session.Execute(@"SELECT * FROM ""Comments""").GetRows();
-            End();
-            WriteLog("Query to Comments took " + Seconds());
             var commentCount = commentRows.Count();
 
-            Start();
             commentRows = session.Execute(@"SELECT * FROM ""Comments""").GetRows();
-            End();
-            WriteLog("Query to Comments took " + Seconds());
+
             DateTime time1 = DateTime.Now;
             var comments = new List<Comment>();            
             if (commentCount > 0 && commentCount > skip)
@@ -144,34 +94,30 @@ namespace NoSQL.Servicios
                 }
             }
             DateTime time2 = DateTime.Now;
-            WriteLog("GetComments took " + (time2-time1).TotalSeconds);
             return comments.ToList();
         }
 
         public List<Comment> GetChildComments(object Parent_id)
         {
-            DateTime time1 = DateTime.Now;
-                var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id);
-                var comments = new List<Comment>();
+            var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Parent_id""=" + Parent_id);
+            var comments = new List<Comment>();
 
-                foreach (Row row in commentRows.GetRows())
+            foreach (Row row in commentRows.GetRows())
+            {
+                var comment = new Comment()
                 {
-                    var comment = new Comment()
-                    {
-                        Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
-                        CommentCount = 0,
-                        Date = row.GetValue<DateTime>("Date"),
-                        Id = row.GetValue<Guid>(0),
-                        Parent_id = row.GetValue<Guid>("Parent_id"),
-                        Thread_id = row.GetValue<Guid>("Thread_id"),
-                        Text = row.GetValue<string>("Text")
-                    };
-                    comment.CommentCount = GetChildCommentCounts(comment.Id);
-                    comments.Add(comment);
-                }
-                DateTime time2 = DateTime.Now;
-            WriteLog("GetChildComments took " + (time2-time1).TotalSeconds);
-                return comments.ToList();            
+                    Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
+                    CommentCount = 0,
+                    Date = row.GetValue<DateTime>("Date"),
+                    Id = row.GetValue<Guid>(0),
+                    Parent_id = row.GetValue<Guid>("Parent_id"),
+                    Thread_id = row.GetValue<Guid>("Thread_id"),
+                    Text = row.GetValue<string>("Text")
+                };
+                comment.CommentCount = GetChildCommentCounts(comment.Id);
+                comments.Add(comment);
+            }
+            return comments.ToList();            
         }
 
         /*
@@ -242,44 +188,31 @@ namespace NoSQL.Servicios
 
         public Author GetAuthor(object id)
         {
-            Start();
             var result = session.Execute(@"SELECT * FROM ""Authors"" WHERE ""Id""="+id).GetRows();
-            End();
-            WriteLog("Query to Author took " + Seconds());
 
             var author = new Author();
             Row row = result.First();
             author = new Author();
-            Start();
             author.Id = row.GetValue<Guid>(0);
             author.Name = row.GetValue<string>("Name");
             author.Photo = ConvertToBitmap(row.GetValue<byte[]>("Photo"));
-            End();
-            WriteLog("Author data serialization took " + Seconds());
             return author;
         }
 
         public Author GetAuthorLight(object id)
         {
-            Start();
             var result = session.Execute(@"SELECT ""Id"", ""Name"" FROM ""Authors"" WHERE ""Id""=" + id).GetRows();
-            End();
-            WriteLog("Query to Author took " + Seconds());
 
             var author = new Author();
             Row row = result.First();
             author = new Author();
-            Start();
             author.Id = row.GetValue<Guid>(0);
             author.Name = row.GetValue<string>("Name");
-            End();
-            WriteLog("Author data serialization took " + Seconds());
             return author;
         }
 
         public Comment GetComment(object id)
         {
-            Start();
             var commentRows = session.Execute(@"SELECT * FROM ""Comments"" WHERE ""Id""=" + id).GetRows();
             Row row = commentRows.First();
             var comment = new Comment()
@@ -293,8 +226,6 @@ namespace NoSQL.Servicios
                     Text = row.GetValue<string>("Text")
                 };
             comment.CommentCount = GetChildCommentCounts(comment.Id);
-            End();
-            WriteLog("GetComment took " + Seconds());
             return comment;
         }
 
@@ -369,11 +300,8 @@ namespace NoSQL.Servicios
 
         public long GetCommentsCount()
         {
-            Start();
             var resu = session.Execute(@"SELECT Count(*) FROM ""Comments""").GetRows();
             long num = resu.First().GetValue<long>(0);
-            End();
-            WriteLog("GetCommentsCount took " + Seconds());
             return num;
         }
 
@@ -403,7 +331,7 @@ namespace NoSQL.Servicios
         }
         public List<Author> AuthorsByName(string name, int max)
         {
-            return new List<Author>();
+            return GetAuthors();
         }
         public List<Author> AuthorsPopular(int cant)
         {
@@ -446,10 +374,7 @@ namespace NoSQL.Servicios
         /// <returns></returns>
         protected long GetChildCommentCounts(object ParentId)
         {
-            Start();
             var results = session.Execute(@"select * from ""CommentCounts"" where ""Id""=" + ParentId).GetRows().ToList();
-            End();
-            WriteLog("GetChildCommentCounts took " + Seconds());
             if (results.Count() > 0)
                 return results.First().GetValue<long>("count");
             return 0;

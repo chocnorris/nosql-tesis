@@ -20,6 +20,7 @@ namespace NoSQL
             InitializeComponent();
             foreach(Author a in db.AuthorsPopular(10))
                 listBoxPop.Items.Add(a.Name);
+            cargarAutores();
         }
 
 
@@ -37,8 +38,13 @@ namespace NoSQL
 
         private void textBoxAutor_TextChanged(object sender, EventArgs e)
         {
+            cargarAutores();
+        }
+        private void cargarAutores()
+        {
             comboBoxAutor.Items.Clear();
-            var Autores = db.AuthorsByName(textBoxAutor.Text, 30);
+            string name = textBoxAutor.Text;
+            var Autores = db.AuthorsByName(name, 30);
             foreach (var autor in Autores)
             {
                 comboBoxAutor.Items.Add(new ComboItem { Text = autor.Name, Value = autor.Id });
@@ -48,6 +54,5 @@ namespace NoSQL
                 comboBoxAutor.SelectedIndex = 0;
             }
         }
-
     }
 }

@@ -64,10 +64,10 @@ namespace NoSQL.Servicios
             var authors = new List<Author>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT * FROM Authors";
+                sql = "SELECT id, name FROM Authors";
             else
             {
-                sql = "SELECT * FROM Authors LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT id, name FROM Authors LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -398,12 +398,28 @@ namespace NoSQL.Servicios
         {
             string sql = "SELECT Count(*) AS cant FROM Threads LEFT JOIN Base ON Threads.id = Base.id WHERE Author_id = "+id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
-            var resu = cmd.ExecuteScalar();
-            return (Int32)resu;
+            string resu = cmd.ExecuteScalar().ToString();
+            return Int32.Parse(resu);
         }
         public List<Author> AuthorsByName(string name, int max)
         {
-            return new List<Author>();
+            var authors = new List<Author>();
+            string regex = "'^" + name + "'";
+            string sql = "SELECT id, name FROM Authors  WHERE Name RLIKE " + regex + " LIMIT " + max;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Author author = new Author()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Name = rdr.GetString("name"),
+                    Photo = null
+                };
+                authors.Add(author);
+            }
+            rdr.Close();
+            return authors;
         }
         public bool IsDatabaseConnected()
         {
@@ -440,7 +456,27 @@ namespace NoSQL.Servicios
 
         public List<Author> AuthorsPopular(int cant)
         {
-            return new List<Author>();
+            var authors = new List<Author>();
+            string sql = "SELECT "+
+                "Authors.id, Authors.name, SUM(CommentCount) AS suma "+
+                "FROM Threads LEFT JOIN Base ON Threads.id = Base.Id LEFT JOIN Authors ON Authors.Id = Base.author_id "+
+                "GROUP BY Authors.id, Authors.name "+
+                "ORDER BY suma DESC "+
+                "LIMIT " + cant;
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Author author = new Author()
+                {
+                    Id = rdr.GetInt32("id"),
+                    Name = rdr.GetString("name"),
+                    Photo = null
+                };
+                authors.Add(author);
+            }
+            rdr.Close();
+            return authors;
         }
     }
 }
