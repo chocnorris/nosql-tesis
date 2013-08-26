@@ -156,13 +156,13 @@ namespace NoSQL.Servicios
                 {
                     Author = new Author ()
                     { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
-                    CommentCount = row.GetValue<long>("CommentCount"),
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
                     Title = row.GetValue<string>("Title"),                    
                 };
                 if (row.GetValue<List<string>>("Tags") != null)
                     thread.Tags = row.GetValue<List<string>>("Tags").ToArray();
+                thread.CommentCount = GetChildCommentCounts(thread.Id);
                 threads.Add(thread);
             }
             return threads.Skip(skip).ToList();
@@ -175,7 +175,6 @@ namespace NoSQL.Servicios
                 var thread = new Thread()
                 {
                     Author = new Author() { Name = row.GetValue<string>("AuthorName"), Id = row.GetValue<Guid>("AuthorId") },
-                    CommentCount = row.GetValue<long>("CommentCount"),
                     Date = row.GetValue<DateTime>("Date"),
                     Id = row.GetValue<Guid>(0),
                     Title = row.GetValue<string>("Title"),
@@ -275,11 +274,10 @@ namespace NoSQL.Servicios
 
             thread.CommentCount = GetChildCommentCounts(id);
           
-            PreparedStatement statement = session.Prepare(@"insert into ""Threads"" (""Id"", ""Title"", ""AuthorId"", ""AuthorName"", ""Date"", ""CommentCount"", ""Tags"")
-                values (?,?,?,?,?,?,?)");            
+            PreparedStatement statement = session.Prepare(@"insert into ""Threads"" (""Id"", ""Title"", ""AuthorId"", ""AuthorName"", ""Date"", ""Tags"")
+                values (?,?,?,?,?,?)");            
             BoundStatement boundStatement = new BoundStatement(statement);
-            string stmt = boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, getDateInMilliseconds(), 0, tags).ToString();
-            session.Execute(boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, DateTime.Now, thread.CommentCount, thread.Tags));           
+            session.Execute(boundStatement.Bind(id, thread.Title, thread.Author.Id, thread.Author.Name, DateTime.Now, thread.Tags));           
             thread.Id = id;
             return thread;
         }
@@ -426,11 +424,11 @@ namespace NoSQL.Servicios
             session.Execute(@"create columnfamily ""Authors"" (""Id"" uuid PRIMARY KEY,""Name"" text,""Photo"" blob);");
             
             session.Execute(@"create columnfamily ""Comments"" (""Id"" uuid primary key, ""AuthorId"" uuid, ""AuthorName"" text,
-                    ""Text"" text,""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp, ""CommentCount"" bigint)");
+                    ""Text"" text,""Parent_id"" uuid, ""Thread_id"" uuid, ""Date"" timestamp)");
 
 
             session.Execute(@"create columnfamily ""Threads"" (""Id"" uuid primary key, ""Title"" text, ""AuthorId"" uuid, ""AuthorName"" text, 
-                    ""Date"" timestamp, ""CommentCount"" bigint, ""Tags"" list<text>)");
+                    ""Date"" timestamp, ""Tags"" list<text>)");
 
             // Coleccion de tags
             //            db.ExecuteNonQuery(@"ALTER TABLE ""Threads"" ADD tags set<text>");

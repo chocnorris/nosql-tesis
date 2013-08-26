@@ -30,7 +30,7 @@ namespace NoSQL.Servicios
         /// </summary>
         public MongoOperaciones(string dbname, string host, string user = "", string pass = "")
         {
-            client = new MongoClient("mongodb://"+host);
+            client = new MongoClient("mongodb://" + host + "/?readPreference=nearest");
             server = client.GetServer();
             db = server.GetDatabase(dbname);
             try
@@ -254,7 +254,6 @@ namespace NoSQL.Servicios
 
             MapReduceOutput salida = new MapReduceOutput("popular");
             salida.Mode = MapReduceOutputMode.Merge;
-
             var mr = db.GetCollection("threads").MapReduce(
                 map, 
                 reduce, 
@@ -284,11 +283,8 @@ namespace NoSQL.Servicios
             MongoCursor<Author> autores = col.Find(Query.Matches("Name", regex));
             autores.SetFields("_id", "Name");
             autores.SetSortOrder("Name");
-            if (autores.Count() < max)
-            {
-                return autores.ToList();
-            }
-            return new List<Author>();
+            autores.SetLimit(max);
+            return autores.ToList();
         }
 
         public bool Initialize(bool drop)
@@ -298,11 +294,10 @@ namespace NoSQL.Servicios
             if (drop)
                 db.Drop();
             ShardDB();
-            //Éste es uno necesario por las fotos
+            //Éste es uno, necesario por las fotos
             db.GetCollection("authors").EnsureIndex(new IndexKeysBuilder().Ascending("Name"), IndexOptions.SetUnique(false));
             return true;
         }
-        //TODO: Ver cómo parametrizar (o no) el sharding de la db
         private bool ShardDB()
         {
             if (server.Instance.InstanceType != MongoServerInstanceType.ShardRouter)
