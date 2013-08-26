@@ -64,10 +64,10 @@ namespace NoSQL.Servicios
             var authors = new List<Author>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT id, name FROM Authors";
+                sql = "SELECT id, name FROM Authors ORDER BY name";
             else
             {
-                sql = "SELECT id, name FROM Authors LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT id, name FROM Authors LIMIT " + take + " OFFSET " + skip + " ORDER BY name"; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -405,7 +405,7 @@ namespace NoSQL.Servicios
         {
             var authors = new List<Author>();
             string regex = "'^" + name + "'";
-            string sql = "SELECT id, name FROM Authors  WHERE Name RLIKE " + regex + " LIMIT " + max;
+            string sql = "SELECT id, name FROM Authors  WHERE Name RLIKE " + regex + "  ORDER BY Authors.name LIMIT " + max;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
