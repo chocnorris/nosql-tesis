@@ -211,7 +211,7 @@ namespace NoSQL.Servicios
             var res = db.GetCollection<Comment>("comments").Remove(Query.EQ("_id", new ObjectId(comentario.Id.ToString())));
             return true;
         }
-
+        //TODO: calcular el map reduce de manera manual cada tanto para ahorrar tiempo
         public int ThreadsByAuthor(object id)
         {
             var map =
@@ -253,7 +253,7 @@ namespace NoSQL.Servicios
                 }";
 
             MapReduceOutput salida = new MapReduceOutput("popular");
-            salida.Mode = MapReduceOutputMode.Merge;
+            //salida.Mode = MapReduceOutputMode.Replace;
             var mr = db.GetCollection("threads").MapReduce(
                 map, 
                 reduce, 
@@ -273,7 +273,6 @@ namespace NoSQL.Servicios
                 });
             }
             return lista;
-
         }
         public List<Author> AuthorsByName(string name, int max)
         {
@@ -320,7 +319,7 @@ namespace NoSQL.Servicios
             comandoShard = new CommandDocument();
             comandoShard.Add("shardCollection", "forum.comments");
             BsonDocument doc = new BsonDocument();
-            doc.Add("thread_id", 1);
+            doc.Add("Thread_id", 1);
             doc.Add("_id", 1);
             comandoShard.Add("key", doc);
             res = db.RunCommand(comandoShard);
