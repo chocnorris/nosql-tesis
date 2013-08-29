@@ -6,14 +6,14 @@ using Neo4jClient;
 
 namespace NoSQL.Modelo
 {
-    public class WroteComment : Relationship<Payload>, IRelationshipAllowingSourceNode<Author>,
- IRelationshipAllowingTargetNode<Comment>
+    public class Wrote : Relationship<Payload>, IRelationshipAllowingSourceNode<Author>,
+ IRelationshipAllowingTargetNode<object>
     {
-        public static readonly string TypeKey = "WROTEC";
+        public static readonly string TypeKey = "WROTE";
 
         public string Caption { get; set; }
 
-        public WroteComment(NodeReference targetNode, Payload payload)
+        public Wrote(NodeReference targetNode, Payload payload)
             : base(targetNode, payload)
         { }
 
