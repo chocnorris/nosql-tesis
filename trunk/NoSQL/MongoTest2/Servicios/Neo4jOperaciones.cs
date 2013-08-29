@@ -73,12 +73,12 @@ namespace NoSQL.Servicios
             var res = client
                 .Cypher
                 .Start(new { n = Node.ByIndexQuery("Comment", "*:*") })
-                .Return<Node<CommentGraph>>("n").Skip(skip);
+                .Return<Node<Comment>>("n").Skip(skip);
             if (take != 0)
                 res = res.Limit(take);
-            List<Node<CommentGraph>> lista = res.Results.ToList();
+            List<Node<Comment>> lista = res.Results.ToList();
             List<Comment> ret = new List<Comment>();
-            foreach (Node<CommentGraph> node in lista)
+            foreach (Node<Comment> node in lista)
             {
                 ret.Add(singleComment(node));
             }
@@ -92,9 +92,9 @@ namespace NoSQL.Servicios
             .Cypher
             .Start(new { parent = new NodeReference((long)Parent_id) })
             .Match("(parent)<-[:PARENT]-(comment)")
-            .Return<Node<CommentGraph>>("comment").Results.ToList();
+            .Return<Node<Comment>>("comment").Results.ToList();
             List<Comment> ret = new List<Comment>();
-            foreach (Node<CommentGraph> node in lista)
+            foreach (Node<Comment> node in lista)
             {
                 ret.Add(singleComment(node));
             }
@@ -139,7 +139,7 @@ namespace NoSQL.Servicios
         public Comment GetComment(object id)
         {
             id = long.Parse(id.ToString());
-            var node = client.Get<CommentGraph>(new NodeReference((long)id));
+            var node = client.Get<Comment>(new NodeReference((long)id));
             return singleComment(node);
         }
 
@@ -168,9 +168,9 @@ namespace NoSQL.Servicios
             thr.CommentCount = respuestas;
             return thr;
         }
-        private Comment singleComment(Node<CommentGraph> node)
+        private Comment singleComment(Node<Comment> node)
         {
-            CommentGraph com = node.Data;
+            Comment com = node.Data;
             com.Id = node.Reference.Id;
             var aut = client
                 .Cypher
@@ -214,8 +214,7 @@ namespace NoSQL.Servicios
                     {
                         new IndexEntry("Comment")
                     {
-                        { "Text", comentario.Text},
-                        { "Rank", new Random().NextDouble()}
+                        { "Text", comentario.Text}
                     }
                     });
             client.CreateRelationship(auth.Reference, new Wrote(theComment));
