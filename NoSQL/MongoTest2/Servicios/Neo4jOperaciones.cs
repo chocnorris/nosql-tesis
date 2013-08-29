@@ -12,85 +12,142 @@ namespace NoSQL.Servicios
     {
         GraphClient client;
 
-        public Neo4jOperaciones()
+        public Neo4jOperaciones(string dbname, string host, string user = "", string pass = "")
         {
+            string uriString = "http://" + host + ":7474/db/data";
+            if(user!="")
+                uriString = "http://" + user + ":" + pass + "@" + host + ":7474/db/data";
+            client = new GraphClient(new Uri(uriString));
+            client.Connect();
         }
         public bool Initialize(bool dropExistent)
         {
-            client = new GraphClient(new Uri("http://localhost:7474/db/data"));
-            client.Connect();
+            bool ret = true;
+            if (dropExistent)
+            {
+                client.Cypher
+                    .Start(new { n = All.Nodes })
+                    .Delete("n")
+                    .ExecuteWithoutResults();
+            }
             CreateNodesRelationshipsIndexes();
-            return true;
+            return ret;
         }
 
         private void CreateNodesRelationshipsIndexes()
         {
             client.CreateIndex("Author", new IndexConfiguration() { Provider = IndexProvider.lucene, Type = IndexType.exact }, IndexFor.Node); // full text node index
+            client.CreateIndex("Thread", new IndexConfiguration() { Provider = IndexProvider.lucene, Type = IndexType.fulltext }, IndexFor.Node); // full text node index
             client.CreateIndex("Comment", new IndexConfiguration() { Provider = IndexProvider.lucene, Type = IndexType.fulltext }, IndexFor.Node); // full text node index
         }
 
         public bool Cleanup()
         {
-            client.Cypher.Start(new { n = Neo4jClient.Cypher.All.Nodes }).Delete(" ").ExecuteWithoutResults();
-            return true;    
+            return Initialize(true);
         }
 
-        public List<Modelo.Author> GetAuthors(int skip = 0, int take = 0)
+        public List<Author> GetAuthors(int skip = 0, int take = 0)
+        {
+            var res = client
+                .Cypher 
+                .Start(new { n = Node.ByIndexQuery("Author", "*:*") })
+                .Return<Node<Author>>("n");
+            List<Node<Author>> lista = res.Results.ToList();
+            List<Author> ret = new List<Author>();
+            Author aut;
+            foreach (Node<Author> node in lista)
+            {
+                aut = node.Data;
+                aut.Id = node.Reference;
+                ret.Add(aut);
+            }
+            return ret;
+        }
+
+        public List<Comment> GetComments(int skip = 0, int take = 0)
+        {
+            var res = client
+                .Cypher
+                .Start(new { n = Node.ByIndexQuery("Comment", "*:*") })
+                .Return<Node<Comment>>("n");
+            List<Node<Comment>> lista = res.Results.ToList();
+            List<Comment> ret = new List<Comment>();
+            Comment com;
+            foreach (Node<Comment> node in lista)
+            {
+                com = node.Data;
+                com.Id = node.Reference;
+                ret.Add(com);
+            }
+            return ret;
+        }
+
+        public List<Comment> GetChildComments(object Parent_id)
         {
             throw new NotImplementedException();
         }
 
-        public List<Modelo.Comment> GetComments(int skip = 0, int take = 0)
+        public List<Thread> GetThreads(int skip = 0, int take = 0)
         {
-            throw new NotImplementedException();
+            var res = client
+                .Cypher
+                .Start(new { n = Node.ByIndexQuery("Thread", "*:*") })
+                .Return<Node<Thread>>("n");
+            List<Node<Thread>> lista = res.Results.ToList();
+            List<Thread> ret = new List<Thread>();
+            Thread thr;
+            foreach (Node<Thread> node in lista)
+            {
+                thr = node.Data;
+                thr.Id = node.Reference;
+                ret.Add(thr);
+            }
+            return ret;
         }
 
-        public List<Modelo.Comment> GetChildComments(object Parent_id)
+        public Thread GetThread(object id)
         {
-            throw new NotImplementedException();
+            var node = client.Get<Thread>((NodeReference)id);
+            Thread th = node.Data;
+            th.Id = node.Reference;
+            return th;
         }
 
-        public List<Modelo.Thread> GetThreads(int skip = 0, int take = 0)
+        public Author GetAuthor(object id)
         {
-            throw new NotImplementedException();
+            var node = client.Get<Author>((NodeReference)id);
+            Author aut = node.Data;
+            aut.Id = node.Reference;
+            return aut;
         }
 
-        public Modelo.Thread GetThread(object id)
+        public Comment GetComment(object id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Modelo.Author GetAuthor(object id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Modelo.Comment GetComment(object id)
-        {
-            throw new NotImplementedException();
+            var node = client.Get<Comment>((NodeReference)id);
+            Comment com = node.Data;
+            com.Id = node.Reference;
+            return com;
         }
 
         public Comment AddComment(Comment comentario)
         {
-            var newComment = new GraphComment() { Id = comentario.Id, Text = comentario.Text };
 
-            NodeReference<GraphComment> theComment = client.Create(newComment,
-        new IRelationshipAllowingParticipantNode<GraphComment>[0],
-        new[]
+            NodeReference<Comment> theComment = client.Create(comentario,
+                new IRelationshipAllowingParticipantNode<Comment>[0],
+                new[]
                     {
                         new IndexEntry("Comment")
                     {
-                        { "Text", newComment.Text},
-                        { "Id", newComment.Id }
+                        { "Text", comentario.Text},
                     }
                     });
-            //NodeReference node;
-
-            string authorName = "'" + comentario.Author.Name + "'";
-            //var result = client.Cypher.Start(new { n = Neo4jClient.Cypher.All.Nodes }).Where<Author>(n => n.Name == authorName).Return<Node<Author>>("n").Results.FirstOrDefault();
-            var result = client.Cypher.Start(new { n = Neo4jClient.Cypher.All.Nodes }).Return<Node<Author>>("n").
-                Results.Where<Node<Author>>(aut=>aut.Data.Name==comentario.Author.Name).FirstOrDefault();
-            client.CreateRelationship(result.Reference, new Wrote(theComment, new Payload() { Date = comentario.Date }));
+            client.CreateRelationship((NodeReference<Author>)comentario.Author.Id, new WroteComment(theComment, new Payload() { Date = comentario.Date }));
+            client.CreateRelationship(theComment, new CommentThread((NodeReference<Thread>)comentario.Thread_id, null));
+            var obj = GetThread(comentario.Parent_id);
+            if(obj != null)
+                client.CreateRelationship(theComment, new ParentCommentT((NodeReference<Thread>)comentario.Thread_id, null));
+            else
+                client.CreateRelationship(theComment, new ParentCommentC((NodeReference<Comment>)comentario.Thread_id, null));
             return comentario;
         }
 
@@ -103,52 +160,54 @@ namespace NoSQL.Servicios
                     new IndexEntry("Author")
                     {
                         { "Name", autor.Name },
-                        { "Id", autor.Id.ToString() }
                     }
                 });
+            autor.Id = theauthor.Id;
             return autor;
         }
 
         public Thread AddThread(Thread thread)
         {
+            var auth = client.Get<Author>((NodeReference)thread.Author.Id);
             var theThread = client.Create(thread,
                     new IRelationshipAllowingParticipantNode<Thread>[0],
                     new[]
                     {
                         new IndexEntry("Thread")
-                    {
-                        { "Title", thread.Title }
-                    }
+                        {
+                            { "Title", thread.Title }
+                        }
                     });
+            client.CreateRelationship((NodeReference<Author>)thread.Author.Id, new WroteThread(theThread, new Payload() { Date = thread.Date }));
             return thread;
         }
 
         public long GetAuthorsCount()
         {
-            throw new NotImplementedException();
+            return GetAuthors().Count;
         }
 
         public long GetThreadsCount()
         {
-            throw new NotImplementedException();
+            return GetThreads().Count;
         }
 
         public long GetCommentsCount()
         {
-            throw new NotImplementedException();
+            return GetComments().Count;
         }
 
-        public bool RemoveAuthor(Modelo.Author autor)
+        public bool RemoveAuthor(Author autor)
         {
             throw new NotImplementedException();
         }
 
-        public bool RemoveThread(Modelo.Thread thread)
+        public bool RemoveThread(Thread thread)
         {
             throw new NotImplementedException();
         }
 
-        public bool RemoveComment(Modelo.Comment comentario)
+        public bool RemoveComment(Comment comentario)
         {
             throw new NotImplementedException();
         }
@@ -158,14 +217,14 @@ namespace NoSQL.Servicios
             throw new NotImplementedException();
         }
 
-        public List<Modelo.Author> AuthorsByName(string name, int max)
+        public List<Author> AuthorsByName(string name, int max)
         {
             throw new NotImplementedException();
         }
 
         public bool IsDatabaseConnected()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public string ConnectionState()
@@ -175,10 +234,21 @@ namespace NoSQL.Servicios
 
         public string Identidad()
         {
-            throw new NotImplementedException();
+            return "Neo4j";
         }
 
         public bool Shutdown()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int ThreadsByAuthor(object id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Author> AuthorsPopular(int cant)
         {
             throw new NotImplementedException();
         }

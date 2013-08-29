@@ -140,9 +140,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modelo\GraphComment.cs" />
+    <Compile Include="Modelo\CommentThread.cs" />
+    <Compile Include="Modelo\ParentCommentC.cs" />
+    <Compile Include="Modelo\ParentCommentT.cs" />
     <Compile Include="Modelo\Payload.cs" />
-    <Compile Include="Modelo\Wrote.cs" />
+    <Compile Include="Modelo\WroteComment.cs" />
+    <Compile Include="Modelo\WroteThread.cs" />
     <Compile Include="Paneles\PanelConexion.cs">
       <SubType>UserControl</SubType>
     </Compile>
