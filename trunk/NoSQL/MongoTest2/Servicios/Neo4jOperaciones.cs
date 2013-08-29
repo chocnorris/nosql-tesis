@@ -75,6 +75,10 @@ namespace NoSQL.Servicios
             Comment com;
             foreach (Node<Comment> node in lista)
             {
+                res = client
+                    .Cypher
+                    .Start(new { e = Relationship. })
+                    .Return<Node<Comment>>("n");
                 com = node.Data;
                 com.Id = node.Reference;
                 ret.Add(com);
