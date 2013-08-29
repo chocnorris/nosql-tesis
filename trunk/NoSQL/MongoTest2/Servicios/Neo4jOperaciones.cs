@@ -126,30 +126,6 @@ namespace NoSQL.Servicios
             return singleThread(node);
         }
 
-        private Thread singleThread(Node<Thread> node)
-        {
-            Thread thr = node.Data;
-            thr.Id = node.Reference.Id;
-            var aut = client
-                .Cypher
-                .Start(new { thread = new NodeReference((long)thr.Id) })
-                .Match("(thread)<-[:WROTE]-(author)")
-                .Return<Node<Author>>("author");
-            thr.Author = new Author()
-            {
-                Id = aut.Results.FirstOrDefault().Reference.Id,
-                Name = aut.Results.FirstOrDefault().Data.Name,
-            };
-
-            long respuestas = client
-                .Cypher
-                .Start(new { thread = new NodeReference((long)thr.Id) })
-                .Match("(thread)<-[:PARENT]-(comment)")
-                .Return(() => All.Count()).Results.FirstOrDefault();
-
-            thr.CommentCount = respuestas;
-            return thr;
-        }
 
         public Author GetAuthor(object id)
         {
@@ -167,6 +143,31 @@ namespace NoSQL.Servicios
             return singleComment(node);
         }
 
+        private Thread singleThread(Node<Thread> node)
+        {
+            Thread thr = node.Data;
+            thr.Id = node.Reference.Id;
+            var aut = client
+                .Cypher
+                .Start(new { thread = new NodeReference((long)thr.Id) })
+                .Match("(thread)<-[:WROTE]-(author)")
+                .Return<Node<Author>>("author");
+            Node<Author>nodo = aut.Results.First();
+            thr.Author = new Author()
+            {
+                Id = aut.Results.FirstOrDefault().Reference.Id,
+                Name = aut.Results.FirstOrDefault().Data.Name,
+            };
+
+            long respuestas = client
+                .Cypher
+                .Start(new { thread = new NodeReference((long)thr.Id) })
+                .Match("(thread)<-[:PARENT]-(comment)")
+                .Return(() => All.Count()).Results.FirstOrDefault();
+
+            thr.CommentCount = respuestas;
+            return thr;
+        }
         private Comment singleComment(Node<Comment> node)
         {
             Comment com = node.Data;
@@ -216,12 +217,12 @@ namespace NoSQL.Servicios
                         { "Text", comentario.Text},
                     }
                     });
-            client.CreateRelationship(auth.Reference, new Wrote(theComment, new Payload() { Date = comentario.Date }));
+            client.CreateRelationship(auth.Reference, new Wrote(theComment));
 
             NodeReference<Thread> thr = long.Parse(comentario.Thread_id.ToString());
-            client.CreateRelationship(theComment, new CommentThread(thr, null));
+            client.CreateRelationship(theComment, new CommentThread(thr));
             NodeReference par = new NodeReference<Comment>(long.Parse(comentario.Parent_id.ToString()));
-            client.CreateRelationship(theComment, new Parent(par, null));
+            client.CreateRelationship(theComment, new Parent(par));
 
             return comentario;
         }
@@ -253,7 +254,7 @@ namespace NoSQL.Servicios
                             { "Title", thread.Title }
                         }
                     });
-            client.CreateRelationship(auth.Reference, new Wrote(theThread, new Payload() { Date = thread.Date }));
+            client.CreateRelationship(auth.Reference, new Wrote(theThread));
             return thread;
         }
 

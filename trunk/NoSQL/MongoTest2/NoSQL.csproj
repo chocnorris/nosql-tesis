@@ -142,7 +142,6 @@
   <ItemGroup>
     <Compile Include="Modelo\Grafo\CommentThread.cs" />
     <Compile Include="Modelo\Grafo\Parent.cs" />
-    <Compile Include="Modelo\Grafo\Payload.cs" />
     <Compile Include="Modelo\Grafo\Wrote.cs" />
     <Compile Include="Paneles\PanelConexion.cs">
       <SubType>UserControl</SubType>
