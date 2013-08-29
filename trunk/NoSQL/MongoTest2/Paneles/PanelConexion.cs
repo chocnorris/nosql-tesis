@@ -21,6 +21,7 @@ namespace NoSQL.Paneles
             comboBoxDB.Items.Add("Mongo");
             comboBoxDB.Items.Add("Cassandra");
             comboBoxDB.Items.Add("MySQL");
+            comboBoxDB.Items.Add("Neo4j");
             comboBoxDB.SelectedIndex = 0;
             comboBoxHost.Items.Add("localhost");
             comboBoxHost.Items.Add("127.0.0.1");
@@ -126,6 +127,15 @@ namespace NoSQL.Paneles
                     db = new MysqlOperaciones("forum", comboBoxHost.Text);
                 else
                     db = new MysqlOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
+            }
+            if (comboBoxDB.SelectedItem.ToString() == "Neo4j")
+            {
+                if (!testConnection(comboBoxHost.Text, 7474))
+                    return;
+                if (textBoxUsuario.Text == "")
+                    db = new Neo4jOperaciones("forum", comboBoxHost.Text);
+                else
+                    db = new Neo4jOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
             }
             padre.AfterConnection(db, panelAux);
         }

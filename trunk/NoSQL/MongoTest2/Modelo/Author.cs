@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using MongoDB.Bson;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace NoSQL.Modelo
 {
     public class Author 
-    {        
+    {
+        [JsonIgnore]
         public object Id { get; set; }
         public string Name { get; set; }
-        //TODO: Agregar más información para los autores/usuarios del sistema
-
+        [JsonIgnore]
         public Bitmap Photo { get; set; }
     }
 }
