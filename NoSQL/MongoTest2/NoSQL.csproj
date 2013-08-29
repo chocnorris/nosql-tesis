@@ -140,6 +140,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modelo\Grafo\CommentGraph.cs" />
     <Compile Include="Modelo\Grafo\CommentThread.cs" />
     <Compile Include="Modelo\Grafo\Parent.cs" />
     <Compile Include="Modelo\Grafo\Wrote.cs" />
