@@ -322,7 +322,7 @@ namespace NoSQL.Servicios
 
         public bool Shutdown()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
 
