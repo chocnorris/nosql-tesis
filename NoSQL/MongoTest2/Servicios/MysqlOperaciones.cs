@@ -64,10 +64,10 @@ namespace NoSQL.Servicios
             var authors = new List<Author>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT id, name FROM Authors ORDER BY name";
+                sql = "SELECT id, Name FROM Authors";
             else
             {
-                sql = "SELECT id, name FROM Authors LIMIT " + take + " OFFSET " + skip + " ORDER BY name"; // <- ni idea que estoy haciendo
+                sql = "SELECT id, Name FROM Authors LIMIT " + take + " OFFSET " + skip + ""; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -76,7 +76,7 @@ namespace NoSQL.Servicios
                 Author author = new Author()
                 {
                     Id = rdr.GetInt32("id"),
-                    Name = rdr.GetString("name"),
+                    Name = rdr.GetString("Name"),
                     Photo = null
                 };
                 authors.Add(author);
@@ -90,10 +90,10 @@ namespace NoSQL.Servicios
             var comments = new List<Comment>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id";
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id";
             else
             {
-                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
+                sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id LIMIT " + take + " OFFSET " + skip; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -104,12 +104,12 @@ namespace NoSQL.Servicios
                     Id = rdr.GetInt32("id"),
                     Text = rdr.GetString("Text"),
                     Date = rdr.GetDateTime("Date"),
-                    Parent_id = rdr.GetInt32("Parent_id"),
-                    Thread_id = rdr.GetInt32("Thread_id"),
+                    Parent_id = rdr.GetInt32("parent_id"),
+                    Thread_id = rdr.GetInt32("thread_id"),
                     CommentCount = rdr.GetInt32("CommentCount"),
                     Author = new Author()
                     {
-                        Id = rdr.GetInt32("Author_id"),
+                        Id = rdr.GetInt32("author_id"),
                         Name = rdr.GetString("Name")
                     }
                 };
@@ -122,7 +122,7 @@ namespace NoSQL.Servicios
         public List<Comment> GetChildComments(object Parent_id)
         {
             var comments = new List<Comment>();
-            string sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id LEFT JOIN Authors ON Authors.id = Base.author_id WHERE Comments.Parent_id = " + Parent_id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name FROM Comments LEFT JOIN Base ON Comments.id = Base.id LEFT JOIN Authors ON Authors.id = Base.author_id WHERE Comments.parent_id = " + Parent_id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
@@ -132,12 +132,12 @@ namespace NoSQL.Servicios
                     Id = rdr.GetInt32("id"),
                     Text = rdr.GetString("Text"),
                     Date = rdr.GetDateTime("Date"),
-                    Parent_id = rdr.GetInt32("Parent_id"),
-                    Thread_id = rdr.GetInt32("Thread_id"),
+                    Parent_id = rdr.GetInt32("parent_id"),
+                    Thread_id = rdr.GetInt32("thread_id"),
                     CommentCount = rdr.GetInt32("CommentCount"),
                     Author = new Author()
                     {
-                        Id = rdr.GetInt32("Author_id"),
+                        Id = rdr.GetInt32("author_id"),
                         Name = rdr.GetString("Name")
                     }
                 };
@@ -154,13 +154,13 @@ namespace NoSQL.Servicios
             if (skip == 0 && take == 0)
                 sql = "SELECT " +
                     "Base.*, Threads.*, Authors.Name AS Name " +
-                    "FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id " +
+                    "FROM Threads LEFT JOIN Base ON Threads.id = Base.id " +
                     "LEFT JOIN Authors ON Authors.id = Base.author_id  ";
             else
             {
                 sql = "SELECT " +
                     "Base.*, Threads.*, Authors.Name AS Name " +
-                    "FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id " +
+                    "FROM Threads LEFT JOIN Base ON Threads.id = Base.id " +
                     "LEFT JOIN Authors ON Authors.id = Base.author_id  " +
                     "LIMIT " + take + " OFFSET " + skip;
             }
@@ -177,7 +177,7 @@ namespace NoSQL.Servicios
                     CommentCount = rdr.GetInt32("CommentCount"),
                     Author = new Author()
                     {
-                        Id = rdr.GetInt32("Author_id"),
+                        Id = rdr.GetInt32("author_id"),
                         Name = rdr.GetString("Name")
                     }
                 };
@@ -189,7 +189,7 @@ namespace NoSQL.Servicios
 
         public Thread GetThread(object id)
         {
-            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name, Tags.Tag AS Tag FROM Threads LEFT JOIN Base ON Threads.Id = Base.Id LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Tags ON Tags.thread_id = Base.id WHERE Threads.Id = " + id;
+            string sql = "SELECT Base.*, Threads.*, Authors.Name AS Name, Tags.Tag AS Tag FROM Threads LEFT JOIN Base ON Threads.id = Base.id LEFT JOIN Authors ON Base.author_id = Authors.id LEFT JOIN Tags ON Tags.thread_id = Base.id WHERE Threads.id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             List<string> tags = new List<string>();
@@ -207,7 +207,7 @@ namespace NoSQL.Servicios
                         CommentCount = rdr.GetInt32("CommentCount"),
                         Author = new Author()
                         {
-                            Id = rdr.GetInt32("Author_id"),
+                            Id = rdr.GetInt32("author_id"),
                             Name = rdr.GetString("Name")
                         }
                     };
@@ -233,7 +233,7 @@ namespace NoSQL.Servicios
             Author author = new Author()
             {
                 Id = rdr.GetInt32("id"),
-                Name = rdr.GetString("name"),
+                Name = rdr.GetString("Name"),
                 Photo = ConvertToBitmap(rawData)
             };
             rdr.Close();
@@ -242,7 +242,7 @@ namespace NoSQL.Servicios
 
         public Comment GetComment(object id)
         {
-            string sql = "SELECT Base.*, Comments.*, Authors.Name AS Name FROM Comments LEFT JOIN Base ON Comments.Id = Base.Id  LEFT JOIN Authors ON Base.author_id = Authors.id WHERE Comments.Id = " + id;
+            string sql = "SELECT Base.*, Comments.*, Authors.Name AS Name FROM Comments LEFT JOIN Base ON Comments.id = Base.id  LEFT JOIN Authors ON Base.author_id = Authors.id WHERE Comments.id = " + id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             rdr.Read();
@@ -251,12 +251,12 @@ namespace NoSQL.Servicios
                 Id = rdr.GetInt32("id"),
                 Text = rdr.GetString("Text"),
                 Date = rdr.GetDateTime("Date"),
-                Parent_id = rdr.GetInt32("Parent_id"),
-                Thread_id = rdr.GetInt32("Thread_id"),
+                Parent_id = rdr.GetInt32("parent_id"),
+                Thread_id = rdr.GetInt32("thread_id"),
                 CommentCount = rdr.GetInt32("CommentCount"),
                 Author = new Author()
                 {
-                    Id = rdr.GetInt32("Author_id"),
+                    Id = rdr.GetInt32("author_id"),
                     Name = rdr.GetString("Name")
                 }
             };
@@ -299,7 +299,7 @@ namespace NoSQL.Servicios
             byte[] bytes = (byte[])converter.ConvertTo(autor.Photo, typeof(byte[]));
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO authors VALUES(NULL, @Name, @Photo)";
+            cmd.CommandText = "INSERT INTO Authors VALUES(NULL, @Name, @Photo)";
             cmd.Parameters.AddWithValue("@Name", autor.Name);
             cmd.Parameters.AddWithValue("@Photo", bytes);
             cmd.ExecuteNonQuery();
@@ -312,8 +312,8 @@ namespace NoSQL.Servicios
         {
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO Base VALUES(NULL, @Author_id, @Date, @CommentCount)";
-            cmd.Parameters.AddWithValue("@Author_id", thread.Author.Id);
+            cmd.CommandText = "INSERT INTO Base VALUES(NULL, @author_id, @Date, @CommentCount)";
+            cmd.Parameters.AddWithValue("@author_id", thread.Author.Id);
             cmd.Parameters.AddWithValue("@Date", thread.Date);
             cmd.Parameters.AddWithValue("@CommentCount", 0);
             cmd.ExecuteNonQuery();
@@ -321,8 +321,8 @@ namespace NoSQL.Servicios
             long id = cmd.LastInsertedId;
             MySqlCommand cmd2 = new MySqlCommand();
             cmd2.Connection = conn;
-            cmd2.CommandText = "INSERT INTO Threads VALUES(@Id, @Title)";
-            cmd2.Parameters.AddWithValue("@Id", id);
+            cmd2.CommandText = "INSERT INTO Threads VALUES(@id, @Title)";
+            cmd2.Parameters.AddWithValue("@id", id);
             cmd2.Parameters.AddWithValue("@Title", thread.Title);
             cmd2.ExecuteNonQuery();
 
@@ -331,8 +331,8 @@ namespace NoSQL.Servicios
             {
                 cmd3 = new MySqlCommand();
                 cmd3.Connection = conn;
-                cmd3.CommandText = "INSERT INTO Tags VALUES(@Thread_id, @Tag)";
-                cmd3.Parameters.AddWithValue("@Thread_id", id);
+                cmd3.CommandText = "INSERT INTO Tags VALUES(@thread_id, @Tag)";
+                cmd3.Parameters.AddWithValue("@thread_id", id);
                 cmd3.Parameters.AddWithValue("@Tag", thread.Tags[i]);
                 cmd3.ExecuteNonQuery();
             }
@@ -396,7 +396,7 @@ namespace NoSQL.Servicios
 
         public int ThreadsByAuthor(object id)
         {
-            string sql = "SELECT Count(*) AS cant FROM Threads LEFT JOIN Base ON Threads.id = Base.id WHERE Author_id = "+id;
+            string sql = "SELECT Count(*) AS cant FROM Threads LEFT JOIN Base ON Threads.id = Base.id WHERE author_id = "+id;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             string resu = cmd.ExecuteScalar().ToString();
             return Int32.Parse(resu);
@@ -405,7 +405,7 @@ namespace NoSQL.Servicios
         {
             var authors = new List<Author>();
             string regex = "'^" + name + "'";
-            string sql = "SELECT id, name FROM Authors  WHERE Name RLIKE " + regex + "  ORDER BY Authors.name LIMIT " + max;
+            string sql = "SELECT id, Name FROM Authors  WHERE Name RLIKE " + regex + "  ORDER BY Authors.Name LIMIT " + max;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
@@ -413,7 +413,7 @@ namespace NoSQL.Servicios
                 Author author = new Author()
                 {
                     Id = rdr.GetInt32("id"),
-                    Name = rdr.GetString("name"),
+                    Name = rdr.GetString("Name"),
                     Photo = null
                 };
                 authors.Add(author);
@@ -458,9 +458,9 @@ namespace NoSQL.Servicios
         {
             var authors = new List<Author>();
             string sql = "SELECT "+
-                "Authors.id, Authors.name, SUM(CommentCount) AS suma "+
-                "FROM Threads LEFT JOIN Base ON Threads.id = Base.Id LEFT JOIN Authors ON Authors.Id = Base.author_id "+
-                "GROUP BY Authors.id, Authors.name "+
+                "Authors.id, Authors.Name, SUM(CommentCount) AS suma "+
+                "FROM Threads LEFT JOIN Base ON Threads.id = Base.id LEFT JOIN Authors ON Authors.id = Base.author_id "+
+                "GROUP BY Authors.id, Authors.Name "+
                 "ORDER BY suma DESC "+
                 "LIMIT " + cant;
             MySqlCommand cmd = new MySqlCommand(sql, conn);
@@ -470,7 +470,7 @@ namespace NoSQL.Servicios
                 Author author = new Author()
                 {
                     Id = rdr.GetInt32("id"),
-                    Name = rdr.GetString("name"),
+                    Name = rdr.GetString("Name"),
                     Photo = null
                 };
                 authors.Add(author);

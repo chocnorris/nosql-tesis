@@ -86,18 +86,18 @@ namespace NoSQL.Paneles
                 if (checkBoxReplSet.CheckState == CheckState.Checked)
                 {
                     string [] hosts = getHostsDataGrid();
-                    if (textBoxUsuario.Text == "")
+                    if (textBoxPass.Text == "")
                         md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text);
                     else
-                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text, textBoxUsuario.Text, textBoxPass.Text);
+                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text, textBoxPass.Text, textBoxUsuario.Text);
                 }
                 else
                 {
                     connstr = comboBoxHost.Text;
-                    if (textBoxUsuario.Text == "")
+                    if (textBoxPass.Text == "")
                         md = new MongoOperaciones("forum", connstr);
                     else
-                        md = new MongoOperaciones("forum", connstr, textBoxUsuario.Text, textBoxPass.Text);
+                        md = new MongoOperaciones("forum", connstr, textBoxPass.Text, textBoxUsuario.Text);
                     if (!testConnection(connstr, 27017))
                         return;
                 }
@@ -107,35 +107,35 @@ namespace NoSQL.Paneles
             {
                 if (!testConnection(comboBoxHost.Text, 9160))
                     return;
-                if (textBoxUsuario.Text == "")
+                if (textBoxPass.Text == "")
                     if (checkBoxReplSet.CheckState == CheckState.Checked)
                         db = new CassandraOperaciones("forum", getHostsDataGrid());
                     else
                         db = new CassandraOperaciones("forum", comboBoxHost.Text);
                 else
                     if (checkBoxReplSet.CheckState == CheckState.Checked)
-                        db = new CassandraOperaciones("forum", getHostsDataGrid(), textBoxUsuario.Text, textBoxPass.Text);
+                        db = new CassandraOperaciones("forum", getHostsDataGrid(), textBoxPass.Text, textBoxUsuario.Text);
                     else
-                        db = new CassandraOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
+                        db = new CassandraOperaciones("forum", comboBoxHost.Text, textBoxPass.Text, textBoxUsuario.Text);
                 db.Initialize(false);
             }
             if (comboBoxDB.SelectedItem.ToString() == "MySQL")
             {
                 if (!testConnection(comboBoxHost.Text, 3306))
                     return;
-                if (textBoxUsuario.Text == "")
+                if (textBoxPass.Text == "")
                     db = new MysqlOperaciones("forum", comboBoxHost.Text);
                 else
-                    db = new MysqlOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
+                    db = new MysqlOperaciones("forum", comboBoxHost.Text, textBoxPass.Text, textBoxUsuario.Text);
             }
             if (comboBoxDB.SelectedItem.ToString() == "Neo4j")
             {
                 if (!testConnection(comboBoxHost.Text, 7474))
                     return;
-                if (textBoxUsuario.Text == "")
+                if (textBoxPass.Text == "")
                     db = new Neo4jOperaciones("forum", comboBoxHost.Text);
                 else
-                    db = new Neo4jOperaciones("forum", comboBoxHost.Text, textBoxUsuario.Text, textBoxPass.Text);
+                    db = new Neo4jOperaciones("forum", comboBoxHost.Text, textBoxPass.Text, textBoxUsuario.Text);
             }
             padre.AfterConnection(db, panelAux);
         }

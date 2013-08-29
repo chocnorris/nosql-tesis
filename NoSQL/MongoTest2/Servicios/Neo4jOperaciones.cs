@@ -81,7 +81,7 @@ namespace NoSQL.Servicios
                 var aut = client
                     .Cypher
                     .Start(new { comment = new NodeReference((long)com.Id) })
-                    .Match("(comment)<-[:WROTEC]-(author)")
+                    .Match("(comment)<-[:WROTE]-(author)")
                     .Return<Node<Author>>("author");
                 com.Author = new Author()
                 {
@@ -123,7 +123,7 @@ namespace NoSQL.Servicios
                 var aut = client
                     .Cypher
                     .Start(new { comment = new NodeReference((long)com.Id) })
-                    .Match("(comment)<-[:WROTEC]-(author)")
+                    .Match("(comment)<-[:WROTE]-(author)")
                     .Return<Node<Author>>("author");
                 com.Author = new Author()
                 {
@@ -151,7 +151,7 @@ namespace NoSQL.Servicios
                 var aut = client
                     .Cypher
                     .Start(new { thread = new NodeReference((long)thr.Id)})
-                    .Match("(thread)<-[:WROTET]-(author)")
+                    .Match("(thread)<-[:WROTE]-(author)")
                     .Return<Node<Author>>("author");
                 thr.Author = new Author()
                 {
@@ -173,7 +173,7 @@ namespace NoSQL.Servicios
             var aut = client
                 .Cypher
                 .Start(new { thread = new NodeReference((long)thr.Id) })
-                .Match("(thread)<-[:WROTET]-(author)")
+                .Match("(thread)<-[:WROTE]-(author)")
                 .Return<Node<Author>>("author");
             thr.Author = new Author()
             {
@@ -203,7 +203,7 @@ namespace NoSQL.Servicios
             var aut = client
                 .Cypher
                 .Start(new { comment = new NodeReference((long)com.Id) })
-                .Match("(comment)<-[:WROTEC]-(author)")
+                .Match("(comment)<-[:WROTE]-(author)")
                 .Return<Node<Author>>("author");
             com.Author = new Author()
             {
@@ -237,34 +237,13 @@ namespace NoSQL.Servicios
                         { "Text", comentario.Text},
                     }
                     });
-            client.CreateRelationship(auth.Reference, new WroteComment(theComment, new Payload() { Date = comentario.Date }));
+            client.CreateRelationship(auth.Reference, new Wrote(theComment, new Payload() { Date = comentario.Date }));
 
-            NodeReference<Thread> thr = null;
-            if (comentario.Thread_id.GetType().Equals(typeof(string)))
-                thr = new NodeReference<Thread>(long.Parse((string)comentario.Thread_id));
-            else
-                thr = new NodeReference<Thread>((long)comentario.Thread_id);
+            NodeReference<Thread> thr = long.Parse(comentario.Thread_id.ToString());
             client.CreateRelationship(theComment, new CommentThread(thr, null));
+            NodeReference par = new NodeReference<Comment>(long.Parse(comentario.Parent_id.ToString()));
+            client.CreateRelationship(theComment, new Parent(par, null));
 
-            if (comentario.Thread_id.Equals(comentario.Parent_id))
-            {
-                NodeReference<Thread> par = null;
-                if (comentario.Parent_id.GetType().Equals(typeof(string)))
-                    par = new NodeReference<Thread>(long.Parse((string)comentario.Parent_id));
-                else
-                    par = new NodeReference<Thread>((long)comentario.Parent_id);
-                client.CreateRelationship(theComment, new ParentCommentT(par, null));
-            }
-            else
-            {
-                NodeReference<Comment> par2 = null;
-                if (comentario.Parent_id.GetType().Equals(typeof(string)))
-                    par2 = new NodeReference<Comment>(long.Parse((string)comentario.Parent_id));
-                else
-                    par2 = new NodeReference<Comment>((long)comentario.Parent_id);
-                client.CreateRelationship(theComment, new ParentCommentC(par2, null));
-
-            }
             return comentario;
         }
 
@@ -295,7 +274,7 @@ namespace NoSQL.Servicios
                             { "Title", thread.Title }
                         }
                     });
-            client.CreateRelationship(auth.Reference, new WroteThread(theThread, new Payload() { Date = thread.Date }));
+            client.CreateRelationship(auth.Reference, new Wrote(theThread, new Payload() { Date = thread.Date }));
             return thread;
         }
 

@@ -47,8 +47,8 @@
             this.groupBoxExtra = new System.Windows.Forms.GroupBox();
             this.labelPass = new System.Windows.Forms.Label();
             this.labelUsuario = new System.Windows.Forms.Label();
-            this.textBoxPass = new System.Windows.Forms.TextBox();
             this.textBoxUsuario = new System.Windows.Forms.TextBox();
+            this.textBoxPass = new System.Windows.Forms.TextBox();
             this.panelPrincipal.SuspendLayout();
             this.panelExtra.SuspendLayout();
             this.groupBoxReplSet.SuspendLayout();
@@ -212,8 +212,8 @@
             // 
             this.groupBoxExtra.Controls.Add(this.labelPass);
             this.groupBoxExtra.Controls.Add(this.labelUsuario);
-            this.groupBoxExtra.Controls.Add(this.textBoxPass);
             this.groupBoxExtra.Controls.Add(this.textBoxUsuario);
+            this.groupBoxExtra.Controls.Add(this.textBoxPass);
             this.groupBoxExtra.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBoxExtra.Location = new System.Drawing.Point(0, 0);
             this.groupBoxExtra.Name = "groupBoxExtra";
@@ -240,20 +240,20 @@
             this.labelUsuario.TabIndex = 9;
             this.labelUsuario.Text = "Usuario";
             // 
-            // textBoxPass
-            // 
-            this.textBoxPass.Location = new System.Drawing.Point(97, 27);
-            this.textBoxPass.Name = "textBoxPass";
-            this.textBoxPass.Size = new System.Drawing.Size(203, 20);
-            this.textBoxPass.TabIndex = 0;
-            // 
             // textBoxUsuario
             // 
-            this.textBoxUsuario.Location = new System.Drawing.Point(97, 53);
+            this.textBoxUsuario.Location = new System.Drawing.Point(97, 27);
             this.textBoxUsuario.Name = "textBoxUsuario";
             this.textBoxUsuario.Size = new System.Drawing.Size(203, 20);
-            this.textBoxUsuario.TabIndex = 1;
-            this.textBoxUsuario.UseSystemPasswordChar = true;
+            this.textBoxUsuario.TabIndex = 0;
+            // 
+            // textBoxPass
+            // 
+            this.textBoxPass.Location = new System.Drawing.Point(97, 53);
+            this.textBoxPass.Name = "textBoxPass";
+            this.textBoxPass.Size = new System.Drawing.Size(203, 20);
+            this.textBoxPass.TabIndex = 1;
+            this.textBoxPass.UseSystemPasswordChar = true;
             // 
             // PanelConexion
             // 
@@ -287,8 +287,8 @@
         private System.Windows.Forms.Panel panelExtra;
         private System.Windows.Forms.Label labelUsuario;
         private System.Windows.Forms.Label labelPass;
-        private System.Windows.Forms.TextBox textBoxPass;
         private System.Windows.Forms.TextBox textBoxUsuario;
+        private System.Windows.Forms.TextBox textBoxPass;
         private System.Windows.Forms.GroupBox groupBoxExtra;
         private System.Windows.Forms.GroupBox groupBoxReplSet;
         private System.Windows.Forms.DataGridView dataGridViewReplSet;
