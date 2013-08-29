@@ -7,7 +7,7 @@ using Neo4jClient;
 namespace NoSQL.Modelo
 {
     public class WroteThread : Relationship<Payload>, IRelationshipAllowingSourceNode<Author>,
- IRelationshipAllowingTargetNode<Comment>
+ IRelationshipAllowingTargetNode<Thread>
     {
         public static readonly string TypeKey = "WROTET";
 
