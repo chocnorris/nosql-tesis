@@ -19,6 +19,7 @@ namespace NoSQL.Servicios
                 uriString = "http://" + user + ":" + pass + "@" + host + ":7474/db/data";
             client = new GraphClient(new Uri(uriString));
             client.Connect();
+            CreateNodesRelationshipsIndexes();
         }
         public bool Initialize(bool dropExistent)
         {
@@ -58,7 +59,7 @@ namespace NoSQL.Servicios
             foreach (Node<Author> node in lista)
             {
                 aut = node.Data;
-                aut.Id = node.Reference;
+                aut.Id = node.Reference.Id;
                 ret.Add(aut);
             }
             return ret;
@@ -75,12 +76,18 @@ namespace NoSQL.Servicios
             Comment com;
             foreach (Node<Comment> node in lista)
             {
-                res = client
-                    .Cypher
-                    .Start(new { e = Relationship. })
-                    .Return<Node<Comment>>("n");
                 com = node.Data;
-                com.Id = node.Reference;
+                com.Id = node.Reference.Id;
+                var aut = client
+                    .Cypher
+                    .Start(new { comment = new NodeReference((long)com.Id) })
+                    .Match("(comment)<-[:WROTEC]-(author)")
+                    .Return<Node<Author>>("author");
+                com.Author = new Author()
+                {
+                    Id = aut.Results.FirstOrDefault().Reference.Id,
+                    Name = aut.Results.FirstOrDefault().Data.Name
+                };
                 ret.Add(com);
             }
             return ret;
@@ -88,7 +95,32 @@ namespace NoSQL.Servicios
 
         public List<Comment> GetChildComments(object Parent_id)
         {
-            throw new NotImplementedException();
+            if (Parent_id.GetType().Equals(typeof(string)))
+                Parent_id = long.Parse((string)Parent_id);
+            var lista = client
+            .Cypher
+            .Start(new { parent = new NodeReference((long)Parent_id) })
+            .Match("(parent)<-[:PARENT]-(comment)")
+            .Return<Node<Comment>>("comment").Results.ToList();
+            List<Comment> ret = new List<Comment>();
+            Comment com;
+            foreach (Node<Comment> node in lista)
+            {
+                com = node.Data;
+                com.Id = node.Reference.Id;
+                var aut = client
+                    .Cypher
+                    .Start(new { comment = new NodeReference((long)com.Id) })
+                    .Match("(comment)<-[:WROTEC]-(author)")
+                    .Return<Node<Author>>("author");
+                com.Author = new Author()
+                {
+                    Id = aut.Results.FirstOrDefault().Reference.Id,
+                    Name = aut.Results.FirstOrDefault().Data.Name
+                };
+                ret.Add(com);
+            }
+            return ret;
         }
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
@@ -103,7 +135,17 @@ namespace NoSQL.Servicios
             foreach (Node<Thread> node in lista)
             {
                 thr = node.Data;
-                thr.Id = node.Reference;
+                thr.Id = node.Reference.Id;
+                var aut = client
+                    .Cypher
+                    .Start(new { thread = new NodeReference((long)thr.Id)})
+                    .Match("(thread)<-[:WROTET]-(author)")
+                    .Return<Node<Author>>("author");
+                thr.Author = new Author()
+                {
+                    Id = aut.Results.FirstOrDefault().Reference.Id,
+                    Name = aut.Results.FirstOrDefault().Data.Name
+                };
                 ret.Add(thr);
             }
             return ret;
@@ -111,31 +153,57 @@ namespace NoSQL.Servicios
 
         public Thread GetThread(object id)
         {
-            var node = client.Get<Thread>((NodeReference)id);
-            Thread th = node.Data;
-            th.Id = node.Reference;
-            return th;
+            if (id.GetType().Equals(typeof(string)))
+                id = long.Parse((string)id);
+            var node = client.Get<Thread>(new NodeReference((long)id));
+            Thread thr = node.Data;
+            thr.Id = node.Reference.Id;
+            var aut = client
+                .Cypher
+                .Start(new { thread = new NodeReference((long)thr.Id) })
+                .Match("(thread)<-[:WROTET]-(author)")
+                .Return<Node<Author>>("author");
+            thr.Author = new Author()
+            {
+                Id = aut.Results.FirstOrDefault().Reference.Id,
+                Name = aut.Results.FirstOrDefault().Data.Name,
+            };
+            return thr;
         }
 
         public Author GetAuthor(object id)
         {
-            var node = client.Get<Author>((NodeReference)id);
+            if (id.GetType().Equals(typeof(string)))
+                id = long.Parse((string)id);
+            var node = client.Get<Author>(new NodeReference((long)id));
             Author aut = node.Data;
-            aut.Id = node.Reference;
+            aut.Id = node.Reference.Id;
             return aut;
         }
 
         public Comment GetComment(object id)
         {
-            var node = client.Get<Comment>((NodeReference)id);
+            if (id.GetType().Equals(typeof(string)))
+                id = long.Parse((string)id);
+            var node = client.Get<Comment>(new NodeReference((long)id));
             Comment com = node.Data;
-            com.Id = node.Reference;
+            com.Id = node.Reference.Id;
+            var aut = client
+                .Cypher
+                .Start(new { comment = new NodeReference((long)com.Id) })
+                .Match("(comment)<-[:WROTEC]-(author)")
+                .Return<Node<Author>>("author");
+            com.Author = new Author()
+            {
+                Id = aut.Results.FirstOrDefault().Reference.Id,
+                Name = aut.Results.FirstOrDefault().Data.Name,
+            };
             return com;
         }
 
         public Comment AddComment(Comment comentario)
         {
-
+            var auth = client.Get<Author>(new NodeReference((long)comentario.Author.Id));
             NodeReference<Comment> theComment = client.Create(comentario,
                 new IRelationshipAllowingParticipantNode<Comment>[0],
                 new[]
@@ -145,13 +213,34 @@ namespace NoSQL.Servicios
                         { "Text", comentario.Text},
                     }
                     });
-            client.CreateRelationship((NodeReference<Author>)comentario.Author.Id, new WroteComment(theComment, new Payload() { Date = comentario.Date }));
-            client.CreateRelationship(theComment, new CommentThread((NodeReference<Thread>)comentario.Thread_id, null));
-            var obj = GetThread(comentario.Parent_id);
-            if(obj != null)
-                client.CreateRelationship(theComment, new ParentCommentT((NodeReference<Thread>)comentario.Thread_id, null));
+            client.CreateRelationship(auth.Reference, new WroteComment(theComment, new Payload() { Date = comentario.Date }));
+
+            NodeReference<Thread> thr = null;
+            if (comentario.Thread_id.GetType().Equals(typeof(string)))
+                thr = new NodeReference<Thread>(long.Parse((string)comentario.Thread_id));
             else
-                client.CreateRelationship(theComment, new ParentCommentC((NodeReference<Comment>)comentario.Thread_id, null));
+                thr = new NodeReference<Thread>((long)comentario.Thread_id);
+            client.CreateRelationship(theComment, new CommentThread(thr, null));
+
+            if (comentario.Thread_id.Equals(comentario.Parent_id))
+            {
+                NodeReference<Thread> par = null;
+                if (comentario.Parent_id.GetType().Equals(typeof(string)))
+                    par = new NodeReference<Thread>(long.Parse((string)comentario.Parent_id));
+                else
+                    par = new NodeReference<Thread>((long)comentario.Parent_id);
+                client.CreateRelationship(theComment, new ParentCommentT(par, null));
+            }
+            else
+            {
+                NodeReference<Comment> par2 = null;
+                if (comentario.Parent_id.GetType().Equals(typeof(string)))
+                    par2 = new NodeReference<Comment>(long.Parse((string)comentario.Parent_id));
+                else
+                    par2 = new NodeReference<Comment>((long)comentario.Parent_id);
+                client.CreateRelationship(theComment, new ParentCommentC(par2, null));
+
+            }
             return comentario;
         }
 
@@ -172,7 +261,7 @@ namespace NoSQL.Servicios
 
         public Thread AddThread(Thread thread)
         {
-            var auth = client.Get<Author>((NodeReference)thread.Author.Id);
+            var auth = client.Get<Author>(new NodeReference((long)thread.Author.Id));
             var theThread = client.Create(thread,
                     new IRelationshipAllowingParticipantNode<Thread>[0],
                     new[]
@@ -182,7 +271,7 @@ namespace NoSQL.Servicios
                             { "Title", thread.Title }
                         }
                     });
-            client.CreateRelationship((NodeReference<Author>)thread.Author.Id, new WroteThread(theThread, new Payload() { Date = thread.Date }));
+            client.CreateRelationship(auth.Reference, new WroteThread(theThread, new Payload() { Date = thread.Date }));
             return thread;
         }
 
