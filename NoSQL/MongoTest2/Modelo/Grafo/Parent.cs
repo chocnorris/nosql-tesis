@@ -6,15 +6,15 @@ using Neo4jClient;
 
 namespace NoSQL.Modelo
 {
-    public class Parent : Relationship<Payload>, IRelationshipAllowingSourceNode<Comment>,
+    public class Parent : Relationship, IRelationshipAllowingSourceNode<Comment>,
  IRelationshipAllowingTargetNode<object>
     {
         public static readonly string TypeKey = "PARENT";
 
         public string Caption { get; set; }
 
-        public Parent(NodeReference targetNode, Payload payload)
-            : base(targetNode, null)
+        public Parent(NodeReference targetNode)
+            : base(targetNode)
         { }
 
         public override string RelationshipTypeKey
