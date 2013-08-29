@@ -140,12 +140,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modelo\CommentThread.cs" />
-    <Compile Include="Modelo\ParentCommentC.cs" />
-    <Compile Include="Modelo\ParentCommentT.cs" />
-    <Compile Include="Modelo\Payload.cs" />
-    <Compile Include="Modelo\WroteComment.cs" />
-    <Compile Include="Modelo\WroteThread.cs" />
+    <Compile Include="Modelo\Grafo\CommentThread.cs" />
+    <Compile Include="Modelo\Grafo\ParentCommentC.cs" />
+    <Compile Include="Modelo\Grafo\ParentCommentT.cs" />
+    <Compile Include="Modelo\Grafo\Payload.cs" />
+    <Compile Include="Modelo\Grafo\WroteComment.cs" />
+    <Compile Include="Modelo\Grafo\WroteThread.cs" />
     <Compile Include="Paneles\PanelConexion.cs">
       <SubType>UserControl</SubType>
     </Compile>
