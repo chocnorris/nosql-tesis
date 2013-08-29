@@ -88,6 +88,18 @@ namespace NoSQL.Servicios
                     Id = aut.Results.FirstOrDefault().Reference.Id,
                     Name = aut.Results.FirstOrDefault().Data.Name
                 };
+                var par = client
+                    .Cypher
+                    .Start(new { comment = new NodeReference((long)com.Id) })
+                    .Match("(parent)<-[:PARENT]-(comment)")
+                    .Return<Node<Comment>>("parent").Results.FirstOrDefault();
+                com.Parent_id = par.Reference.Id;
+                var thr = client
+                    .Cypher
+                    .Start(new { comment = new NodeReference((long)com.Id) })
+                    .Match("(thread)<-[:COMMTH]-(comment)")
+                    .Return<Node<Comment>>("thread").Results.FirstOrDefault();
+                com.Thread_id = thr.Reference.Id;
                 ret.Add(com);
             }
             return ret;
@@ -198,6 +210,18 @@ namespace NoSQL.Servicios
                 Id = aut.Results.FirstOrDefault().Reference.Id,
                 Name = aut.Results.FirstOrDefault().Data.Name,
             };
+            var par = client
+                .Cypher
+                .Start(new { comment = new NodeReference((long)com.Id) })
+                .Match("(parent)<-[:PARENT]-(comment)")
+                .Return<Node<Comment>>("parent").Results.FirstOrDefault();
+            com.Parent_id = par.Reference.Id;
+            var thr = client
+                .Cypher
+                .Start(new { comment = new NodeReference((long)com.Id) })
+                .Match("(thread)<-[:COMMTH]-(comment)")
+                .Return<Node<Comment>>("thread").Results.FirstOrDefault();
+            com.Thread_id = thr.Reference.Id;
             return com;
         }
 
