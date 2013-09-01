@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace NoSQL.Modelo
 {
@@ -19,5 +20,7 @@ namespace NoSQL.Modelo
         public long CommentCount { get; set; }
         [JsonIgnore]
         public string [] Tags { get; set; }
+        [BsonIgnore]
+        public long Vote { get; set; }
     }
 }

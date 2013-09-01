@@ -150,7 +150,7 @@ namespace NoSQL.Servicios
             var aut = client
                 .Cypher
                 .Start(new { thread = new NodeReference((long)thr.Id) })
-                .Match("(thread)<-[:WROTE]-(author)")
+                .Match("(thread)<-[:AUTH_WROTE]-(author)")
                 .Return<Node<Author>>("author");
             Node<Author>nodo = aut.Results.First();
             thr.Author = new Author()
@@ -175,7 +175,7 @@ namespace NoSQL.Servicios
             var aut = client
                 .Cypher
                 .Start(new { comment = new NodeReference((long)com.Id) })
-                .Match("(comment)<-[:WROTE]-(author)")
+                .Match("(comment)<-[:AUTH_WROTE]-(author)")
                 .Return<Node<Author>>("author");
             com.Author = new Author()
             {
@@ -207,6 +207,11 @@ namespace NoSQL.Servicios
 
         public Comment AddComment(Comment comentario)
         {
+            Random r = new Random();
+            if (r.Next(2)==1)
+                comentario.ParentVote = 1;
+            else
+                comentario.ParentVote = -1;
             var auth = client.Get<Author>(new NodeReference((long)comentario.Author.Id));
             NodeReference<Comment> theComment = client.Create(comentario,
                 new IRelationshipAllowingParticipantNode<Comment>[0],
@@ -214,7 +219,8 @@ namespace NoSQL.Servicios
                     {
                         new IndexEntry("Comment")
                     {
-                        { "Text", comentario.Text}
+                        { "Text", comentario.Text },
+                        { "ParentVote",  comentario.ParentVote }
                     }
                     });
             client.CreateRelationship(auth.Reference, new Wrote(theComment));
@@ -229,6 +235,8 @@ namespace NoSQL.Servicios
 
         public Author AddAuthor(Author autor)
         {
+            Random r = new Random();
+            autor.Relevance = r.Next(101);
             var theauthor = client.Create(autor,
                 new IRelationshipAllowingParticipantNode<Author>[0],
                 new[]
@@ -236,6 +244,7 @@ namespace NoSQL.Servicios
                     new IndexEntry("Author")
                     {
                         { "Name", autor.Name },
+                        { "Relevance", autor.Relevance }
                     }
                 });
             autor.Id = theauthor.Id;
@@ -251,7 +260,8 @@ namespace NoSQL.Servicios
                     {
                         new IndexEntry("Thread")
                         {
-                            { "Title", thread.Title }
+                            { "Title", thread.Title },
+                            { "Vote", auth.Data.Relevance }
                         }
                     });
             client.CreateRelationship(auth.Reference, new Wrote(theThread));
@@ -335,6 +345,19 @@ namespace NoSQL.Servicios
         {
             List<Author> lista = GetAuthors();
             return lista;
+        }
+
+        public int GetThreadRelevance(object Parent_id)
+        {
+            //por ver, usar foreach ppara setear Vote de Thread que es el valor retornado por este metodo
+            Parent_id = long.Parse(Parent_id.ToString());
+            var result = client
+            .Cypher
+            .Start(new { parent = new NodeReference((long)Parent_id), author = Neo4jClient.Cypher.All.Nodes, comment =  Neo4jClient.Cypher.All.Nodes})
+            .Match("(parent)<-[:PARENT]-(comment)")
+            .Where("(comment)<-[:AUTH_WROTE]-(author)")
+            .Return<int>("sum(author.Relevance*comment.ParentVote)").Results.FirstOrDefault();
+            return result;
         }
 
     }
