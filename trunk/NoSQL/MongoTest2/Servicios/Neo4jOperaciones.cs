@@ -27,6 +27,9 @@ namespace NoSQL.Servicios
             if (dropExistent)
             {
                 client.Cypher
+                    .Start(new { n1 = All.Nodes, n2=All.Nodes })
+                    .Match("rel = (n1)--(n2)").Delete("rel").ExecuteWithoutResults();
+                client.Cypher
                     .Start(new { n = All.Nodes })
                     .Delete("n")
                     .ExecuteWithoutResults();
