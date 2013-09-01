@@ -64,6 +64,7 @@
             this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialogFoto = new System.Windows.Forms.OpenFileDialog();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -84,6 +85,7 @@
             // 
             // groupBoxAutores
             // 
+            this.groupBoxAutores.Controls.Add(this.button1);
             this.groupBoxAutores.Controls.Add(this.buttonFoto);
             this.groupBoxAutores.Controls.Add(this.buttonAgregarAutor);
             this.groupBoxAutores.Controls.Add(this.textBoxNombreAutor);
@@ -428,6 +430,7 @@
             this.comboBoxAutorThread.Name = "comboBoxAutorThread";
             this.comboBoxAutorThread.Size = new System.Drawing.Size(152, 21);
             this.comboBoxAutorThread.TabIndex = 1;
+            this.comboBoxAutorThread.SelectedIndexChanged += new System.EventHandler(this.comboBoxAutorThread_SelectedIndexChanged);
             // 
             // labelAutorThread
             // 
@@ -457,6 +460,16 @@
             this.openFileDialogFoto.Filter = "Imagen|*.jpg;*png";
             this.openFileDialogFoto.Title = "Elegir imagen";
             this.openFileDialogFoto.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialogFoto_FileOk);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(492, 18);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Consultas";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // VentanaDatos
             // 
@@ -532,5 +545,6 @@
         private System.Windows.Forms.Button buttonTags;
         private System.Windows.Forms.Button buttonFoto;
         private System.Windows.Forms.OpenFileDialog openFileDialogFoto;
+        private System.Windows.Forms.Button button1;
     }
 }

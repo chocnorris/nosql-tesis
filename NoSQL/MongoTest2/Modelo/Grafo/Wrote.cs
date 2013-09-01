@@ -9,7 +9,7 @@ namespace NoSQL.Modelo
     public class Wrote : Relationship, IRelationshipAllowingSourceNode<Author>,
  IRelationshipAllowingTargetNode<Thread>
     {
-        public static readonly string TypeKey = "WROTE";
+        public static readonly string TypeKey = "AUTH_WROTE";
 
         public string Caption { get; set; }
 
