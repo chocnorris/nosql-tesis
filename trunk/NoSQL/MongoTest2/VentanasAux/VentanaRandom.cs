@@ -43,6 +43,7 @@ namespace NoSQL
         {
             if (worker.IsBusy)
                 return;
+            operationStatistic.Clear();
             labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(AU);
@@ -52,6 +53,7 @@ namespace NoSQL
         {
             if (worker.IsBusy)
                 return;
+            operationStatistic.Clear();
             labelEstado.Text = "";
             progressBar.Visible = true;
             worker.RunWorkerAsync(TH);
@@ -73,6 +75,7 @@ namespace NoSQL
                 return;
             labelEstado.Text = "";
             progressBar.Visible = true;
+            operationStatistic.Clear();
             worker.RunWorkerAsync(CO1MB);
         }
 
@@ -132,7 +135,10 @@ namespace NoSQL
             {
                 int num = rand.Next(50);
                 Double num2 = Math.Round(rand.NextDouble(),6);
+                var addStart = DateTime.Now;
                 db.AddAuthor(new Author() { Name = names[num] +"@"+num2, Photo = (Bitmap)Image.FromFile(@"..\..\Data\nophoto.jpg")});
+                var addEnd = DateTime.Now;
+                operationStatistic.Add(i, (addEnd - addStart).TotalMilliseconds);
                 worker.ReportProgress((i * 100) / n);
             }            
         }
@@ -147,6 +153,7 @@ namespace NoSQL
                 int num2 = rand.Next(50);
                 int num3 = rand.Next(nAut);
                 Author auth = db.GetAuthors(num3,1).First();
+                var addStart = DateTime.Now;
                 db.AddThread(new Thread()
                 {
                     Title = names[num] + names[num2],
@@ -154,6 +161,8 @@ namespace NoSQL
                     Date = DateTime.Now,
                     Tags = new string[]{"uno", "dos", "tres" }
                 });
+                var addEnd = DateTime.Now;
+                operationStatistic.Add(i, (addEnd - addStart).TotalMilliseconds);
                 worker.ReportProgress((i*100)/n);
             }
         }
