@@ -357,9 +357,9 @@ namespace NoSQL.Servicios
             var result = client
             .Cypher
             .Start(new { parent = new NodeReference((long)Parent_id), author = Neo4jClient.Cypher.All.Nodes, comment =  Neo4jClient.Cypher.All.Nodes})
-            .Match("(parent)<-[:PARENT]-(comment)")
+            .Match("p = (parent)<-[:PARENT*]-(comment)")
             .Where("(comment)<-[:AUTH_WROTE]-(author)")
-            .Return<int>("sum(author.Relevance*comment.ParentVote)").Results.FirstOrDefault();
+            .Return<int>("sum((author.Relevance/length(p))*comment.ParentVote)").Results.FirstOrDefault();
             return result;
         }
 
