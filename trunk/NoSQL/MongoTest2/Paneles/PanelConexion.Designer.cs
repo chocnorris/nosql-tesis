@@ -41,8 +41,6 @@
             this.Host = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Port = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.labelNombreReplSet = new System.Windows.Forms.Label();
-            this.textBoxNombreReplSet = new System.Windows.Forms.TextBox();
             this.checkBoxReplSet = new System.Windows.Forms.CheckBox();
             this.groupBoxExtra = new System.Windows.Forms.GroupBox();
             this.labelPass = new System.Windows.Forms.Label();
@@ -133,9 +131,9 @@
             // 
             this.panel1.Controls.Add(this.dataGridViewReplSet);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(3, 69);
+            this.panel1.Location = new System.Drawing.Point(3, 43);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(333, 226);
+            this.panel1.Size = new System.Drawing.Size(333, 252);
             this.panel1.TabIndex = 2;
             // 
             // dataGridViewReplSet
@@ -150,7 +148,7 @@
             this.dataGridViewReplSet.Enabled = false;
             this.dataGridViewReplSet.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewReplSet.Name = "dataGridViewReplSet";
-            this.dataGridViewReplSet.Size = new System.Drawing.Size(333, 226);
+            this.dataGridViewReplSet.Size = new System.Drawing.Size(333, 252);
             this.dataGridViewReplSet.TabIndex = 1;
             // 
             // Host
@@ -170,32 +168,12 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.labelNombreReplSet);
-            this.panel2.Controls.Add(this.textBoxNombreReplSet);
             this.panel2.Controls.Add(this.checkBoxReplSet);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(3, 16);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(393, 53);
+            this.panel2.Size = new System.Drawing.Size(393, 27);
             this.panel2.TabIndex = 3;
-            // 
-            // labelNombreReplSet
-            // 
-            this.labelNombreReplSet.AutoSize = true;
-            this.labelNombreReplSet.Location = new System.Drawing.Point(13, 27);
-            this.labelNombreReplSet.Name = "labelNombreReplSet";
-            this.labelNombreReplSet.Size = new System.Drawing.Size(44, 13);
-            this.labelNombreReplSet.TabIndex = 11;
-            this.labelNombreReplSet.Text = "Nombre";
-            // 
-            // textBoxNombreReplSet
-            // 
-            this.textBoxNombreReplSet.Enabled = false;
-            this.textBoxNombreReplSet.Location = new System.Drawing.Point(94, 24);
-            this.textBoxNombreReplSet.Name = "textBoxNombreReplSet";
-            this.textBoxNombreReplSet.Size = new System.Drawing.Size(203, 20);
-            this.textBoxNombreReplSet.TabIndex = 10;
-            this.textBoxNombreReplSet.Text = "rs0";
             // 
             // checkBoxReplSet
             // 
@@ -295,8 +273,6 @@
         private System.Windows.Forms.CheckBox checkBoxReplSet;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label labelNombreReplSet;
-        private System.Windows.Forms.TextBox textBoxNombreReplSet;
         private System.Windows.Forms.DataGridViewTextBoxColumn Host;
         private System.Windows.Forms.DataGridViewTextBoxColumn Port;
     }

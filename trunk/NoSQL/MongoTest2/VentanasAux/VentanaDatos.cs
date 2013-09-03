@@ -26,6 +26,10 @@ namespace NoSQL
             InitializeComponent();
             if (db.Identidad() == "Cassandra")
                 numericUpDownPag.Enabled = false;
+            if (db.Identidad() == "Neo4j")
+                buttonDM.Visible = true;
+            else
+                buttonDM.Visible = false;
         }
 
         private void VentanaDatos_Load(object sender, EventArgs e)
@@ -275,7 +279,7 @@ namespace NoSQL
                 buttonAgregarThread.Enabled = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonDM_Click(object sender, EventArgs e)
         {
             if (consultasWindow == null || consultasWindow.IsDisposed )
             {

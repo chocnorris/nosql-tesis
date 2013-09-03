@@ -17,6 +17,8 @@ namespace NoSQL
         IOperaciones db;
         Dictionary<int, double> operationStatistic = new Dictionary<int,double>();
 
+        int numeroTotal = 0;
+
         string[] names = new string[50]
         {
             "Shirlee","Shiela","Kathline","Domitila","Adina","Lizzie","Eugenio",
@@ -93,16 +95,20 @@ namespace NoSQL
             switch (opc)
             {
                 case CO:
-                    cargarComments((int)numericUpDownCom.Value, false);
+                    numeroTotal = (int)numericUpDownCom.Value;
+                    cargarComments(numeroTotal, false);
                     break;
                 case TH:
-                    cargarThreads((int)numericUpDownThreads.Value);
+                    numeroTotal = (int)numericUpDownThreads.Value;
+                    cargarThreads(numeroTotal);
                     break;
-                case AU:                    
-                    cargarAutores((int)numericUpDownAutores.Value);
+                case AU:
+                    numeroTotal = (int)numericUpDownAutores.Value;
+                    cargarAutores(numeroTotal);
                     break;
                 case CO1MB:
-                    cargarComments((int)numericUpDownCom1MB.Value, true);
+                    numeroTotal = (int)numericUpDownCom1MB.Value;
+                    cargarComments(numeroTotal, true);
                     break;
             }
             var finish = DateTime.Now;
@@ -244,7 +250,7 @@ namespace NoSQL
             progressBar.Value = 0;
             progressBar.Visible = false;
             labelEstado.Text = "La operación tardó " + elapsed + " segundos";
-            //MessageBox.Show("La operación tardó " + elapsed + " segundos", "Operación", MessageBoxButtons.OK);            
+            updateChart(numeroTotal);
         }
 
         private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -256,17 +262,6 @@ namespace NoSQL
         {
             if (worker.IsBusy)
                 e.Cancel = true;
-        }
-
-        private void chart1_Click(object sender, EventArgs e)
-        {
-            updateChart((int)numericUpDownCom.Value);
-
-        }
-
-        private void VentanaRandom_Load(object sender, EventArgs e)
-        {
-
         }
 
     }
