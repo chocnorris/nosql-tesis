@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBoxAutores = new System.Windows.Forms.GroupBox();
+            this.buttonDM = new System.Windows.Forms.Button();
             this.buttonFoto = new System.Windows.Forms.Button();
             this.buttonAgregarAutor = new System.Windows.Forms.Button();
             this.textBoxNombreAutor = new System.Windows.Forms.TextBox();
@@ -64,7 +65,6 @@
             this.contextMenuStripNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialogFoto = new System.Windows.Forms.OpenFileDialog();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBoxAutores.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxComments.SuspendLayout();
@@ -85,7 +85,7 @@
             // 
             // groupBoxAutores
             // 
-            this.groupBoxAutores.Controls.Add(this.button1);
+            this.groupBoxAutores.Controls.Add(this.buttonDM);
             this.groupBoxAutores.Controls.Add(this.buttonFoto);
             this.groupBoxAutores.Controls.Add(this.buttonAgregarAutor);
             this.groupBoxAutores.Controls.Add(this.textBoxNombreAutor);
@@ -97,6 +97,16 @@
             this.groupBoxAutores.TabIndex = 0;
             this.groupBoxAutores.TabStop = false;
             this.groupBoxAutores.Text = "Autores";
+            // 
+            // buttonDM
+            // 
+            this.buttonDM.Location = new System.Drawing.Point(492, 18);
+            this.buttonDM.Name = "buttonDM";
+            this.buttonDM.Size = new System.Drawing.Size(75, 23);
+            this.buttonDM.TabIndex = 4;
+            this.buttonDM.Text = "Consultas";
+            this.buttonDM.UseVisualStyleBackColor = true;
+            this.buttonDM.Click += new System.EventHandler(this.buttonDM_Click);
             // 
             // buttonFoto
             // 
@@ -461,16 +471,6 @@
             this.openFileDialogFoto.Title = "Elegir imagen";
             this.openFileDialogFoto.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialogFoto_FileOk);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(492, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Consultas";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // VentanaDatos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -545,6 +545,6 @@
         private System.Windows.Forms.Button buttonTags;
         private System.Windows.Forms.Button buttonFoto;
         private System.Windows.Forms.OpenFileDialog openFileDialogFoto;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonDM;
     }
 }
