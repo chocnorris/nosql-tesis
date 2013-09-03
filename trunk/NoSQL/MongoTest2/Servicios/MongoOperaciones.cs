@@ -365,7 +365,7 @@ namespace NoSQL.Servicios
                 if (i < hosts.Count() - 1)
                     connstr += ",";
             }
-            return connstr + "/?readPreference=nearest";
+            return connstr + "/";
         }
     }
 }
