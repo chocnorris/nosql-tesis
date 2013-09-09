@@ -249,7 +249,7 @@ namespace NoSQL.Servicios
                     for (var i in emits) {
                         total += emits[i].count
                     }
-                    return total;
+                    return { count : NumberLong(total) };
                 }";
 
             MapReduceOutput salida = new MapReduceOutput("popular");
