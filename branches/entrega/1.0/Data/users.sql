@@ -1,0 +1,5 @@
+CREATE USER 'forum'@'%' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON forum.* TO 'forum'@'%' WITH GRANT OPTION;
+
+CREATE USER 'forum'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON forum.* TO 'forum'@'localhost' WITH GRANT OPTION;
