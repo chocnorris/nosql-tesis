@@ -20,11 +20,11 @@ namespace NoSQL.Servicios
         protected string keySpaceName;
 
         public CassandraOperaciones(string dbname, string host, string user = "", string pass = "")
-        {
-            cluster = Cluster.Builder().AddContactPoint(host).Build();
-            //session = cluster.Connect(dbname);
-            session = cluster.Connect();
-            keySpaceName = dbname;
+        {            
+                cluster = Cluster.Builder().AddContactPoint(host).Build();
+                //session = cluster.Connect(dbname);
+                keySpaceName = dbname;
+                session = cluster.Connect();            
         }
         public CassandraOperaciones(string dbname, string [] hosts, string user = "", string pass = "")
         {
@@ -119,6 +119,32 @@ namespace NoSQL.Servicios
             }
             return comments.ToList();            
         }
+
+        /*
+        public List<Thread> GetThreads2(int skip = 0, int take = 0)
+        {
+            var threadRows = session.Execute(@"SELECT * FROM ""Threads""").GetRows();
+            var threadCount = threadRows.Count();
+            threadRows = session.Execute(@"SELECT * FROM ""Threads""").GetRows();
+            var threads = new List<Thread>();
+            if (threadCount > 0 && threadCount > skip)
+            {
+                var limit = skip + take;
+                while (skip < threadCount && skip < limit)
+                {
+                    var row = threadRows.ElementAt(skip);
+                    var thread = new Thread();
+                    thread.Author = this.GetAuthor(row.GetValue<Guid>("Author"));
+                    thread.Date = row.GetValue<DateTime>("Date");
+                    thread.Id = row.GetValue<Guid>(0);
+                    thread.CommentCount = GetChildCommentCounts(thread.Id);
+                    threads.Add(thread);
+                    skip++;
+                }
+            }
+            return threads.ToList();
+        }
+        */
 
         public List<Thread> GetThreads(int skip = 0, int take = 0)
         {

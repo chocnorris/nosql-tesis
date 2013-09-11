@@ -24,11 +24,14 @@ namespace NoSQL.Paneles
             comboBoxDB.Items.Add("Neo4j");
             comboBoxDB.SelectedIndex = 0;
             comboBoxHost.Items.Add("localhost");
-            comboBoxHost.Items.Add("node01.test");
+            comboBoxHost.Items.Add("127.0.0.1");
+            comboBoxHost.Items.Add("192.168.56.201");
+            comboBoxHost.Items.Add("192.168.56.202");
+            comboBoxHost.Items.Add("192.168.56.203");
 
-            dataGridViewReplSet.Rows.Add("node01.test", "27017");
-            dataGridViewReplSet.Rows.Add("node02.test", "27017");
-            dataGridViewReplSet.Rows.Add("node93.test", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb0.test", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb1.test", "27017");
+            dataGridViewReplSet.Rows.Add("mongodb2.test", "27017");
 
         }
 
@@ -84,9 +87,9 @@ namespace NoSQL.Paneles
                 {
                     string [] hosts = getHostsDataGrid();
                     if (textBoxPass.Text == "")
-                        md = new MongoOperaciones("forum", hosts);
+                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text);
                     else
-                        md = new MongoOperaciones("forum", hosts, textBoxPass.Text, textBoxUsuario.Text);
+                        md = new MongoOperaciones("forum", hosts, textBoxNombreReplSet.Text, textBoxPass.Text, textBoxUsuario.Text);
                 }
                 else
                 {
@@ -161,11 +164,14 @@ namespace NoSQL.Paneles
             {
                 comboBoxHost.Enabled = false;
                 dataGridViewReplSet.Enabled = true;
+                if (comboBoxDB.SelectedItem.Equals("Mongo"))
+                    textBoxNombreReplSet.Enabled = true;
             }
             else
             {
                 comboBoxHost.Enabled = true;
                 dataGridViewReplSet.Enabled = false;
+                textBoxNombreReplSet.Enabled = false;
             }
         }
 

@@ -64,10 +64,10 @@ namespace NoSQL.Servicios
             var authors = new List<Author>();
             string sql = "";
             if (skip == 0 && take == 0)
-                sql = "SELECT id, Name FROM Authors ORDER BY Name";
+                sql = "SELECT id, Name FROM Authors";
             else
             {
-                sql = "SELECT id, Name FROM Authors ORDER BY Name LIMIT " + take + " OFFSET " + skip + ""; // <- ni idea que estoy haciendo
+                sql = "SELECT id, Name FROM Authors LIMIT " + take + " OFFSET " + skip + ""; // <- ni idea que estoy haciendo
             }
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();

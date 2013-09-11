@@ -172,12 +172,13 @@
             this.chart1.Size = new System.Drawing.Size(501, 208);
             this.chart1.TabIndex = 8;
             this.chart1.Text = "chart1";
+            this.chart1.Click += new System.EventHandler(this.chart1_Click);
             // 
             // VentanaRandom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(809, 236);
+            this.ClientSize = new System.Drawing.Size(809, 253);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.labelEstado);
             this.Controls.Add(this.numericUpDownCom1MB);
@@ -195,6 +196,7 @@
             this.Name = "VentanaRandom";
             this.Text = "Datos aleatorios";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VentanaRandom_FormClosing);
+            this.Load += new System.EventHandler(this.VentanaRandom_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCom)).EndInit();

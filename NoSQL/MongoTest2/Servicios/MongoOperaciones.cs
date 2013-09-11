@@ -42,9 +42,9 @@ namespace NoSQL.Servicios
             }
         }
 
-        public MongoOperaciones(string dbname, string[] hosts, string user = "", string pass = "")
+        public MongoOperaciones(string dbname, string[] hosts,string replSetName, string user = "", string pass = "")
         {
-            string connstr = "mongodb://" + construirReplSetConn(hosts);
+            string connstr = "mongodb://" + construirReplSetConn(hosts, replSetName);
             client = new MongoClient(connstr);
             server = client.GetServer();
             db = server.GetDatabase(dbname);
@@ -249,7 +249,7 @@ namespace NoSQL.Servicios
                     for (var i in emits) {
                         total += emits[i].count
                     }
-                    return { count : NumberLong(total) };
+                    return total;
                 }";
 
             MapReduceOutput salida = new MapReduceOutput("popular");
@@ -352,7 +352,7 @@ namespace NoSQL.Servicios
             return true;
         }
 
-        private string construirReplSetConn(string [] hosts)
+        private string construirReplSetConn(string [] hosts, string replSetName)
         {
             string connstr = "";
             for (int i = 0; i < hosts.Count(); i++)
@@ -365,7 +365,7 @@ namespace NoSQL.Servicios
                 if (i < hosts.Count() - 1)
                     connstr += ",";
             }
-            return connstr + "/";
+            return connstr + "/?replicaSet=" + replSetName+"&readPreference=nearest";
         }
     }
 }
