@@ -49,7 +49,7 @@ namespace NoSQL.Servicios
                 }
             }
             MySqlScript script = new MySqlScript(conn);
-            script.Query = System.IO.File.ReadAllText(@"..\..\Data\script.sql");
+            script.Query = System.IO.File.ReadAllText(@"Data\script.sql");
             int result = script.Execute();
             return true;
         }

@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using NoSQL.Servicios;
 using NoSQL.Modelo;
-using NoSQL.VentanasAux;
 
 namespace NoSQL
 {
@@ -17,8 +16,7 @@ namespace NoSQL
         IOperaciones db;
         const string MSG_ERROR_DB  = "Error accediendo a la base de datos, operación no realizada. Verifique la configuración.";
         string[] tags = new string [0];
-        Image foto = Image.FromFile(@"..\..\Data\nophoto.jpg");
-        DataminingConsultas consultasWindow;
+        Image foto = Image.FromFile(@"Data\nophoto.jpg");
 
         public VentanaDatos(IOperaciones db)
         {
@@ -26,10 +24,6 @@ namespace NoSQL
             InitializeComponent();
             if (db.Identidad() == "Cassandra")
                 numericUpDownPag.Enabled = false;
-            if (db.Identidad() == "Neo4j")
-                buttonDM.Visible = true;
-            else
-                buttonDM.Visible = false;
         }
 
         private void VentanaDatos_Load(object sender, EventArgs e)
@@ -277,22 +271,6 @@ namespace NoSQL
                 buttonAgregarThread.Enabled = false;
             else
                 buttonAgregarThread.Enabled = true;
-        }
-
-        private void buttonDM_Click(object sender, EventArgs e)
-        {
-            if (consultasWindow == null || consultasWindow.IsDisposed )
-            {
-                consultasWindow = new DataminingConsultas((Neo4jOperaciones)db);
-                consultasWindow.Show();
-            }
-            else
-            {
-                if (consultasWindow.Visible)
-                    consultasWindow.Hide();
-                else
-                    consultasWindow.Show();
-            }
         }
 
         private void comboBoxAutorThread_SelectedIndexChanged(object sender, EventArgs e)

@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBoxAutores = new System.Windows.Forms.GroupBox();
-            this.buttonDM = new System.Windows.Forms.Button();
             this.buttonFoto = new System.Windows.Forms.Button();
             this.buttonAgregarAutor = new System.Windows.Forms.Button();
             this.textBoxNombreAutor = new System.Windows.Forms.TextBox();
@@ -85,7 +84,6 @@
             // 
             // groupBoxAutores
             // 
-            this.groupBoxAutores.Controls.Add(this.buttonDM);
             this.groupBoxAutores.Controls.Add(this.buttonFoto);
             this.groupBoxAutores.Controls.Add(this.buttonAgregarAutor);
             this.groupBoxAutores.Controls.Add(this.textBoxNombreAutor);
@@ -97,16 +95,6 @@
             this.groupBoxAutores.TabIndex = 0;
             this.groupBoxAutores.TabStop = false;
             this.groupBoxAutores.Text = "Autores";
-            // 
-            // buttonDM
-            // 
-            this.buttonDM.Location = new System.Drawing.Point(492, 18);
-            this.buttonDM.Name = "buttonDM";
-            this.buttonDM.Size = new System.Drawing.Size(75, 23);
-            this.buttonDM.TabIndex = 4;
-            this.buttonDM.Text = "Consultas";
-            this.buttonDM.UseVisualStyleBackColor = true;
-            this.buttonDM.Click += new System.EventHandler(this.buttonDM_Click);
             // 
             // buttonFoto
             // 
@@ -545,6 +533,5 @@
         private System.Windows.Forms.Button buttonTags;
         private System.Windows.Forms.Button buttonFoto;
         private System.Windows.Forms.OpenFileDialog openFileDialogFoto;
-        private System.Windows.Forms.Button buttonDM;
     }
 }
