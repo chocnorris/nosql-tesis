@@ -142,7 +142,7 @@ namespace NoSQL
                 int num = rand.Next(50);
                 Double num2 = Math.Round(rand.NextDouble(),6);
                 var addStart = DateTime.Now;
-                db.AddAuthor(new Author() { Name = names[num] +"@"+num2, Photo = (Bitmap)Image.FromFile(@"..\..\Data\nophoto.jpg")});
+                db.AddAuthor(new Author() { Name = names[num] +"@"+num2, Photo = (Bitmap)Image.FromFile(@"Data\nophoto.jpg")});
                 var addEnd = DateTime.Now;
                 operationStatistic.Add(i, (addEnd - addStart).TotalMilliseconds);
                 worker.ReportProgress((i * 100) / n);
@@ -230,7 +230,7 @@ namespace NoSQL
                     var addStart = DateTime.Now;
                     db.AddComment(new Comment()
                     {
-                        Text = System.IO.File.ReadAllText(@"..\..\Data\1mb.txt"),
+                        Text = System.IO.File.ReadAllText(@"Data\1mb.txt"),
                         Thread_id = threadId,
                         Author = auth,
                         Date = DateTime.Now,
